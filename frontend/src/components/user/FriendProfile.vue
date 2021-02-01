@@ -50,6 +50,9 @@
       @click="friendDelete(friendEmail)"
       >친구 삭제</b-button
     >
+    <input type="text" placeholder="title" v-model="message.mtitle" />
+    <input type="text" placeholder="content" v-model="message.mcontent" />
+    <button @click="sendMessage">send</button>
   </div>
 </template>
 
@@ -144,6 +147,26 @@ export default {
           console.log(error);
         });
     },
+    sendMessage() {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+      params.append('email', storage.getItem('user-email'));
+      params.append('friendEmail', this.friendEmail);
+      params.append('mtitle', this.message.mtitle);
+      params.append('mcontent', this.message.mcontent);
+
+      axios
+        .post('http://localhost:8080/sendMessage', params)
+        .then((response) => {
+          console.log(response);
+          alert('쪽지를 보냈습니다.');
+          this.message.mtitle = '';
+          this.message.mcontent = '';
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   data() {
     return {
@@ -152,6 +175,12 @@ export default {
       tel: '',
       friendStatus: { type: Number, default: 4 },
       profileImg: '',
+      message: {
+        msender: { type: Number },
+        mreceiver: { type: Number },
+        mtitle: '',
+        mcontent: '',
+      },
     };
   },
   created() {

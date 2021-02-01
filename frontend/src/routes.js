@@ -12,6 +12,7 @@ import Components from '@/views/Components.vue';
 import ErrorPage from '@/views/Error.vue';
 import PageNotFound from '@/views/PageNotFound.vue';
 import ChangeAvatar from '@/views/user/ChangeAvatar.vue'
+import MyMessage from '@/views/message/Message.vue';
 
 import FriendTest from '@/views/FriendTest.vue';
 
@@ -56,6 +57,12 @@ export default [
     path: '/feed/main',
     name: 'FeedMain',
     component: FeedMain,
+  },
+  {
+    path: '/message',
+    name: 'MyMessage',
+    component: MyMessage,
+    props: true,
   },
   {
     path: '/community',
