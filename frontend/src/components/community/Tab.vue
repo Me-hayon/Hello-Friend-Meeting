@@ -29,44 +29,59 @@
       </b-row>
       <b-row style="margin-bottom:25px">
         <b-col>카테고리</b-col>
-        <b-col
-          ><select name="category" id="category-select">
+        <b-col>
+          <b-form-select>
             <option value="여행">여행</option>
             <option value="스터디">스터디</option>
             <option value="게임">게임</option>
-            <option value="영화">영화</option></select
-          ></b-col
-        >
+            <option value="영화">영화</option>
+          </b-form-select>
+          <!-- <select name="category" id="category-select">
+            <option value="여행">여행</option>
+            <option value="스터디">스터디</option>
+            <option value="게임">게임</option>
+            <option value="영화">영화</option></select> -->
+        </b-col>
       </b-row>
       <b-row style="margin-bottom:25px">
         <b-col>노출범위</b-col>
         <b-col>
-          <div style="">
-            <input
-              class="groupRadio"
-              type="radio"
-              id="친구만"
-              name="drone"
-              value="친구만"
-              checked
-            />
-            <label for="친구만">친구만</label>
-          </div>
+          <b-row>
+            <b-col>
+              <b-form-radio name="drone" value="친구만">친구만</b-form-radio>
+              <!-- <input
+                class="groupRadio"
+                type="radio"
+                id="친구만"
+                name="drone"
+                value="친구만"
+                checked
+              /> -->
+            </b-col>
+          </b-row>
 
-          <div>
+          <b-row>
+            <b-col>
+              <b-form-radio name="drone" value="친구의친구까지"
+                >친구의친구까지</b-form-radio
+              >
+            </b-col>
+            <!-- <label for="친구의친구까지">친구의친구까지</label>
             <input
               type="radio"
               id="친구의친구까지"
               name="drone"
               value="친구의친구까지"
-            />
-            <label for="친구의친구까지">친구의친구까지</label>
-          </div>
+            /> -->
+          </b-row>
 
-          <div>
-            <input type="radio" id="비공개" name="drone" value="비공개" />
-            <label for="비공개">비공개</label>
-          </div>
+          <b-row>
+            <b-col>
+              <b-form-radio name="drone" value="비공개">비공개</b-form-radio>
+            </b-col>
+            <!-- <label for="비공개">비공개</label>
+            <input type="radio" id="비공개" name="drone" value="비공개" /> -->
+          </b-row>
         </b-col>
       </b-row>
     </b-modal>
@@ -98,5 +113,9 @@ a:hover {
   border: 1px solid black;
 }
 .groupRadio {
+}
+
+input {
+  height: auto;
 }
 </style>
