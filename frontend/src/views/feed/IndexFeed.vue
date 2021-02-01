@@ -1,6 +1,5 @@
 <template>
   <div class="feed newsfeed">
-    <Header />
     <div class="wrapB" style="margin-bottom:60px">
       <h1>뉴스피드</h1>
 
@@ -38,7 +37,6 @@
 
 <script>
 // import { mapState } from "vuex";
-import Header from '../../components/common/Header.vue';
 import '../../components/css/feed/feed-item.scss';
 import '../../components/css/feed/newsfeed.scss';
 import BottomNav from '../../components/common/BottomNav.vue';
@@ -49,7 +47,7 @@ const storage = window.sessionStorage;
 export default {
   // props: ['keyword'],
 
-  components: { BottomNav, Header },
+  components: { BottomNav },
   data() {
     return {
       myFeeds: [
@@ -80,6 +78,8 @@ export default {
         console.log(error);
         console.log('error occur');
       });
+
+    this.$store.state.isHeader = true;
   },
 };
 </script>

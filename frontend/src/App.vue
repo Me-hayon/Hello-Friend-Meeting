@@ -1,9 +1,12 @@
 <template>
-  <div id="app">
-    <v-app>
+  <v-app>
+    <v-app-bar :value="$store.state.isHeader"> </v-app-bar>
+    <v-navigation-drawer></v-navigation-drawer>
+    <v-main>
       <router-view></router-view>
-    </v-app>
-  </div>
+    </v-main>
+    <v-bottom-navigation></v-bottom-navigation>
+  </v-app>
 </template>
 
 <script>
