@@ -1,0 +1,70 @@
+<template>
+  <b-container style="background-color: rgb(247, 246, 232)">
+    <Header />
+    <FriendProfile :friendEmail="friendEmail" />
+    <div>
+      <table
+        class="table b-table table-striped table-hover"
+        style="width:100%; text-align:center; margin-top:30px"
+      >
+        <tr>
+          <td>그룹명</td>
+          <td>그룹신청</td>
+          <td>그룹원수</td>
+        </tr>
+        <tr v-for="group in groups" :key="group.gno">
+          <td>{{ group.gname }}</td>
+          <td><b-button variant="success">신청하기</b-button></td>
+          <td>{{ group.gpeople }}</td>
+        </tr>
+        <!-- <tr>
+          <td>볼링</td>
+          <td><b-button>신청하기</b-button></td>
+          <td>17</td>
+        </tr>
+        <tr>
+          <td>영화</td>
+          <td><b-button>신청하기</b-button></td>
+          <td>25</td>
+        </tr> -->
+      </table>
+    </div>
+
+    <Footer />
+  </b-container>
+</template>
+
+<script>
+import Header from "@/components/common/Header.vue";
+import FriendProfile from "@/components/user/FriendProfile.vue";
+import Footer from "@/components/common/BottomNav.vue";
+
+const storage = window.sessionStorage;
+
+export default {
+  props: {
+    friendEmail: {
+      type: String,
+      default: "",
+    },
+  },
+  data() {
+    return {
+      groups: [
+        { gname: "토익스터디", gno: 1, gpeople: 20 },
+        { gname: "볼링", gno: "Larsen", gpeople: 31 },
+      ],
+    };
+  },
+  components: { Header, FriendProfile, Footer },
+  methods: {
+    onClickState() {
+      storage.removeItem("auth-token");
+      storage.removeItem("user-email");
+      this.$router.push("/");
+    },
+  },
+};
+</script>
+
+<style></style>
