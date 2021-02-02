@@ -8,14 +8,13 @@ import FeedMain from "@/views/feed/IndexFeed.vue";
 import Community from "@/views/Community.vue";
 import GroupList from "@/components/community/GroupList.vue";
 import FriendList from "@/components/community/FriendList.vue";
-import Components from "@/views/Components.vue";
+
 import ErrorPage from "@/views/Error.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import ChangeAvatar from "@/views/user/ChangeAvatar.vue";
 
-import FriendTest from '@/views/FriendTest.vue';
-
 import FriendTest from "@/views/FriendTest.vue";
+
 import GroupMainPage from "@/components/group/GroupMainPage.vue";
 export default [
   {
@@ -89,11 +88,7 @@ export default [
       },
     ],
   },
-  {
-    path: "/components",
-    name: "Components",
-    component: Components,
-  },
+
   {
     path: "/error",
     name: "ErrorPage",
