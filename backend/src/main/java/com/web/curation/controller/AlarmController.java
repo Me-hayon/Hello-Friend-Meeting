@@ -3,6 +3,7 @@ package com.web.curation.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class AlarmController {
 	@PostMapping("/getAlarms")
 	public List<Alarm> getAlarms(@RequestParam(required=true) final String email){
 		int uid=userInfoRepository.findByEmail(email).getUno();
-		List<Alarm> list=alarmRepository.findByAuserAndAtype(uid,0);
+		List<Alarm> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
 		if(list.size()==0)
 			return null;
 		return list;

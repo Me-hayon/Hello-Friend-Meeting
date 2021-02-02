@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +29,7 @@ public class FeedController {
 	public List<FeedDto> getFeeds(@RequestParam(required=true) final String email){
 		int auser=userInfoRepository.findByEmail(email).getUno();
 		List<FeedDto> list=new ArrayList<>();
-		List<Alarm> tmpList=alarmRepository.findByAuserAndAtype(auser, 1);
+		List<Alarm> tmpList=alarmRepository.findByAuserAndAtype(auser, 1,Sort.by("ano").descending());
 		for(Alarm alarm:tmpList) {
 			FeedDto dto=new FeedDto();
 			dto.setAno(alarm.getAno());

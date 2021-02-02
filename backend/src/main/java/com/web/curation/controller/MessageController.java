@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +48,7 @@ public class MessageController {
 	@PostMapping("/getMessages")
 	public List<Message> getMessage(@RequestParam String email){
 		int uno=userInfoRepository.findByEmail(email).getUno();
-		List<Message> list=messageRepository.findAllByMreceiver(uno);
+		List<Message> list=messageRepository.findAllByMreceiver(uno,Sort.by("mno").descending());
 		return list;
 	}
 	
