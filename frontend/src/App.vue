@@ -18,11 +18,6 @@ import AlarmBtn from '@/components/alarm/AlarmBtn.vue';
 export default {
   name: 'app',
   components: { AlarmBtn },
-  data() {
-    return {
-      drawer: false,
-    };
-  },
 };
 </script>
 
