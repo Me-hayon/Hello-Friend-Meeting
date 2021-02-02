@@ -8,10 +8,9 @@ import FeedMain from '@/views/feed/IndexFeed.vue';
 import Community from '@/views/Community.vue';
 import GroupList from '@/components/community/GroupList.vue';
 import FriendList from '@/components/community/FriendList.vue';
-import Components from '@/views/Components.vue';
 import ErrorPage from '@/views/Error.vue';
 import PageNotFound from '@/views/PageNotFound.vue';
-import ChangeAvatar from '@/views/user/ChangeAvatar.vue'
+import ChangeAvatar from '@/views/user/ChangeAvatar.vue';
 
 import FriendTest from '@/views/FriendTest.vue';
 
@@ -50,7 +49,7 @@ export default [
   {
     path: '/user/changeAvatar',
     name: 'ChangeAvatar',
-    component:ChangeAvatar
+    component: ChangeAvatar,
   },
   {
     path: '/feed/main',
@@ -75,11 +74,6 @@ export default [
         component: FriendList,
       },
     ],
-  },
-  {
-    path: '/components',
-    name: 'Components',
-    component: Components,
   },
   {
     path: '/error',
