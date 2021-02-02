@@ -2,12 +2,12 @@
   <v-simple-table style="margin-top:50px; margin-bottom:70px">
     <template v-slot:default>
       <tbody>
-        <tr class="groupTd" v-for="item in groups" :key="item.name">
+        <tr style="height:100px" v-for="item in groups" :key="item.name">
           <td>{{ item.name }}</td>
           <td>
             <i style="margin-right:10px" class="material-icons"
               ><font-awesome-icon :icon="['far', 'user']"/></i
-            >{{ item.calories }}
+            >{{ item.member }}
           </td>
         </tr>
       </tbody>
@@ -22,35 +22,35 @@ export default {
       groups: [
         {
           name: "토익스터디",
-          calories: 59,
+          member: 59,
         },
         {
           name: "스트라이크",
-          calories: 27,
+          member: 27,
         },
         {
           name: "영화보러가자",
-          calories: 22,
+          member: 22,
         },
         {
           name: "롤팸",
-          calories: 35,
+          member: 35,
         },
         {
           name: "토익스터디",
-          calories: 59,
+          member: 59,
         },
         {
           name: "스트라이크",
-          calories: 27,
+          member: 27,
         },
         {
           name: "영화보러가자",
-          calories: 22,
+          member: 22,
         },
         {
           name: "롤팸",
-          calories: 35,
+          member: 35,
         },
       ],
     };
@@ -58,8 +58,4 @@ export default {
 };
 </script>
 
-<style>
-.groupTd {
-  height: 100px;
-}
-</style>
+<style></style>
