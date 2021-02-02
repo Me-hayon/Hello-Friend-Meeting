@@ -1,6 +1,5 @@
 <template>
   <div class="wrapC">
-    <Header />
     <h4 style="font-size: 1.5rem; margin-bottom: 100px">비밀번호 변경</h4>
     <div class="input-with-label" style="margin-bottom: 30px">
       <input
@@ -63,14 +62,10 @@
 <script>
 import PV from 'password-validator';
 import axios from 'axios';
-import Header from '../../components/common/Header.vue';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    Header,
-  },
   created() {
     this.passwordSchema
       .is()
@@ -81,6 +76,8 @@ export default {
       .digits()
       .has()
       .letters();
+
+    this.$store.state.isHeader = true;
   },
   data() {
     return {
@@ -98,16 +95,16 @@ export default {
     };
   },
   watch: {
-    password: function (v) {
+    password: function(v) {
       this.checkForm();
       this.checkComplete();
     },
-    newPassword: function (v) {
+    newPassword: function(v) {
       this.checkForm();
       this.checkComplete();
     },
 
-    passwordConfirm: function (v) {
+    passwordConfirm: function(v) {
       this.checkForm();
       this.checkComplete();
     },
