@@ -1,7 +1,15 @@
 <template>
   <v-app>
-    <v-app-bar :value="$store.state.isHeader"> </v-app-bar>
-    <v-navigation-drawer></v-navigation-drawer>
+    <v-app-bar v-show="$store.state.isHeader" app dark flat>
+      <v-spacer></v-spacer>
+      <alarm-btn />
+    </v-app-bar>
+    <v-navigation-drawer
+      v-model="drawer"
+      absolute
+      temporary
+      right
+    ></v-navigation-drawer>
     <v-main>
       <router-view></router-view>
     </v-main>
@@ -11,9 +19,16 @@
 
 <script>
 import './components/css/style.scss';
+import AlarmBtn from '@/components/alarm/AlarmBtn.vue';
 
 export default {
   name: 'app',
+  components: { AlarmBtn },
+  data() {
+    return {
+      drawer: false,
+    };
+  },
 };
 </script>
 
