@@ -16,7 +16,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+  created() {
+    this.$store.state.isHeader = false;
+    this.$store.state.isFooter = false;
+  },
+};
 </script>
 
 <style>

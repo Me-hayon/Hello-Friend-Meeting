@@ -90,6 +90,7 @@ export default {
       .letters();
 
     this.$store.state.isHeader = false;
+    this.$store.state.isFooter = false;
   },
   watch: {
     password: function(v) {

@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation v-model="currentPage" app>
+  <v-bottom-navigation v-show="$store.state.isFooter" v-model="currentPage" app>
     <v-btn value="home" to="/feed/main">
       <v-icon>mdi-home</v-icon>
     </v-btn>
