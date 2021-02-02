@@ -59,7 +59,6 @@
           <router-link to="/user/join" class="btn--text">가입하기</router-link>
         </div>
       </div>
-      <BottomNav />
     </div>
   </div>
 </template>
@@ -68,15 +67,11 @@
 import '../../components/css/user.scss';
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
-import BottomNav from '../../components/common/BottomNav.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    BottomNav,
-  },
   created() {
     if (storage.getItem('auth-token')) {
       this.$router.push('/feed/main');
@@ -93,12 +88,14 @@ export default {
       .digits()
       .has()
       .letters();
+
+    this.$store.state.isHeader = false;
   },
   watch: {
-    password: function (v) {
+    password: function(v) {
       this.checkForm();
     },
-    email: function (v) {
+    email: function(v) {
       this.checkForm();
     },
   },

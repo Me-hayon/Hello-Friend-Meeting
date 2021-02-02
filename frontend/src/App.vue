@@ -1,16 +1,34 @@
 <template>
-  <div id="app">
-    <v-app>
+  <v-app>
+    <v-app-bar v-show="$store.state.isHeader" app dark flat>
+      <v-spacer></v-spacer>
+      <alarm-btn />
+    </v-app-bar>
+    <v-navigation-drawer
+      v-model="drawer"
+      absolute
+      temporary
+      right
+    ></v-navigation-drawer>
+    <v-main>
       <router-view></router-view>
-    </v-app>
-  </div>
+    </v-main>
+    <v-bottom-navigation></v-bottom-navigation>
+  </v-app>
 </template>
 
 <script>
 import './components/css/style.scss';
+import AlarmBtn from '@/components/alarm/AlarmBtn.vue';
 
 export default {
   name: 'app',
+  components: { AlarmBtn },
+  data() {
+    return {
+      drawer: false,
+    };
+  },
 };
 </script>
 
