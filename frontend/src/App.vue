@@ -1,23 +1,21 @@
 <template>
   <v-app>
-    <v-app-bar v-show="$store.state.isHeader" app dark flat>
-      <v-spacer></v-spacer>
-      <alarm-btn />
-    </v-app-bar>
+    <Header />
     <v-main>
       <router-view></router-view>
     </v-main>
-    <v-bottom-navigation></v-bottom-navigation>
+    <Footer />
   </v-app>
 </template>
 
 <script>
 import './components/css/style.scss';
-import AlarmBtn from '@/components/alarm/AlarmBtn.vue';
+import Header from '@/components/common/Header.vue';
+import Footer from '@/components/common/Footer.vue';
 
 export default {
   name: 'app',
-  components: { AlarmBtn },
+  components: { Header, Footer },
 };
 </script>
 

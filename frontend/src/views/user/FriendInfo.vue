@@ -28,20 +28,18 @@
         </tr> -->
       </table>
     </div>
-
-    <Footer />
   </b-container>
 </template>
 
 <script>
 import FriendProfile from '@/components/user/FriendProfile.vue';
-import Footer from '@/components/common/BottomNav.vue';
 
 const storage = window.sessionStorage;
 
 export default {
   created() {
     this.$store.state.isHeader = true;
+    this.$store.state.isFooter = true;
   },
   props: {
     friendEmail: {
@@ -57,7 +55,7 @@ export default {
       ],
     };
   },
-  components: { FriendProfile, Footer },
+  components: { FriendProfile },
   methods: {
     onClickState() {
       storage.removeItem('auth-token');

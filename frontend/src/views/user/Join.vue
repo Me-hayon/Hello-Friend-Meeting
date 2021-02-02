@@ -147,6 +147,7 @@ export default {
       .letters();
 
     this.$store.state.isHeader = false;
+    this.$store.state.isFooter = false;
   },
   data() {
     return {
