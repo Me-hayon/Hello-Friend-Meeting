@@ -1,6 +1,5 @@
 <template>
   <b-container style="background-color: rgb(247, 246, 232)">
-    <Header />
     <Profile />
     <b-row style="padding-top: 90%" class="justify-content-center">
       <b-button
@@ -19,20 +18,22 @@
 </template>
 
 <script>
-import Header from "@/components/common/Header.vue";
-import Profile from "@/components/user/Profile.vue";
-import Footer from "@/components/common/BottomNav.vue";
-import UserDeleteModal from "@/components/user/UserDeleteModal.vue";
+import Profile from '@/components/user/Profile.vue';
+import Footer from '@/components/common/BottomNav.vue';
+import UserDeleteModal from '@/components/user/UserDeleteModal.vue';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: { Header, Profile, UserDeleteModal, Footer },
+  components: { Profile, UserDeleteModal, Footer },
+  created() {
+    this.$store.state.isHeader = true;
+  },
   methods: {
     onClickLogout() {
-      storage.removeItem("auth-token");
-      storage.removeItem("user-email");
-      this.$router.push("/");
+      storage.removeItem('auth-token');
+      storage.removeItem('user-email');
+      this.$router.push('/');
     },
   },
 };
