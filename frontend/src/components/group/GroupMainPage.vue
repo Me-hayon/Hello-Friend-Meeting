@@ -12,6 +12,7 @@ export default {
   },
   created() {
     this.$store.state.isHeader = true;
+    this.$store.state.isFooter = true;
   },
 };
 </script>
