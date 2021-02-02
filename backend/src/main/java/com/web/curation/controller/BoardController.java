@@ -1,5 +1,6 @@
 package com.web.curation.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +26,23 @@ public class BoardController {
 	@Autowired
 	UserInfoRepository userInfoRepository;
 
-	@PostMapping("/boardtest")
+	@PostMapping("/getBoardList")
 	public Object getBoardList(@RequestParam int bgno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		List<Board> notice = boardRepository.findAllByBgnoAndBisNotice(bgno, true, Sort.by("bno").descending());
 		List<Board> notNotice = boardRepository.findAllByBgnoAndBisNotice(bgno, false, Sort.by("bno").descending());
+		
 		resultMap.put("notice", notice);
+		if(notice.size()>0)
+			resultMap.put("noticeWriter",userInfoRepository.findById(notice.get(0).getBwriter()));
+		
 		resultMap.put("notNotice", notNotice);
-
+		List<String> notNoticeWriter=new ArrayList<>();
+		for(Board board:notNotice) 
+			notNoticeWriter.add(userInfoRepository.findById(board.getBwriter()).get().getUname());
+		resultMap.put("notNoticeWriter",notNoticeWriter);
+		
 		return resultMap;
 	}
 
@@ -42,7 +51,7 @@ public class BoardController {
 		Map<String,Object> resultMap=new HashMap<>();
 		Board board = boardRepository.findById(bno).get();
 		resultMap.put("curBoard",board);
-		
+		resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
 		return resultMap;
 	}
 	
