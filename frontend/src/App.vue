@@ -4,12 +4,6 @@
       <v-spacer></v-spacer>
       <alarm-btn />
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-      right
-    ></v-navigation-drawer>
     <v-main>
       <router-view></router-view>
     </v-main>
