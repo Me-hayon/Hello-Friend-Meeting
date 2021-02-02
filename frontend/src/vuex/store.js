@@ -9,6 +9,7 @@ Vue.use(Vuex);
 const state = {
   isUser: false,
   isHeader: false,
+  isFooter: false,
 };
 
 export default new Vuex.Store({

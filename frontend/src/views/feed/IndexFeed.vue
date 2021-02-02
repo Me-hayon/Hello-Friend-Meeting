@@ -31,7 +31,6 @@
       <FeedItem />
       <FeedItem /> -->
     </div>
-    <BottomNav />
   </div>
 </template>
 
@@ -39,7 +38,6 @@
 // import { mapState } from "vuex";
 import '../../components/css/feed/feed-item.scss';
 import '../../components/css/feed/newsfeed.scss';
-import BottomNav from '../../components/common/BottomNav.vue';
 // import FeedItem from '../../components/feed/FeedItem.vue';
 import axios from 'axios';
 
@@ -47,7 +45,6 @@ const storage = window.sessionStorage;
 export default {
   // props: ['keyword'],
 
-  components: { BottomNav },
   data() {
     return {
       myFeeds: [
@@ -80,6 +77,7 @@ export default {
       });
 
     this.$store.state.isHeader = true;
+    this.$store.state.isFooter = true;
   },
 };
 </script>

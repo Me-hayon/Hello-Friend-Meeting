@@ -5,7 +5,6 @@
  -->
 <template>
   <div class="user join wrapC">
-    <Header />
     <h1>가입하기</h1>
     <div class="form-wrap">
       <div class="input-with-label">
@@ -134,12 +133,8 @@ import '../../components/css/user.scss';
 import * as EmailValidator from 'email-validator';
 import PV from 'password-validator';
 import axios from 'axios';
-import Header from '../../components/common/Header.vue';
 
 export default {
-  components: {
-    Header,
-  },
   created() {
     this.passwordSchema
       .is()
@@ -150,6 +145,9 @@ export default {
       .digits()
       .has()
       .letters();
+
+    this.$store.state.isHeader = false;
+    this.$store.state.isFooter = false;
   },
   data() {
     return {

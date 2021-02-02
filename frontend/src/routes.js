@@ -13,6 +13,8 @@ import ErrorPage from "@/views/Error.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import ChangeAvatar from "@/views/user/ChangeAvatar.vue";
 
+import FriendTest from '@/views/FriendTest.vue';
+
 import FriendTest from "@/views/FriendTest.vue";
 import GroupMainPage from "@/components/group/GroupMainPage.vue";
 export default [
