@@ -9,4 +9,5 @@ import com.web.curation.model.entity.GroupParticipant;
 public interface GroupParticipantRepository extends JpaRepository<GroupParticipant,Integer> {
 	public List<GroupParticipant> findAllByGno(int gno);
 	public List<GroupParticipant> findAllByUno(int uno);
+	public GroupParticipant findByUnoAndGno(int uno, int gno);
 }

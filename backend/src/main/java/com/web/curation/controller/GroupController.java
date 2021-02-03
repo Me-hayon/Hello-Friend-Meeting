@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.FriendInfo;
+import com.web.curation.model.entity.GroupApply;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
+import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
 import com.web.curation.model.repository.GroupParticipantRepository;
 import com.web.curation.model.repository.UserInfoRepository;
@@ -41,6 +43,9 @@ public class GroupController {
 	
 	@Autowired
 	FriendInfoRepository friendInfoRepository;
+	
+	@Autowired
+	GroupApplyRepository groupApplyRepository;
 	
 	/*
 	@PostMapping("/url")
@@ -133,6 +138,13 @@ public class GroupController {
 		alarm.setAurl("#");
 		alarmRepository.save(alarm);
 		
+		GroupApply groupApply=new GroupApply();
+		groupApply.setAisApply(false);
+		groupApply.setGno(groupInfo.getGno());
+		groupApply.setUno(friendId);
+		
+		groupApplyRepository.save(groupApply);
+		
 		return resultMap;
 	}
 	
@@ -141,6 +153,9 @@ public class GroupController {
 		Map<String,Object> resultMap=new HashMap<>();
 		
 		UserInfo myInfo=userInfoRepository.findByEmail(email);
+		
+		GroupApply groupApply=groupApplyRepository.findByUnoAndGno(myInfo.getUno(), gno).get();
+		groupApplyRepository.delete(groupApply);
 		
 		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
 		GroupParticipant groupParticipant=new GroupParticipant();
@@ -184,34 +199,116 @@ public class GroupController {
 		return resultMap;
 	}
 	
-	@PostMapping("/joinGroup")
+	@PostMapping("/applyGroup")
 	public Object joinGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
-		//그룹 가입에대한 아이디어 필요. 초대,신청받았을때 알림페이지에서 처리할지
+		UserInfo myInfo=userInfoRepository.findByEmail(email);
+		
+		GroupApply groupApply=new GroupApply();
+		groupApply.setAisApply(true);
+		groupApply.setGno(gno);
+		groupApply.setUno(myInfo.getUno());
+		
+		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
+		
+		Alarm alarm=new Alarm();
+		alarm.setAtype(0);
+		alarm.setAurl("#");
+		alarm.setAuser(groupInfo.getGmaster());
+		alarm.setCreateUser(myInfo.getUno());
+		
+		StringBuilder sb=new StringBuilder();
+		sb.append(myInfo.getUname());
+		sb.append("님이 ");
+		sb.append(groupInfo.getGname());
+		sb.append("그룹에 가입을 신청했습니다.");
+		alarm.setAsummary(sb.toString());
 		
 		resultMap.put("data","그룹에 가입 신청을 보냈습니다.");
 		
 		return resultMap;
 	}
 	
-	@PostMapping("/acceptJoinGroup")
+	@PostMapping("/acceptApplyGroup")
 	public Object acceptJoinoinGroup(@RequestParam int uno, @RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
+		
+		GroupApply groupApply=groupApplyRepository.findByUnoAndGno(uno, gno).get();
+		groupApplyRepository.delete(groupApply);
+		
+		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
+		
+		GroupParticipant groupParticipant=new GroupParticipant();
+		groupParticipant.setGno(gno);
+		groupParticipant.setUno(uno);
+		groupParticipantRepository.save(groupParticipant);
+		
+		List<GroupParticipant> gpList=groupParticipantRepository.findAllByGno(gno);
+		
+		StringBuilder sb=new StringBuilder();
+		for(GroupParticipant gp:gpList) {
+			sb.append(gp.getUno());
+			sb.append(" ");
+		}
+		groupInfo.setGuserList(sb.toString());
+		groupInfoRepository.save(groupInfo);
+		
+		resultMap.put("data","가입 요청을 승인했습니다.");
 		
 		return resultMap;
 	}
 	
-//	@PostMapping("/getoutGroup")
-//	public Object getoutGroup(@RequestParam int gno, @RequestParam String email) {
-//		Map<String,Object> resultMap=new HashMap<>();
-//		
-//		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
-//		group
-//		
-//		return resultMap;
-//	}
+	@PostMapping("/getoutGroup")
+	public Object getoutGroup(@RequestParam int gno, @RequestParam String email) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		UserInfo myInfo=userInfoRepository.findByEmail(email);
+		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
+		
+		GroupParticipant groupParticipant=groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno);
+		groupParticipantRepository.delete(groupParticipant);
+		
+		List<GroupParticipant> gpList=groupParticipantRepository.findAllByGno(gno);
+
+		StringBuilder sb=new StringBuilder();
+		for(GroupParticipant gp:gpList) {
+			sb.append(gp.getUno());
+			sb.append(" ");
+		}
+		groupInfo.setGuserList(sb.toString());
+		groupInfoRepository.save(groupInfo);
+		
+		resultMap.put("data","그룹에서 탈퇴했습니다.");
+		
+		
+		return resultMap;
+	}
 	
+	@PostMapping("/banishGroup")
+	public Object banishGroup(@RequestParam int gno, @RequestParam int uno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		GroupInfo groupInfo=groupInfoRepository.findById(gno).get();
+		
+		GroupParticipant groupParticipant=groupParticipantRepository.findByUnoAndGno(uno, gno);
+		groupParticipantRepository.delete(groupParticipant);
+		
+		List<GroupParticipant> gpList=groupParticipantRepository.findAllByGno(gno);
+
+		StringBuilder sb=new StringBuilder();
+		for(GroupParticipant gp:gpList) {
+			sb.append(gp.getUno());
+			sb.append(" ");
+		}
+		groupInfo.setGuserList(sb.toString());
+		groupInfoRepository.save(groupInfo);
+		
+		resultMap.put("data","그룹에서 추방했습니다.");
+		
+		
+		return resultMap;
+	}
 	
 	
 }
