@@ -7,7 +7,6 @@ import mutations from './mutations';
 Vue.use(Vuex);
 
 const state = {
-  isUser: false,
   isHeader: false,
   isFooter: false,
 };

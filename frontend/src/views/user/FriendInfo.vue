@@ -38,8 +38,8 @@ const storage = window.sessionStorage;
 
 export default {
   created() {
-    this.$store.state.isHeader = true;
-    this.$store.state.isFooter = true;
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
   },
   props: {
     friendEmail: {

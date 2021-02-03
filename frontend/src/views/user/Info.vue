@@ -25,8 +25,8 @@ const storage = window.sessionStorage;
 export default {
   components: { Profile, UserDeleteModal },
   created() {
-    this.$store.state.isHeader = true;
-    this.$store.state.isFooter = true;
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
   },
   methods: {
     onClickLogout() {

@@ -146,8 +146,8 @@ export default {
       .has()
       .letters();
 
-    this.$store.state.isHeader = false;
-    this.$store.state.isFooter = false;
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
   },
   data() {
     return {
