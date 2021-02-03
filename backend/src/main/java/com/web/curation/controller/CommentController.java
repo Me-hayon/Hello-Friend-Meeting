@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.curation.model.entity.Alarm;
+import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Comment;
+import com.web.curation.model.entity.UserInfo;
+import com.web.curation.model.repository.AlarmRepository;
+import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CommentRepository;
+import com.web.curation.model.repository.GroupInfoRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -24,6 +30,15 @@ public class CommentController {
 	
 	@Autowired
 	UserInfoRepository userInfoRepository;
+	
+	@Autowired
+	BoardRepository boardRepository;
+	
+	@Autowired
+	AlarmRepository alarmRepository;
+	
+	@Autowired
+	GroupInfoRepository groupInfoRepository;
 	
 	@PostMapping("/getCommentList")
 	public Object getCommentList(@RequestParam int bno) {
@@ -43,11 +58,31 @@ public class CommentController {
 	public Object writeComment(@RequestParam String email, @RequestParam String ccontent, @RequestParam int bno) {
 		Map<String, Object> resultMap=new HashMap<>();
 		
+		UserInfo myInfo=userInfoRepository.findByEmail(email);
+		
+		Board board=boardRepository.findById(bno).get();
+		UserInfo alarmTargetInfo=userInfoRepository.findById(board.getBwriter()).get();
+		
 		Comment comment=new Comment();
 		comment.setBno(bno);
 		comment.setCcontent(ccontent);
-		comment.setCwriter(userInfoRepository.findByEmail(email).getUno());
+		comment.setCwriter(myInfo.getUno());
 		commentRepository.save(comment);
+		
+		Alarm alarm=new Alarm();
+		alarm.setAurl("#");
+		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAtype(0);
+		alarm.setAuser(alarmTargetInfo.getUno());
+		
+		StringBuilder sb=new StringBuilder();
+		sb.append(myInfo.getUname());
+		sb.append("님이 ");
+		sb.append(groupInfoRepository.findById(board.getBgno()).get().getGname());
+		sb.append("그룹의 ");
+		sb.append(board.getBtitle());
+		sb.append("글에 댓글을 달았습니다.");
+		alarm.setAsummary(sb.toString());
 		
 		resultMap.put("data","댓글 작성에 성공했습니다.");
 		

@@ -1,6 +1,8 @@
 package com.web.curation.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -26,11 +28,18 @@ public class AlarmController {
 	UserInfoRepository userInfoRepository;
 	
 	@PostMapping("/getAlarms")
-	public List<Alarm> getAlarms(@RequestParam(required=true) final String email){
+	public Object getAlarms(@RequestParam(required=true) final String email){
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		
 		int uid=userInfoRepository.findByEmail(email).getUno();
 		List<Alarm> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
-		if(list.size()==0)
-			return null;
+		
+		long notRead=alarmRepository.countByAuserAndAisRead(uid, false);//되는지 확인 필요함.
+		
+		resultMap.put("alarms",list);
+		resultMap.put("notReadAlarm",notRead);
+		
 		return list;
 	}
 	

@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.Board;
+import com.web.curation.model.entity.GroupInfo;
+import com.web.curation.model.entity.UserInfo;
+import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.BoardRepository;
+import com.web.curation.model.repository.GroupInfoRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -25,6 +30,12 @@ public class BoardController {
 
 	@Autowired
 	UserInfoRepository userInfoRepository;
+	
+	@Autowired
+	AlarmRepository alarmRepository;
+	
+	@Autowired
+	GroupInfoRepository groupInfoRepository;
 
 	@PostMapping("/getBoardList")
 	public Object getBoardList(@RequestParam int bgno) {
@@ -60,14 +71,41 @@ public class BoardController {
 			@RequestParam String content, @RequestParam boolean bisNotice) {
 		Map<String, Object> resultMap = new HashMap<>();
 
+		UserInfo myInfo=userInfoRepository.findByEmail(email);
+		
 		Board board = new Board();
-		board.setBwriter(userInfoRepository.findByEmail(email).getUno());
+		board.setBwriter(myInfo.getUno());
 		board.setBgno(bgno);
 		board.setBtitle(title);
 		board.setBcontent(content);
 		board.setBisNotice(bisNotice);
 
 		boardRepository.save(board);
+		
+		GroupInfo groupInfo=groupInfoRepository.findById(bgno).get();
+		String guserList=groupInfo.getGuserList();
+		String[] eachUser=guserList.split(" ");
+		
+		StringBuilder sb=new StringBuilder();
+		sb.append(groupInfo.getGname());
+		sb.append("그룹에 ");
+		sb.append(myInfo.getUname());
+		sb.append("님이 새 게시글을 작성했습니다.\n");
+		sb.append(board.getBtitle());
+		
+		String asummary=sb.toString();
+		
+		for(String uno:eachUser) {
+			int curUno=Integer.parseInt(uno);
+			Alarm alarm=new Alarm();
+			alarm.setAtype(1);
+			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurl("#");
+			alarm.setAuser(curUno);
+			alarm.setAsummary(asummary);
+			
+			alarmRepository.save(alarm);
+		}
 
 		resultMap.put("data", "글 작성에 성공했습니다.");
 		return resultMap;
