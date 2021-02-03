@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Header />
-    <v-main>
+    <v-main :style="mainStyle">
       <router-view></router-view>
     </v-main>
     <Footer />
@@ -16,26 +16,23 @@ import Footer from '@/components/common/Footer.vue';
 export default {
   name: 'app',
   components: { Header, Footer },
+  data() {
+    return {
+      mainStyle: 'padding: 0;',
+    };
+  },
+  computed: {
+    checkStyle() {
+      return this.$store.getters.getIsHeader;
+    },
+  },
+  watch: {
+    checkStyle(isHeader) {
+      if (isHeader) this.mainStyle = 'padding: 56px 0';
+      else this.mainStyle = 'padding: 0;';
+    },
+  },
 };
 </script>
 
-<style>
-.container {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-.container > div {
-  padding: 0;
-}
-
-.row {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
-.btn {
-  height: auto;
-  box-shadow: none;
-}
-</style>
+<style></style>

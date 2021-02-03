@@ -18,8 +18,8 @@
 <script>
 export default {
   created() {
-    this.$store.state.isHeader = false;
-    this.$store.state.isFooter = false;
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
   },
 };
 </script>

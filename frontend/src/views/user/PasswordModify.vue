@@ -77,8 +77,8 @@ export default {
       .has()
       .letters();
 
-    this.$store.state.isHeader = true;
-    this.$store.state.isFooter = true;
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
   },
   data() {
     return {
