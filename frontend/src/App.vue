@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import './components/css/style.scss';
 import Header from '@/components/common/Header.vue';
 import Footer from '@/components/common/Footer.vue';
 
