@@ -1,5 +1,13 @@
 <template>
-  <div class="user" id="login">
+  <v-container>
+    <v-row>
+      <v-col align="center" justify="center">
+        <h1>우리 친구하자</h1>
+      </v-col>
+    </v-row>
+    <v-row> </v-row>
+  </v-container>
+  <!-- <div class="user" id="login">
     <div class="wrapC">
       <h1 style="text-align: center; margin-top: 55px">우리 친구하자</h1>
       <img
@@ -59,24 +67,19 @@
           <router-link to="/user/join" class="btn--text">가입하기</router-link>
         </div>
       </div>
-      <BottomNav />
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import '../../components/css/user.scss';
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
-import BottomNav from '../../components/common/BottomNav.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    BottomNav,
-  },
   created() {
     if (storage.getItem('auth-token')) {
       this.$router.push('/feed/main');
@@ -93,12 +96,15 @@ export default {
       .digits()
       .has()
       .letters();
+
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
   },
   watch: {
-    password: function (v) {
+    password: function(v) {
       this.checkForm();
     },
-    email: function (v) {
+    email: function(v) {
       this.checkForm();
     },
   },

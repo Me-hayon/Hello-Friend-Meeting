@@ -1,7 +1,8 @@
 <template>
-  <b-row>
+  <v-app-bar v-show="$store.state.isHeader" app dark flat>
+    <v-spacer></v-spacer>
     <alarm-btn />
-  </b-row>
+  </v-app-bar>
 </template>
 
 <script>
