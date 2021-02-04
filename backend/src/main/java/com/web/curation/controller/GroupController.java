@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
+import com.web.curation.model.entity.Category;
 import com.web.curation.model.entity.FriendInfo;
 import com.web.curation.model.entity.GroupApply;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
+import com.web.curation.model.repository.CategoryRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
 import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
@@ -47,7 +49,20 @@ public class GroupController {
 
 	@Autowired
 	GroupApplyRepository groupApplyRepository;
+	
+	@Autowired
+	CategoryRepository categoryRepository;
 
+	@PostMapping("/getCategory")
+	public Object getCategory() {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		List<Category> list= categoryRepository.findAll();
+		resultMap.put("list",list);
+		
+		return resultMap;
+	}
+	
 	@PostMapping("/getUserListInGroup")
 	public Object getUserListInGroup(@RequestParam int gno) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -96,7 +111,11 @@ public class GroupController {
 		groupInfo.setGname(gname);
 		groupInfo.setGuserList(Integer.toString(gmaster)+" ");
 
-		groupInfoRepository.save(groupInfo);
+		groupInfo=groupInfoRepository.save(groupInfo);
+		GroupParticipant groupParticipant=new GroupParticipant();
+		groupParticipant.setGno(groupInfo.getGno());
+		groupParticipant.setUno(gmaster);
+		groupParticipantRepository.save(groupParticipant);
 
 		
 		if(gboundary!=0) {
