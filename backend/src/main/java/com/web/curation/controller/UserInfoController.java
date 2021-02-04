@@ -164,6 +164,25 @@ public class UserInfoController {
 		return resultMap;
 		
 	}
+	
+	@PostMapping("/findEmailByUno")
+	public Object findEmailByUno(@RequestParam int uno) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		UserInfo user = null;
+		if(userInfoRepository.findById(uno).isPresent()) {
+			user=userInfoRepository.findById(uno).get();
+			resultMap.put("isPresent",true);
+		}
+		else {
+			resultMap.put("data","해당하는 사용자가 없습니다.");
+			resultMap.put("isPresent",false);
+			return resultMap;
+		}
+		resultMap.put("data",user.getEmail());
+		return resultMap;
+		
+	}
 
 	/////////////////////////////////// 비밀번호 변경
 

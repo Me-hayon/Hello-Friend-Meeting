@@ -88,7 +88,7 @@ public class FriendInfoController {
 			alarm.setAsummary(sb.toString());
 
 			alarm.setAtype(0);
-			alarm.setAurl("#");
+			alarm.setAurl("FriendInfo");
 			alarm.setAuser(friendId);
 			alarm.setCreateUser(myInfo.getUno());
 			System.out.println(alarm);

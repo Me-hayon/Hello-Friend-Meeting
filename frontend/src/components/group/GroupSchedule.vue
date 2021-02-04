@@ -63,6 +63,7 @@
 <script>
 export default {
   created() {
+    console.log(this.isGmaster);
     const today = new Date();
     console.log(today);
     const year = today.getFullYear();
@@ -74,21 +75,22 @@ export default {
   },
   methods: {
     open(date) {
-      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
+      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
     },
   },
   data() {
     return {
       dateOpen: false,
       start: this.startDate,
-      type: "month",
+      type: 'month',
       typeOptions: [
-        { text: "Day", value: "day" },
-        { text: "Week", value: "week" },
-        { text: "Month", value: "month" },
+        { text: 'Day', value: 'day' },
+        { text: 'Week', value: 'week' },
+        { text: 'Month', value: 'month' },
       ],
     };
   },
+  props: ['gno', 'isGmaster'],
 };
 </script>
 
