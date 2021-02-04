@@ -26,12 +26,14 @@ public class Alarm {
 	private String aurl;
 	private String asummary;
 	private int atype;//0:알림, 1:피드
+	//알림 : 내 게시글에 달린 댓글, 친구요청, 그룹초대, 그룹 가입 신청
+	//피드 : 새로생긴 그룹, 내가 소속된 그룹의 게시글, 친구가 새로 가입한 그룹
 	private int auser;
 	@Column(insertable=false,updatable=false)
 	private String adate;
 	@Column(insertable=false)
 	private boolean aisRead;
 	private int createUser;
-	//피드 dto 하나  만들어서 피드 페이지로 리턴해주기
+	//피드는 FeedDto로 리턴함
 
 }

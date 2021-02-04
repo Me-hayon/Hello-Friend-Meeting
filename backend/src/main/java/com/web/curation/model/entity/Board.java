@@ -1,5 +1,6 @@
 package com.web.curation.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class Board {
 	private String bcontent;
 	private int bwriter;
 	private boolean bisNotice;
+	@Column(insertable=false,updatable=false)
 	private String bdate;
 	
 

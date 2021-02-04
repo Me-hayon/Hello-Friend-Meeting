@@ -86,8 +86,8 @@ export default {
     };
   },
   created() {
-    if (storage.getItem('auth-token')) {
-      this.$router.push('/feed/main');
+    if (storage.getItem("auth-token")) {
+      this.$router.push("/feed/main");
     }
 
     this.$store.commit('setIsHeader', false);
