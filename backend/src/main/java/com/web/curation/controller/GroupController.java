@@ -52,18 +52,26 @@ public class GroupController {
 	
 	@Autowired
 	CategoryRepository categoryRepository;
-
-	@PostMapping("/isGroupMaster")
-	public Object isGroupMaster(@RequestParam String email,@RequestParam int gno) {
+	
+	@PostMapping("/isGroupMember")//0:미가입, 1:가입신청상태, 2:초대미수락상태, 3:그룹원, 4:그룹장
+	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
 		UserInfo userInfo=userInfoRepository.findByEmail(email);
 		
-		if(groupInfoRepository.findByGnoAndGmaster(gno, userInfo.getUno()).isPresent())
-			resultMap.put("isGmaster",true);
+		if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent()) {
+			if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).get().isAisApply())
+				resultMap.put("memberStatus",1);
+			else
+				resultMap.put("memberStatus",2);
+		}
 		
+		else if(groupParticipantRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent())
+			resultMap.put("memberStatus",3);
+		else if(groupInfoRepository.findByGnoAndGmaster(gno, userInfo.getUno()).isPresent())
+			resultMap.put("memberStatus",4);
 		else
-			resultMap.put("isGmaster",false);
+			resultMap.put("memberStatus",0);
 		
 		
 		return resultMap;
@@ -145,9 +153,9 @@ public class GroupController {
 			for(FriendInfo fi:friendList) {
 				Alarm alarm=new Alarm();
 				alarm.setAtype(1);
-				alarm.setAurl("#");
+				alarm.setAurl("GroupMainPage");
 				alarm.setAuser(fi.getMyId());
-				alarm.setCreateUser(gmaster);
+				alarm.setCreateUser(groupInfo.getGno());
 				alarm.setAsummary(sb.toString());
 				
 				alarmRepository.save(alarm);
@@ -192,8 +200,8 @@ public class GroupController {
 
 					Alarm alarm=new Alarm();
 					alarm.setAuser(ff);
-					alarm.setAurl("#");
-					alarm.setCreateUser(gmaster);
+					alarm.setAurl("GroupMainPage");
+					alarm.setCreateUser(groupInfo.getGno());
 					alarm.setAtype(1);
 					alarm.setAsummary(asummary);
 					
@@ -245,9 +253,9 @@ public class GroupController {
 		sb.append("그룹으로 초대하셨습니다!");
 		alarm.setAsummary(sb.toString());
 		alarm.setAuser(friendId);
-		alarm.setCreateUser(myInfo.getUno());
+		alarm.setCreateUser(gno);
 		alarm.setAtype(0);
-		alarm.setAurl("#");
+		alarm.setAurl("GroupMainPage");
 		alarmRepository.save(alarm);
 
 		GroupApply groupApply = new GroupApply();
@@ -292,9 +300,9 @@ public class GroupController {
 		for(FriendInfo fi:friendList) {
 			Alarm alarm = new Alarm();
 			alarm.setAtype(1);
-			alarm.setAurl("#");
+			alarm.setAurl("GroupMainPage");
 			alarm.setAuser(fi.getMyId());
-			alarm.setCreateUser(myInfo.getUno());
+			alarm.setCreateUser(gno);
 
 			alarm.setAsummary(sb2.toString());
 			alarmRepository.save(alarm);
@@ -333,9 +341,9 @@ public class GroupController {
 
 		Alarm alarm = new Alarm();
 		alarm.setAtype(0);
-		alarm.setAurl("#");
+		alarm.setAurl("GroupMainPage");
 		alarm.setAuser(groupInfo.getGmaster());
-		alarm.setCreateUser(myInfo.getUno());
+		alarm.setCreateUser(gno);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(myInfo.getUname());

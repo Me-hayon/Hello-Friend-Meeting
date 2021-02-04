@@ -13,24 +13,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="message in messages" :key="message.name">
+          <tr
+            @click="modalShow = !modalShow"
+            v-for="message in messages"
+            :key="message.name"
+          >
             <td>{{ message.mtitle }}</td>
             <td>
               {{ message.mcontent }}
-              <div style="float:right">
-                <button style="margin-right:15px" v-b-modal.write>
-                  답장
-                </button>
-
-                <button v-b-modal.delete>
-                  X
-                </button>
-              </div>
+              <div style="float:right"></div>
             </td>
           </tr>
         </tbody>
         <b-modal
-          id="write"
+          id="reply"
           centered
           title="쪽지쓰기"
           @ok="replyMessage(message.msender)"
@@ -42,6 +38,21 @@
           title="쪽지를 삭제하시겠습니까?"
           @ok="delMessage(message.mno)"
         ></b-modal>
+        <b-modal v-model="modalShow" centered hide-footer>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi
+            laborum sint voluptate, hic corrupti quasi voluptates vero, maiores
+            tempora fuga debitis quis molestiae ab laudantium esse cum deleniti
+            quidem explicabo.
+          </p>
+          <b-button style="margin-right:15px" v-b-modal.reply>
+            답장
+          </b-button>
+
+          <b-button v-b-modal.delete>
+            삭제
+          </b-button>
+        </b-modal>
       </template>
     </v-simple-table>
 
@@ -56,6 +67,7 @@ export default {
   data() {
     return {
       messages: Array,
+      modalShow: false,
     };
   },
   created() {

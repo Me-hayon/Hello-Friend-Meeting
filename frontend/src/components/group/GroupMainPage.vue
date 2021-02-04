@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GroupNav :gno="gno" :isGmaster="isGmaster" />
+    <GroupNav :gno="gno" :memberStatus="memberStatus" />
   </div>
 </template>
 
@@ -21,9 +21,9 @@ export default {
     params.append('email', storage.getItem('user-email'));
     params.append('gno', this.gno);
     axios
-      .post('http://localhost:8080/isGroupMaster', params)
+      .post('http://localhost:8080/isGroupMember', params)
       .then((response) => {
-        this.isGmaster = response.data.isGmaster;
+        this.memberStatus = response.data.memberStatus;
       })
       .catch((error) => {
         console.log(error);
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      isGmaster: '',
+      memberStatus: '',
     };
   },
 };

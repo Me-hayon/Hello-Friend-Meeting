@@ -63,7 +63,6 @@
 <script>
 export default {
   created() {
-    console.log(this.isGmaster);
     const today = new Date();
     console.log(today);
     const year = today.getFullYear();
@@ -90,7 +89,7 @@ export default {
       ],
     };
   },
-  props: ['gno', 'isGmaster'],
+  props: ['gno', 'memberStatus'],
 };
 </script>
 

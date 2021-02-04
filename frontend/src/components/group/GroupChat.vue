@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  props: ['gno', 'isGmaster'],
+  props: ['gno', 'memberStatus'],
 };
 </script>
 
