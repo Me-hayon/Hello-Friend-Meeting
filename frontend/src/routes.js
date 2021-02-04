@@ -8,7 +8,7 @@ import FeedMain from "@/views/feed/IndexFeed.vue";
 import Community from "@/views/Community.vue";
 import GroupList from "@/components/community/GroupList.vue";
 import FriendList from "@/components/community/FriendList.vue";
-
+import Message from "@/views/message/Message.vue";
 import ErrorPage from "@/views/Error.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import ChangeAvatar from "@/views/user/ChangeAvatar.vue";
@@ -78,10 +78,15 @@ export default [
     ],
   },
   {
+    path: "/message",
+    name: "Message",
+    component: Message,
+  },
+  {
     path: "/group",
     name: "GroupMainPage",
     component: GroupMainPage,
-    props:true
+    props: true,
   },
 
   {
