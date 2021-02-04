@@ -9,26 +9,27 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <v-card flat> <GroupBoard /></v-card>
+        <v-card flat> <GroupBoard :gno="gno"/></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat> <GroupSchedule /></v-card>
+        <v-card flat> <GroupSchedule :gno="gno"/></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupChat /> </v-card>
+        <v-card flat><GroupChat :gno="gno" /> </v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupMemberList /> </v-card>
+        <v-card flat><GroupMemberList :gno="gno" /> </v-card>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
 <script>
-import GroupBoard from "@/components/group/GroupBoard.vue";
-import GroupSchedule from "@/components/group/GroupSchedule.vue";
-import GroupChat from "@/components/group/GroupChat.vue";
-import GroupMemberList from "@/components/group/GroupMemberList.vue";
+import GroupBoard from '@/components/group/GroupBoard.vue';
+import GroupSchedule from '@/components/group/GroupSchedule.vue';
+import GroupChat from '@/components/group/GroupChat.vue';
+import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
+  props: ['gno'],
   components: {
     GroupBoard,
     GroupSchedule,

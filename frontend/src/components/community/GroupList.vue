@@ -2,12 +2,17 @@
   <v-simple-table style="margin-top:50px; margin-bottom:70px">
     <template v-slot:default>
       <tbody>
-        <tr style="height:100px" v-for="item in groups" :key="item.name">
-          <td>{{ item.name }}</td>
+        <tr
+          style="height:100px"
+          v-for="item in groups"
+          :key="item.gno"
+          @click="goToGroupPage(item.gno)"
+        >
+          <td>{{ item.gname }}</td>
           <td>
             <i style="margin-right:10px" class="material-icons"
               ><font-awesome-icon :icon="['far', 'user']"/></i
-            >{{ item.member }}
+            >{{ item.members }}
           </td>
         </tr>
       </tbody>
@@ -16,44 +21,37 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+  created() {
+    var storage = window.sessionStorage;
+    var params = new URLSearchParams();
+
+    params.append('email', storage.getItem('user-email'));
+    axios
+      .post('http://localhost:8080/getGroupList', params)
+      .then((response) => {
+        this.groups = response.data.groupList;
+        for (var i = 0; i < this.groups.length; i++) {
+          this.groups[i].members =
+            this.groups[i].guserList.split(' ').length - 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
   data() {
     return {
-      groups: [
-        {
-          name: "토익스터디",
-          member: 59,
-        },
-        {
-          name: "스트라이크",
-          member: 27,
-        },
-        {
-          name: "영화보러가자",
-          member: 22,
-        },
-        {
-          name: "롤팸",
-          member: 35,
-        },
-        {
-          name: "토익스터디",
-          member: 59,
-        },
-        {
-          name: "스트라이크",
-          member: 27,
-        },
-        {
-          name: "영화보러가자",
-          member: 22,
-        },
-        {
-          name: "롤팸",
-          member: 35,
-        },
-      ],
+      groupMembers: [],
+      groups: [],
     };
+  },
+  methods: {
+    goToGroupPage(gno) {
+      this.$router.push({ name: 'GroupMainPage', params: { gno } });
+    },
   },
 };
 </script>

@@ -78,7 +78,7 @@ public class GroupController {
 
 		List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
 		resultMap.put("groupList", groupList);
-
+		
 		return resultMap;
 	}
 
@@ -94,7 +94,7 @@ public class GroupController {
 		groupInfo.setGcategory(gcategory);
 		groupInfo.setGmaster(gmaster);
 		groupInfo.setGname(gname);
-		groupInfo.setGuserList(Integer.toString(gmaster));
+		groupInfo.setGuserList(Integer.toString(gmaster)+" ");
 
 		groupInfoRepository.save(groupInfo);
 
@@ -266,6 +266,7 @@ public class GroupController {
 		}
 
 		groupInfo.setGuserList(sb.toString());
+		groupInfoRepository.save(groupInfo);
 		resultMap.put("data", "그룹에 가입했습니다!");
 
 		return resultMap;

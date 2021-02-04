@@ -1,13 +1,13 @@
 <template>
-  <v-container>
+  <!-- <v-container>
     <v-row>
       <v-col align="center" justify="center">
         <h1>우리 친구하자</h1>
       </v-col>
     </v-row>
     <v-row> </v-row>
-  </v-container>
-  <!-- <div class="user" id="login">
+  </v-container> -->
+  <div class="user" id="login">
     <div class="wrapC">
       <h1 style="text-align: center; margin-top: 55px">우리 친구하자</h1>
       <img
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 </template>
 
 <script>

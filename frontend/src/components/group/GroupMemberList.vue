@@ -1,9 +1,35 @@
 <template>
-  <div>그룹멤버리스트</div>
+  <div>
+    그룹멤버리스트
+
+    <ul>
+      <li v-for="member in memberList" :key="member.uno">{{ member.uname }}</li>
+    </ul>
+  </div>
 </template>
 
 <script>
-export default {};
+import axios from 'axios';
+export default {
+  props: ['gno'],
+  data() {
+    return {
+      memberList: [],
+    };
+  },
+  created() {
+    var params = new URLSearchParams();
+    params.append('gno', this.gno);
+    axios
+      .post('http://localhost:8080/getUserListInGroup', params)
+      .then((response) => {
+        this.memberList = response.data.userList;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+};
 </script>
 
 <style></style>

@@ -91,36 +91,36 @@
 <script>
 export default {
   data: () => ({
-    focus: "",
-    type: "month",
+    focus: '',
+    type: 'month',
     typeToLabel: {
-      month: "Month",
-      week: "Week",
-      day: "Day",
-      "4day": "4 Days",
+      month: 'Month',
+      week: 'Week',
+      day: 'Day',
+      '4day': '4 Days',
     },
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     events: [],
     colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
+      'blue',
+      'indigo',
+      'deep-purple',
+      'cyan',
+      'green',
+      'orange',
+      'grey darken-1',
     ],
     names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
+      'Meeting',
+      'Holiday',
+      'PTO',
+      'Travel',
+      'Event',
+      'Birthday',
+      'Conference',
+      'Party',
     ],
   }),
   mounted() {
@@ -129,13 +129,13 @@ export default {
   methods: {
     viewDay({ date }) {
       this.focus = date;
-      this.type = "day";
+      this.type = 'day';
     },
     getEventColor(event) {
       return event.color;
     },
     setToday() {
-      this.focus = "";
+      this.focus = '';
     },
     prev() {
       this.$refs.calendar.prev();
@@ -284,37 +284,38 @@ export default {
 
 <script>
 export default {
+  props: ['gno'],
   data: () => ({
-    focus: "",
-    type: "month",
+    focus: '',
+    type: 'month',
     typeToLabel: {
-      month: "Month",
-      week: "Week",
-      day: "Day",
-      "4day": "4 Days",
+      month: 'Month',
+      week: 'Week',
+      day: 'Day',
+      '4day': '4 Days',
     },
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     events: [],
     colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
+      'blue',
+      'indigo',
+      'deep-purple',
+      'cyan',
+      'green',
+      'orange',
+      'grey darken-1',
     ],
     names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
+      'Meeting',
+      'Holiday',
+      'PTO',
+      'Travel',
+      'Event',
+      'Birthday',
+      'Conference',
+      'Party',
     ],
   }),
   mounted() {
@@ -323,13 +324,13 @@ export default {
   methods: {
     viewDay({ date }) {
       this.focus = date;
-      this.type = "day";
+      this.type = 'day';
     },
     getEventColor(event) {
       return event.color;
     },
     setToday() {
-      this.focus = "";
+      this.focus = '';
     },
     prev() {
       this.$refs.calendar.prev();

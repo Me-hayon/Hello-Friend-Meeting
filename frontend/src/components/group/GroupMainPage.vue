@@ -1,12 +1,13 @@
 <template>
   <div>
-    <GroupNav />
+    <GroupNav :gno="gno" />
   </div>
 </template>
 
 <script>
-import GroupNav from "@/components/group/GroupNav.vue";
+import GroupNav from '@/components/group/GroupNav.vue';
 export default {
+  props: ['gno'],
   components: {
     GroupNav,
   },

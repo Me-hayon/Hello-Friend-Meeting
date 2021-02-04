@@ -14,7 +14,7 @@
         <tr v-for="group in groups" :key="group.gno">
           <td>{{ group.gname }}</td>
           <td><b-button variant="success">신청하기</b-button></td>
-          <td>{{ group.gpeople }}</td>
+          <td>{{ group.members }}</td>
         </tr>
         <!-- <tr>
           <td>볼링</td>
@@ -33,6 +33,7 @@
 
 <script>
 import FriendProfile from '@/components/user/FriendProfile.vue';
+import axios from 'axios';
 
 const storage = window.sessionStorage;
 
@@ -40,6 +41,21 @@ export default {
   created() {
     this.$store.commit('setIsHeader', true);
     this.$store.commit('setIsFooter', true);
+
+    var params = new URLSearchParams();
+    params.append('email', this.friendEmail);
+    axios
+      .post('http://localhost:8080/getGroupList', params)
+      .then((response) => {
+        this.groups = response.data.groupList;
+        for (var i = 0; i < this.groups.length; i++) {
+          this.groups[i].members =
+            this.groups[i].guserList.split(' ').length - 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   props: {
     friendEmail: {
@@ -49,10 +65,7 @@ export default {
   },
   data() {
     return {
-      groups: [
-        { gname: '토익스터디', gno: 1, gpeople: 20 },
-        { gname: '볼링', gno: 'Larsen', gpeople: 31 },
-      ],
+      groups: [],
     };
   },
   components: { FriendProfile },
