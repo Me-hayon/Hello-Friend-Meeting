@@ -26,12 +26,7 @@
           <v-text-field
             ref="name"
             v-model="name"
-            :rules="[
-              () => !!name || 'This field is required',
-              () =>
-                (!!name && name.length <= 10) ||
-                '이름은 10자 이내로 멋지게 지어주세요!',
-            ]"
+            :rules="nameRules"
             :error-messages="errorMessages"
             label="내 이름은..."
             placeholder="찬찬규"
@@ -43,10 +38,7 @@
               ><v-text-field
                 ref="emailFront"
                 v-model="emailFront"
-                :rules="[
-                  () => !!address || 'This field is required',
-                  addressCheck,
-                ]"
+                :rules="[() => !!emailFront || 'This field is required']"
                 label="내 이메일 주소는..."
                 placeholder="ID"
                 required
@@ -84,26 +76,51 @@
           <v-text-field
             ref="passwordConfirm"
             v-model="passwordConfirm"
-            :rules="[() => !!passwordConfirm || 'This field is required']"
-            label="비밀번호 재입력..."
+            :rules="passwordConfirmRules"
+            label="비밀번호 다시..."
             required
             placeholder="●●●●●●●●"
           ></v-text-field>
-          <v-text-field
-            ref="tel"
-            v-model="tel"
-            :rules="[() => !!tel || 'This field is required']"
-            label="내 휴대폰 번호는..."
-            required
-            hint="-없이 숫자만 입력"
-            placeholder="01012345678"
-          ></v-text-field>
+          <v-row style="margin-left: 0; margin-right: 0; margin-top: 5px;">
+            <v-col>
+              <v-row>
+                <v-text-field
+                  ref="tel"
+                  v-model="tel"
+                  :rules="[() => !!tel || 'This field is required']"
+                  label="내 휴대폰 번호는..."
+                  required
+                  hint="-없이 숫자만 입력"
+                  placeholder="01012345678"
+                ></v-text-field
+              ></v-row>
+              <v-row>
+                <v-text-field
+                  ref="tel"
+                  v-model="tel"
+                  :rules="[() => !!tel || 'This field is required']"
+                  label="내 휴대폰 번호는..."
+                  required
+                  hint="-없이 숫자만 입력"
+                  placeholder="01012345678"
+                ></v-text-field>
+              </v-row>
+            </v-col>
+            <v-col cols="4" style="padding: 0;" align-self="center">
+              <v-row style="margin: 10px;"
+                ><v-btn small color="success">인증번호 받기</v-btn></v-row
+              >
+              <v-row style="margin: 10px;"
+                ><v-btn small color="success">다시 받기</v-btn></v-row
+              >
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-divider class="mt-12"></v-divider>
         <v-card-actions>
           <v-btn text>Cancel</v-btn>
           <v-spacer></v-spacer>
-          <v-slide-x-reverse-transition>
+          <!-- <v-slide-x-reverse-transition>
             <v-tooltip v-if="formHasErrors" left>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -118,7 +135,7 @@
               </template>
               <span>Refresh form</span>
             </v-tooltip>
-          </v-slide-x-reverse-transition>
+          </v-slide-x-reverse-transition> -->
           <v-btn color="primary" text @click="submit">Submit</v-btn>
         </v-card-actions>
       </v-col>
@@ -127,7 +144,11 @@
 </template>
 
 <script>
+let tmp;
 export default {
+  created() {
+    tmp = this;
+  },
   data: () => ({
     emailFront: '',
     emailBack: '',
@@ -138,18 +159,26 @@ export default {
       'ssafy.com',
       '직접 입력',
     ],
+    errorMessages: '',
+    titleName: '반가워요!',
+    name: '',
+    password: '',
+    passwordConfirm: '',
+    nameRules: [
+      (v) => !!v || 'This field is required',
+      (v) => (!!v && v.length <= 10) || '이름은 10자 이내로 멋지게 지어주세요!',
+    ],
     passwordRules: [
       (v) => !!v || '비밀번호를 입력해주세요.',
       (v) => (v && v.length >= 5) || 'Password must have 5+ characters',
-      (v) => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character',
+      // (v) => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character',
       (v) => /(?=.*\d)/.test(v) || 'Must have one number',
       (v) => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]',
     ],
-    errorMessages: '',
-    titleName: '반가워요!',
-    name: null,
-    password: null,
-    passwordConfirm: null,
+    passwordConfirmRules: [
+      (v) => !!v || '비밀번호를 입력해주세요.',
+      (v) => v == tmp.password || '비밀번호와 일치해야해요.',
+    ],
     tel: null,
     auth: null,
     formHasErrors: false,
