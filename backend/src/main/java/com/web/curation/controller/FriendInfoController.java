@@ -60,8 +60,9 @@ public class FriendInfoController {
 	@PostMapping("/addFriendByTel")
 	public Object addFriend(@RequestParam(required = true) final String myEmail,
 			@RequestParam(required = true) final String targetTel) {
-
-		UserInfo friendUserInfo = userInfoRepository.findByTel(targetTel);
+		UserInfo friendUserInfo=null;
+		if(userInfoRepository.findByTel(targetTel).isPresent())
+			friendUserInfo = userInfoRepository.findByTel(targetTel).get();
 		UserInfo myInfo=userInfoRepository.findByEmail(myEmail);
 		int friendId =friendUserInfo.getUno();
 		int myId = myInfo.getUno();
