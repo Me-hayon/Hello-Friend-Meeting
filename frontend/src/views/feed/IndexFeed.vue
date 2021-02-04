@@ -2,7 +2,6 @@
   <div class="feed newsfeed">
     <div class="wrapB" style="margin-bottom:60px">
       <h1>뉴스피드</h1>
-
       <ul>
         <li v-for="feed in myFeeds" :key="feed.ano">
           <table class="table table-bordered">

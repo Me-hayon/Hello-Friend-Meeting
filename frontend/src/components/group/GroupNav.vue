@@ -9,16 +9,20 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <v-card flat> <GroupBoard :gno="gno"/></v-card>
+        <v-card flat> <GroupBoard :gno="gno" :isGmaster="isGmaster"/></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat> <GroupSchedule :gno="gno"/></v-card>
+        <v-card flat>
+          <GroupSchedule :gno="gno" :isGmaster="isGmaster"
+        /></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupChat :gno="gno" /> </v-card>
+        <v-card flat><GroupChat :gno="gno" :isGmaster="isGmaster" /> </v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupMemberList :gno="gno" /> </v-card>
+        <v-card flat
+          ><GroupMemberList :gno="gno" :isGmaster="isGmaster" />
+        </v-card>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
@@ -29,7 +33,7 @@ import GroupSchedule from '@/components/group/GroupSchedule.vue';
 import GroupChat from '@/components/group/GroupChat.vue';
 import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
-  props: ['gno'],
+  props: ['gno', 'isGmaster'],
   components: {
     GroupBoard,
     GroupSchedule,

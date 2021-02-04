@@ -53,6 +53,22 @@ public class GroupController {
 	@Autowired
 	CategoryRepository categoryRepository;
 
+	@PostMapping("/isGroupMaster")
+	public Object isGroupMaster(@RequestParam String email,@RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		UserInfo userInfo=userInfoRepository.findByEmail(email);
+		
+		if(groupInfoRepository.findByGnoAndGmaster(gno, userInfo.getUno()).isPresent())
+			resultMap.put("isGmaster",true);
+		
+		else
+			resultMap.put("isGmaster",false);
+		
+		
+		return resultMap;
+	}
+	
 	@PostMapping("/getCategory")
 	public Object getCategory() {
 		Map<String,Object> resultMap=new HashMap<>();
@@ -297,10 +313,21 @@ public class GroupController {
 
 		UserInfo myInfo = userInfoRepository.findByEmail(email);
 
+		if(groupApplyRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
+			resultMap.put("data","이미 신청한 그룹입니다.");
+			return resultMap;
+		}
+		else if(groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
+			resultMap.put("data","이미 가입된 그룹입니다.");
+			return resultMap;
+		}
+		
 		GroupApply groupApply = new GroupApply();
 		groupApply.setAisApply(true);
 		groupApply.setGno(gno);
 		groupApply.setUno(myInfo.getUno());
+		
+		groupApplyRepository.save(groupApply);
 
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
 

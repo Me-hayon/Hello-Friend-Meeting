@@ -3,7 +3,12 @@
     <v-simple-table style="margin-top:50px; margin-bottom:70px">
       <template v-slot:default>
         <tbody>
-          <tr style="height:100px" v-for="item in groups" :key="item.gname">
+          <tr
+            style="height:100px"
+            v-for="item in groups"
+            :key="item.gname"
+            @click="goToGroupPage(item.gno)"
+          >
             <td>{{ item.gname }}</td>
             <td>
               <i style="margin-right:10px" class="material-icons"

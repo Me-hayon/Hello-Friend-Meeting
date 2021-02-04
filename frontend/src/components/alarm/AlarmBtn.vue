@@ -26,7 +26,11 @@
       <v-divider></v-divider>
 
       <v-list max-height="300" style="overflow-y: auto;">
-        <v-list-item v-for="alarm in alarms" :key="alarm.ano">
+        <v-list-item
+          v-for="alarm in alarms"
+          :key="alarm.ano"
+          @click="goRouting(alarm.aurl, alarm.createUser)"
+        >
           <v-list-item-title>
             {{ alarm.asummary }}
           </v-list-item-title>
@@ -80,6 +84,18 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+  },
+  methods: {
+    goRouting(aurl, auno) {
+      var params = new URLSearchParams();
+      params.append('uno', auno);
+      axios
+        .post('http://localhost:8080/findEmailByUno', params)
+        .then((response) => {
+          var friendEmail = response.data.data;
+          this.$router.push({ name: aurl, params: { friendEmail } });
+        });
+    },
   },
 };
 </script>

@@ -13,7 +13,11 @@
         </tr>
         <tr v-for="group in groups" :key="group.gno">
           <td>{{ group.gname }}</td>
-          <td><b-button variant="success">신청하기</b-button></td>
+          <td>
+            <b-button variant="success" @click="applyGroup(group.gno)"
+              >신청하기</b-button
+            >
+          </td>
           <td>{{ group.members }}</td>
         </tr>
         <!-- <tr>
@@ -74,6 +78,20 @@ export default {
       storage.removeItem('auth-token');
       storage.removeItem('user-email');
       this.$router.push('/');
+    },
+    applyGroup(gno) {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+      params.append('email', storage.getItem('user-email'));
+      params.append('gno', gno);
+      axios
+        .post('http://localhost:8080/applyGroup', params)
+        .then((response) => {
+          alert(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };

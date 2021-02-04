@@ -11,7 +11,7 @@
 <script>
 import axios from 'axios';
 export default {
-  props: ['gno'],
+  props: ['gno', 'isGmaster'],
   data() {
     return {
       memberList: [],
