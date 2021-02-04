@@ -2,6 +2,7 @@ package com.web.curation.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -97,8 +98,8 @@ public class GroupController {
 
 		groupInfoRepository.save(groupInfo);
 
-		switch (gboundary) {// 0:비공개(초대만), 1:친구까지 공개, 2:친구의친구까지 공개
-		case 1:
+		
+		if(gboundary!=0) {
 			List<FriendInfo> friendList=getFriendList(gmaster);
 			StringBuilder sb=new StringBuilder();
 			sb.append("회원님의 친구 ");
@@ -116,17 +117,54 @@ public class GroupController {
 				
 				alarmRepository.save(alarm);
 			}
-			break;
-		case 2:
-			//////////////
-			//////////////
-			//////////////
-			//////////////
-			//////////////
-			//////////////찬규님과 봉현님의 친구인 기호님이 만들었습니다.
-			//////////////
-			//////////////
-			break;
+			if(gboundary==2) {
+				//찬규님과 봉현님의 친구인 기호님이 만들었습니다.
+				//친구의 친구를 세트에 담는다
+				//세트에서 내 친구들과 나 제외
+				//친구의친구 수만큼 반복문
+				//내 친구와 해당 친구의 친구의 공통 친구들을 찾는다
+				List<Integer> friendFriendList=new ArrayList<>();
+				List<Integer> friendIntList=new ArrayList<>();
+				friendIntList.add(gmaster);
+				for(FriendInfo fi:friendList) {
+					friendIntList.add(fi.getMyId());
+					List<FriendInfo> toFindFriendFriend=getFriendList(fi.getMyId());
+					for(FriendInfo friendFriend:toFindFriendFriend) {
+						friendFriendList.add(friendFriend.getMyId());
+					}
+				}
+				HashSet<Integer> tmp=new HashSet<>(friendFriendList);
+				friendFriendList=new ArrayList<>(tmp);
+				friendFriendList.removeAll(friendIntList);
+				
+				for(Integer ff:friendFriendList) {
+					
+					StringBuilder sb2=new StringBuilder();
+					for(Integer f:friendIntList) {
+						if(isFriendFriend(gmaster,f,ff)) {
+							sb2.append(userInfoRepository.findById(f).get().getUname());
+							sb2.append(" ");
+						}
+					}
+					if(sb2.length()==0)
+						continue;
+					sb2.append("님의 친구 ");
+					sb2.append(myInfo.getUname());
+					sb2.append("님이 ");
+					sb2.append(gname);
+					sb2.append("그룹을 만드셨습니다.");
+					String asummary=sb2.toString();
+
+					Alarm alarm=new Alarm();
+					alarm.setAuser(ff);
+					alarm.setAurl("#");
+					alarm.setCreateUser(gmaster);
+					alarm.setAtype(1);
+					alarm.setAsummary(asummary);
+					
+					alarmRepository.save(alarm);
+				}
+			}
 		}
 
 		resultMap.put("data", "그룹 생성에 성공했습니다.");
@@ -360,5 +398,16 @@ public class GroupController {
 		
 		return toReturnFriendList;
 	}
+
+	public boolean isFriendFriend(int id1, int bridge, int id2) {
+		if (friendInfoRepository.findByMyIdAndFriendId(id1, bridge).isPresent()
+				&& friendInfoRepository.findByMyIdAndFriendId(bridge, id1).isPresent()
+				&& friendInfoRepository.findByMyIdAndFriendId(id2,bridge).isPresent()
+				&& friendInfoRepository.findByMyIdAndFriendId(bridge, id2).isPresent())
+			return true;
+		return false;
+
+	}
+
 	
 }
