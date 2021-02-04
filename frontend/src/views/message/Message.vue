@@ -61,8 +61,6 @@
         </b-modal>
       </template>
     </v-simple-table>
-
-    <!-- 답장은 모달로 하던가 -->
   </div>
 </template>
 

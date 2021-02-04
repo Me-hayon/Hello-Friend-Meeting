@@ -13,6 +13,24 @@
         <p style="margin-bottom: 5px;">
           <strong>📧 {{ friendEmail }}</strong>
         </p>
+        <p>
+          <b-button v-b-modal.modal-1>쪽지보내기</b-button>
+
+          <b-modal
+            id="modal-1"
+            title="쪽지보내기"
+            @ok="sendMessage"
+            @hide="resetDatas"
+          >
+            제목 : <input type="text" v-model="message.mtitle" />
+            <hr />
+            <b-form-textarea
+              id="textarea-rows"
+              rows="8"
+              v-model="message.mcontent"
+            ></b-form-textarea>
+          </b-modal>
+        </p>
       </div>
     </div>
     <b-button
@@ -50,9 +68,6 @@
       @click="friendDelete(friendEmail)"
       >친구 삭제</b-button
     >
-    <input type="text" placeholder="title" v-model="message.mtitle" />
-    <input type="text" placeholder="content" v-model="message.mcontent" />
-    <button @click="sendMessage">send</button>
   </div>
 </template>
 
@@ -166,6 +181,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    resetDatas() {
+      this.message.mtitle = '';
+      this.message.mcontent = '';
     },
   },
   data() {
