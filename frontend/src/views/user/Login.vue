@@ -1,13 +1,5 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col align="center" justify="center">
-        <h1>우리 친구하자</h1>
-      </v-col>
-    </v-row>
-    <v-row> </v-row>
-  </v-container>
-  <!-- <div class="user" id="login">
+  <div class="user" id="login">
     <div class="wrapC">
       <h1 style="text-align: center; margin-top: 55px">우리 친구하자</h1>
       <img
@@ -68,21 +60,21 @@
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 </template>
 
 <script>
-import '../../components/css/user.scss';
-import PV from 'password-validator';
-import * as EmailValidator from 'email-validator';
-import axios from 'axios';
+import "../../components/css/user.scss";
+import PV from "password-validator";
+import * as EmailValidator from "email-validator";
+import axios from "axios";
 
 const storage = window.sessionStorage;
 
 export default {
   created() {
-    if (storage.getItem('auth-token')) {
-      this.$router.push('/feed/main');
+    if (storage.getItem("auth-token")) {
+      this.$router.push("/feed/main");
     }
 
     this.component = this;
@@ -97,8 +89,8 @@ export default {
       .has()
       .letters();
 
-    this.$store.commit('setIsHeader', false);
-    this.$store.commit('setIsFooter', false);
+    this.$store.commit("setIsHeader", false);
+    this.$store.commit("setIsFooter", false);
   },
   watch: {
     password: function(v) {
@@ -111,14 +103,14 @@ export default {
   methods: {
     checkForm() {
       if (this.email.length > 0 && !EmailValidator.validate(this.email))
-        this.error.email = '이메일 형식이 아닙니다.';
+        this.error.email = "이메일 형식이 아닙니다.";
       else this.error.email = false;
 
       if (
         this.password.length > 0 &&
         !this.passwordSchema.validate(this.password)
       )
-        this.error.password = '영문, 숫자 포함 8자리 이상이어야 합니다.';
+        this.error.password = "영문, 숫자 포함 8자리 이상이어야 합니다.";
       else this.error.password = false;
 
       let isSubmit = true;
@@ -135,32 +127,32 @@ export default {
         console.log(this.password);
 
         var params = new URLSearchParams();
-        params.append('email', this.email);
-        params.append('password', this.password);
+        params.append("email", this.email);
+        params.append("password", this.password);
 
         axios
-          .post('http://localhost:8080/login', params)
+          .post("http://localhost:8080/login", params)
           .then((response) => {
             this.isSubmit = true;
-            if (response.data['is-success']) {
-              storage.setItem('auth-token', response.data['auth-token']);
-              storage.setItem('user-email', response.data['user-email']);
-              this.$router.push('/feed/main');
+            if (response.data["is-success"]) {
+              storage.setItem("auth-token", response.data["auth-token"]);
+              storage.setItem("user-email", response.data["user-email"]);
+              this.$router.push("/feed/main");
             } else {
-              alert('아이디 또는 비밀번호를 잘못 입력하였습니다.');
+              alert("아이디 또는 비밀번호를 잘못 입력하였습니다.");
             }
           })
           .catch((error) => {
             this.isSubmit = true;
-            alert('로그인 도중 오류가 발생하였습니다.');
+            alert("로그인 도중 오류가 발생하였습니다.");
           });
       }
     },
   },
   data: () => {
     return {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       passwordSchema: new PV(),
       error: {
         email: false,
