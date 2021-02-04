@@ -18,7 +18,13 @@
       </b-row>
     </b-col>
     <button v-b-modal.modal-center class="add-friend-btn">친구+</button>
-    <b-modal id="modal-center" centered title="친구찾기" @hidden="resetInput">
+    <b-modal
+      id="modal-center"
+      centered
+      title="친구찾기"
+      @hidden="resetInput"
+      hide-footer
+    >
       <div>
         <input
           style="width:70%"
