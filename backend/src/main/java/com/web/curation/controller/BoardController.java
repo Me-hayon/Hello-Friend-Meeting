@@ -80,7 +80,7 @@ public class BoardController {
 		board.setBcontent(content);
 		board.setBisNotice(bisNotice);
 
-		boardRepository.save(board);
+		board=boardRepository.save(board);
 		
 		GroupInfo groupInfo=groupInfoRepository.findById(bgno).get();
 		String guserList=groupInfo.getGuserList();
@@ -99,7 +99,7 @@ public class BoardController {
 			int curUno=Integer.parseInt(uno);
 			Alarm alarm=new Alarm();
 			alarm.setAtype(1);
-			alarm.setCreateUser(myInfo.getUno());
+			alarm.setCreateUser(board.getBno());
 			alarm.setAurl("#");
 			alarm.setAuser(curUno);
 			alarm.setAsummary(asummary);

@@ -20,7 +20,7 @@
 <script>
 import axios from 'axios';
 export default {
-  props: ['gno', 'isGmaster'],
+  props: ['gno', 'memberStatus'],
   data() {
     return {
       table: [],
