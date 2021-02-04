@@ -118,7 +118,7 @@ public class GroupController {
 				alarmRepository.save(alarm);
 			}
 			if(gboundary==2) {
-				//찬규님과 봉현님의 친구인 기호님이 만들었습니다.
+				//임찬규 박봉현 님의 친구인 이기호님이 그룹 만들었습니다.
 				//친구의 친구를 세트에 담는다
 				//세트에서 내 친구들과 나 제외
 				//친구의친구 수만큼 반복문
@@ -152,7 +152,7 @@ public class GroupController {
 					sb2.append(myInfo.getUname());
 					sb2.append("님이 ");
 					sb2.append(gname);
-					sb2.append("그룹을 만드셨습니다.");
+					sb2.append("그룹을 만들었습니다.");
 					String asummary=sb2.toString();
 
 					Alarm alarm=new Alarm();
@@ -340,7 +340,7 @@ public class GroupController {
 		UserInfo myInfo = userInfoRepository.findByEmail(email);
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
 
-		GroupParticipant groupParticipant = groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno);
+		GroupParticipant groupParticipant = groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno).get();
 		groupParticipantRepository.delete(groupParticipant);
 
 		List<GroupParticipant> gpList = groupParticipantRepository.findAllByGno(gno);
@@ -364,7 +364,7 @@ public class GroupController {
 
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
 
-		GroupParticipant groupParticipant = groupParticipantRepository.findByUnoAndGno(uno, gno);
+		GroupParticipant groupParticipant = groupParticipantRepository.findByUnoAndGno(uno, gno).get();
 		groupParticipantRepository.delete(groupParticipant);
 
 		List<GroupParticipant> gpList = groupParticipantRepository.findAllByGno(gno);
@@ -379,6 +379,36 @@ public class GroupController {
 
 		resultMap.put("data", "그룹에서 추방했습니다.");
 
+		return resultMap;
+	}
+	
+	@PostMapping("/groupJoinStatus")
+	public Object groupJoinStatus(int uno, int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		StringBuilder sb=new StringBuilder();
+		int status;//0:비회원, 1:가입신청상태, 2:초대받은상태, 3:회원
+		
+		if(groupParticipantRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			sb.append("회원");
+			status=3;
+		}
+		else if(groupApplyRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			if(groupApplyRepository.findByUnoAndGno(uno, gno).get().isAisApply()) {
+				status=1;
+				sb.append("가입신청한상태");
+			}
+			else {
+				status=2;
+				sb.append("초대받은상태");
+			}
+		}
+		else {
+			sb.append("회원아님");
+			status=0;
+		}
+		resultMap.put("message",sb.toString());
+		resultMap.put("joinStatus",status);
+		
 		return resultMap;
 	}
 
@@ -402,12 +432,10 @@ public class GroupController {
 	public boolean isFriendFriend(int id1, int bridge, int id2) {
 		if (friendInfoRepository.findByMyIdAndFriendId(id1, bridge).isPresent()
 				&& friendInfoRepository.findByMyIdAndFriendId(bridge, id1).isPresent()
-				&& friendInfoRepository.findByMyIdAndFriendId(id2,bridge).isPresent()
+				&& friendInfoRepository.findByMyIdAndFriendId(id2, bridge).isPresent()
 				&& friendInfoRepository.findByMyIdAndFriendId(bridge, id2).isPresent())
 			return true;
 		return false;
 
-	}
-
-	
+	}	
 }
