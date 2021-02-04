@@ -1,19 +1,40 @@
 <template>
-  <v-container>
-    <v-row style="margin-top: 100px;">
-      <v-col align="center">
-        <p class="font-weight-black" style="font-size: 2.5rem;">
-          우리 친구하자
-        </p>
-      </v-col>
-    </v-row>
-    <v-row>
+  <v-container class="bg">
+    <v-row style="margin-top: 200px;">
       <v-col align="center">
         <img src="@/assets/images/logo.png" />
       </v-col>
     </v-row>
-    <v-row style="margin-top: 30px;">
-      <v-col style="padding-left: 40px; padding-right: 40px;">
+    <v-row>
+      <v-col align="center">
+        <p class="font-weight-thin" style="color: white; font-size: 1rem;">
+          로그인 하러 가기
+        </p>
+      </v-col>
+    </v-row>
+    <v-row style="margin-top: -35px;">
+      <v-col align="center">
+        <v-btn
+          icon
+          color="white"
+          @click="$vuetify.goTo('#startLogin', options)"
+        >
+          <v-icon size="50">mdi-menu-down</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row style="margin-top: 600px;"></v-row>
+    <v-row id="startLogin" style="margin-top: 30px;">
+      <v-col
+        style="
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: rgba(255,255,255,.6);
+        margin-left: 30px;
+        margin-right: 30px;
+        border-radius: 10px; "
+      >
+        <!-- <v-row style="margin-bottom: 15px;">adflakdjflkj</v-row> -->
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="email"
@@ -37,7 +58,6 @@
             :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="passwordShow = !passwordShow"
           ></v-text-field>
-
           <v-btn
             :disabled="!valid"
             width="100%"
@@ -53,7 +73,9 @@
     <v-divider></v-divider>
     <v-row style="padding-left: 40px; padding-right: 40px;">
       <v-col style="padding-left: 0; padding-right: 0;" cols="8">
-        <p class="font-weight-bold">혹시 아직 회원이 아니신가요?</p>
+        <p class="font-weight-thin" style="color: white;">
+          혹시 아직 회원이 아니신가요?
+        </p>
       </v-col>
       <v-col style="padding-left: 0; padding-right: 0;" align="end">
         <router-link to="/user/join" class="font-weight-bold"
@@ -83,15 +105,23 @@ export default {
           '올바른 이메일 형식을 입력해주세요.',
       ],
       passwordShow: false,
+      duration: 1000,
     };
   },
   created() {
-    if (storage.getItem("auth-token")) {
-      this.$router.push("/feed/main");
+    if (storage.getItem('auth-token')) {
+      this.$router.push('/feed/main');
     }
 
     this.$store.commit('setIsHeader', false);
     this.$store.commit('setIsFooter', false);
+  },
+  computed: {
+    options() {
+      return {
+        duration: this.duration,
+      };
+    },
   },
   methods: {
     validate() {
@@ -137,3 +167,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.bg {
+  background: url('~@/assets/images/night.gif') no-repeat center center fixed;
+  background-size: cover;
+}
+</style>
