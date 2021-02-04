@@ -1,166 +1,139 @@
 <template>
-  <div class="user" id="login">
-    <div class="wrapC">
-      <h1 style="text-align: center; margin-top: 55px">우리 친구하자</h1>
-      <img
-        class="logo"
-        style="display: block; margin: 0 auto 50px"
-        src="@/assets/images/logo.png"
-        alt=""
-      />
+  <v-container>
+    <v-row style="margin-top: 100px;">
+      <v-col align="center">
+        <p class="font-weight-black" style="font-size: 2.5rem;">
+          우리 친구하자
+        </p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col align="center">
+        <img src="@/assets/images/logo.png" />
+      </v-col>
+    </v-row>
+    <v-row style="margin-top: 30px;">
+      <v-col style="padding-left: 40px; padding-right: 40px;">
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="email"
+            label="이메일"
+            hint="@를 포함해주세요."
+            outlined
+            rounded
+            clearable
+            required
+            :rules="emailRules"
+          ></v-text-field>
 
-      <div class="input-with-label">
-        <input
-          v-model="email"
-          v-bind:class="{
-            error: error.email,
-            complete: !error.email && email.length !== 0,
-          }"
-          @keyup.enter="Login"
-          id="email"
-          placeholder="이메일을 입력하세요"
-          type="text"
-        />
-        <label for="email">이메일</label>
-        <div class="error-text" v-if="error.email">{{ error.email }}</div>
-      </div>
+          <v-text-field
+            v-model="password"
+            label="비밀번호"
+            outlined
+            rounded
+            clearable
+            required
+            :type="passwordShow ? 'text' : 'password'"
+            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="passwordShow = !passwordShow"
+          ></v-text-field>
 
-      <div class="input-with-label">
-        <input
-          v-model="password"
-          type="password"
-          v-bind:class="{
-            error: error.password,
-            complete: !error.password && password.length !== 0,
-          }"
-          id="password"
-          @keyup.enter="Login"
-          placeholder="비밀번호를 입력하세요"
-        />
-        <label for="password">비밀번호</label>
-        <div class="error-text" v-if="error.password">{{ error.password }}</div>
-      </div>
-      <button
-        class="btn btn--back btn--login"
-        @click="onLogin"
-        :disabled="!isSubmit"
-        :class="{ disabled: !isSubmit }"
-        style="background-color: tomato; color: white"
-      >
-        로그인
-      </button>
-      <div class="add-option">
-        <div class="text">
-          <p>혹시</p>
-          <div class="bar"></div>
-        </div>
-        <div class="wrap">
-          <p>아직 회원이 아니신가요?</p>
-          <router-link to="/user/join" class="btn--text">가입하기</router-link>
-        </div>
-      </div>
-    </div>
-  </div>
+          <v-btn
+            :disabled="!valid"
+            width="100%"
+            color="success"
+            class="font-weight-black"
+            @click="validate"
+          >
+            로그인
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
+    <v-row style="padding-left: 40px; padding-right: 40px;">
+      <v-col style="padding-left: 0; padding-right: 0;" cols="8">
+        <p class="font-weight-bold">혹시 아직 회원이 아니신가요?</p>
+      </v-col>
+      <v-col style="padding-left: 0; padding-right: 0;" align="end">
+        <router-link to="/user/join" class="font-weight-bold"
+          >가입하기</router-link
+        >
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import "../../components/css/user.scss";
-import PV from "password-validator";
-import * as EmailValidator from "email-validator";
-import axios from "axios";
+import axios from 'axios';
 
 const storage = window.sessionStorage;
 
 export default {
+  data() {
+    return {
+      valid: false,
+      email: '',
+      password: '',
+      emailRules: [
+        (v) =>
+          /.+@.+\..+/.test(v) ||
+          v == null ||
+          v.length == 0 ||
+          '올바른 이메일 형식을 입력해주세요.',
+      ],
+      passwordShow: false,
+    };
+  },
   created() {
     if (storage.getItem("auth-token")) {
       this.$router.push("/feed/main");
     }
 
-    this.component = this;
-
-    this.passwordSchema
-      .is()
-      .min(8)
-      .is()
-      .max(100)
-      .has()
-      .digits()
-      .has()
-      .letters();
-
-    this.$store.commit("setIsHeader", false);
-    this.$store.commit("setIsFooter", false);
-  },
-  watch: {
-    password: function(v) {
-      this.checkForm();
-    },
-    email: function(v) {
-      this.checkForm();
-    },
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
   },
   methods: {
-    checkForm() {
-      if (this.email.length > 0 && !EmailValidator.validate(this.email))
-        this.error.email = "이메일 형식이 아닙니다.";
-      else this.error.email = false;
-
-      if (
-        this.password.length > 0 &&
-        !this.passwordSchema.validate(this.password)
-      )
-        this.error.password = "영문, 숫자 포함 8자리 이상이어야 합니다.";
-      else this.error.password = false;
-
-      let isSubmit = true;
-      Object.values(this.error).map((v) => {
-        if (v) isSubmit = false;
-      });
-      this.isSubmit = isSubmit;
+    validate() {
+      if (this.$refs.form.validate()) this.login();
     },
-    onLogin() {
-      if (this.isSubmit) {
-        this.email = this.email.toLowerCase();
-        this.isSubmit = false;
-        console.log(this.email);
-        console.log(this.password);
+    login() {
+      var params = new URLSearchParams();
+      params.append('email', this.email);
+      params.append('password', this.password);
 
-        var params = new URLSearchParams();
-        params.append("email", this.email);
-        params.append("password", this.password);
-
-        axios
-          .post("http://localhost:8080/login", params)
-          .then((response) => {
-            this.isSubmit = true;
-            if (response.data["is-success"]) {
-              storage.setItem("auth-token", response.data["auth-token"]);
-              storage.setItem("user-email", response.data["user-email"]);
-              this.$router.push("/feed/main");
-            } else {
-              alert("아이디 또는 비밀번호를 잘못 입력하였습니다.");
-            }
-          })
-          .catch((error) => {
-            this.isSubmit = true;
-            alert("로그인 도중 오류가 발생하였습니다.");
-          });
-      }
+      axios
+        .post('http://localhost:8080/login', params)
+        .then((response) => {
+          if (response.data['is-success']) {
+            storage.setItem('auth-token', response.data['auth-token']);
+            storage.setItem('user-email', response.data['user-email']);
+            this.$router.push('/feed/main');
+          } else {
+            alert('아이디 또는 비밀번호를 잘못 입력하였습니다.');
+          }
+        })
+        .catch((error) => {
+          alert('로그인 도중 오류가 발생하였습니다.');
+        });
     },
   },
-  data: () => {
-    return {
-      email: "",
-      password: "",
-      passwordSchema: new PV(),
-      error: {
-        email: false,
-        password: false,
-      },
-      isSubmit: false,
-      component: this,
-    };
+  watch: {
+    valid(valid) {
+      if (valid) {
+        if (this.email == null || this.email.length == 0) this.valid = false;
+        else if (this.password == null || this.password.length == 0)
+          this.valid = false;
+      }
+    },
+    email(email) {
+      if (email == null || email.length == 0) this.valid = false;
+    },
+    password(password) {
+      if (this.valid && (password == null || password.length == 0))
+        this.valid = false;
+      else if (!this.valid && password.length > 0) this.valid = true;
+    },
   },
 };
 </script>
