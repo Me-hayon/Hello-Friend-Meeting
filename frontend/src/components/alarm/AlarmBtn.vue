@@ -7,126 +7,29 @@
       <v-list>
         <v-list-item>
           <v-list-item-avatar>
-            <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+            <img :src="imgPath" />
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>John Leider</v-list-item-title>
-            <v-list-item-subtitle>Founder of Vuetify.js</v-list-item-subtitle>
+            <v-list-item-title>{{ userInfo.uname }}</v-list-item-title>
+            <v-list-item-subtitle>{{ userInfo.utel }}</v-list-item-subtitle>
           </v-list-item-content>
 
-          <v-list-item-action>
+          <!-- <v-list-item-action>
             <v-btn :class="fav ? 'red--text' : ''" icon @click="fav = !fav">
               <v-icon>mdi-heart</v-icon>
             </v-btn>
-          </v-list-item-action>
+          </v-list-item-action> -->
         </v-list-item>
       </v-list>
 
       <v-divider></v-divider>
 
       <v-list max-height="300" style="overflow-y: auto;">
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="message" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable messages</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-action>
-            <v-switch v-model="hints" color="purple"></v-switch>
-          </v-list-item-action>
-          <v-list-item-title>Enable hints</v-list-item-title>
+        <v-list-item v-for="alarm in alarms" :key="alarm.ano">
+          <v-list-item-title>
+            {{ alarm.asummary }}
+          </v-list-item-title>
         </v-list-item>
       </v-list>
 
@@ -141,11 +44,42 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
       menu: false,
+      alarms: [],
+      userInfo: {},
+      imgPath: '',
     };
+  },
+  created() {
+    var storage = window.sessionStorage;
+    var params = new URLSearchParams();
+    params.append('email', storage.getItem('user-email'));
+
+    axios
+      .post('http://localhost:8080/getAlarms', params)
+      .then((response) => {
+        this.alarms = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .post('http://localhost:8080/profile', params)
+      .then((response) => {
+        this.userInfo.uname = response.data['user-name'];
+        this.userInfo.utel = response.data['user-tel'];
+        this.userInfo.uprofileImg = response.data['profile-img'];
+        console.log(this.userInfo.uprofileImg);
+        this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>
