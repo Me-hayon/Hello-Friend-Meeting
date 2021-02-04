@@ -81,12 +81,7 @@ export default [
     path: "/group",
     name: "GroupMainPage",
     component: GroupMainPage,
-    children: [
-      {
-        path: "",
-        component: GroupMainPage,
-      },
-    ],
+    props:true
   },
 
   {
