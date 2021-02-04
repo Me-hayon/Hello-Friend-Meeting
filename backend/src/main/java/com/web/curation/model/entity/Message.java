@@ -1,5 +1,6 @@
 package com.web.curation.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +27,7 @@ public class Message {
 	private int mreceiver;
 	private String mtitle;
 	private String mcontent;
+	@Column(insertable=false,updatable=false)
 	private String mdate;
 
 }

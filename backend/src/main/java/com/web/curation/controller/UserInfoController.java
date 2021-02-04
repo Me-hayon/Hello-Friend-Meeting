@@ -66,7 +66,9 @@ public class UserInfoController {
 	public Object authTel(@RequestParam("phone") String tel, HttpServletResponse response) {
 
 		Map<String, Object> resultMap = new HashMap<>();
-		UserInfo userInfo = userInfoRepository.findByTel(tel);
+		UserInfo userInfo = null;
+		if(userInfoRepository.findByTel(tel).isPresent())
+			userInfo=userInfoRepository.findByTel(tel).get();
 
 		if (userInfo == null) { // 중복이 아님
 			sensService.makeBody(tel);
@@ -142,6 +144,44 @@ public class UserInfoController {
 			resultMap.put("user-name", "앗! 이름을 불러올 수 없어요.");
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
+	}
+	
+	@PostMapping("/profileByTel")
+	public Object getUserByTel(@RequestParam String tel) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		UserInfo user = null;
+		if(userInfoRepository.findByTel(tel).isPresent()) {
+			user=userInfoRepository.findByTel(tel).get();
+			resultMap.put("isPresent",true);
+		}
+		else {
+			resultMap.put("data","해당하는 사용자가 없습니다.");
+			resultMap.put("isPresent",false);
+			return resultMap;
+		}
+		resultMap.put("data",user);
+		return resultMap;
+		
+	}
+	
+	@PostMapping("/findEmailByUno")
+	public Object findEmailByUno(@RequestParam int uno) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		UserInfo user = null;
+		if(userInfoRepository.findById(uno).isPresent()) {
+			user=userInfoRepository.findById(uno).get();
+			resultMap.put("isPresent",true);
+		}
+		else {
+			resultMap.put("data","해당하는 사용자가 없습니다.");
+			resultMap.put("isPresent",false);
+			return resultMap;
+		}
+		resultMap.put("data",user.getEmail());
+		return resultMap;
+		
 	}
 
 	/////////////////////////////////// 비밀번호 변경

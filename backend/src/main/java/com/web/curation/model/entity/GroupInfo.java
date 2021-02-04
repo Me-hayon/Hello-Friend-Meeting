@@ -1,5 +1,6 @@
 package com.web.curation.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,7 +27,8 @@ public class GroupInfo {
 	private String gname;
 	private int gcategory;
 	private String guserList;
+	@Column(insertable=false,updatable=false)
 	private String gdate;
-	private int gboundary;
+	private int gboundary;//0:비공개(초대만), 1:친구까지 공개, 2:친구의친구까지 공개
 
 }

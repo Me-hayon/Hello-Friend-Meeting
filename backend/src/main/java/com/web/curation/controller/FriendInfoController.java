@@ -60,8 +60,9 @@ public class FriendInfoController {
 	@PostMapping("/addFriendByTel")
 	public Object addFriend(@RequestParam(required = true) final String myEmail,
 			@RequestParam(required = true) final String targetTel) {
-
-		UserInfo friendUserInfo = userInfoRepository.findByTel(targetTel);
+		UserInfo friendUserInfo=null;
+		if(userInfoRepository.findByTel(targetTel).isPresent())
+			friendUserInfo = userInfoRepository.findByTel(targetTel).get();
 		UserInfo myInfo=userInfoRepository.findByEmail(myEmail);
 		int friendId =friendUserInfo.getUno();
 		int myId = myInfo.getUno();
@@ -87,7 +88,7 @@ public class FriendInfoController {
 			alarm.setAsummary(sb.toString());
 
 			alarm.setAtype(0);
-			alarm.setAurl("#");
+			alarm.setAurl("FriendInfo");
 			alarm.setAuser(friendId);
 			alarm.setCreateUser(myInfo.getUno());
 			System.out.println(alarm);

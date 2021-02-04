@@ -1,6 +1,5 @@
 package com.web.curation.model.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,15 +16,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Comment {
+public class GroupApply {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int cno;
+	private int gano;
 	
-	private int bno;
-	private int cwriter;
-	private String ccontent;
-	@Column(insertable=false,updatable=false)
-	private String cdate;
+	private int uno;
+	private int gno;
+	private boolean aisApply;
+	//true : 신청한거, false : 초대받은거
+
 }

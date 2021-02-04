@@ -3,7 +3,9 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: ['gno', 'isGmaster'],
+};
 </script>
 
 <style></style>
