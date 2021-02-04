@@ -18,7 +18,7 @@
           <v-text-field
             v-model="email"
             label="이메일"
-            hint="@를 포함해주세요."
+            hint="ssafy@ssafy.com"
             outlined
             rounded
             clearable
