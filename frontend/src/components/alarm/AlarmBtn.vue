@@ -29,7 +29,7 @@
         <v-list-item
           v-for="alarm in alarms"
           :key="alarm.ano"
-          @click="goRouting(alarm.aurl, alarm.createUser)"
+          @click="goRouting(alarm.aurl, alarm.createUser, alarm.ano)"
         >
           <v-list-item-title>
             {{ alarm.asummary }}
@@ -86,15 +86,28 @@ export default {
       });
   },
   methods: {
-    goRouting(aurl, auno) {
+    goRouting(aurl, myParam, ano) {
       var params = new URLSearchParams();
-      params.append('uno', auno);
-      axios
-        .post('http://localhost:8080/findEmailByUno', params)
-        .then((response) => {
-          var friendEmail = response.data.data;
-          this.$router.push({ name: aurl, params: { friendEmail } });
-        });
+      params.append('ano', ano);
+      axios.post('http://localhost:8080/readAlarm', params);
+
+      params = new URLSearchParams();
+      if (aurl === 'FriendInfo') {
+        params.append('uno', myParam);
+        axios
+          .post('http://localhost:8080/findEmailByUno', params)
+          .then((response) => {
+            var friendEmail = response.data.data;
+            this.$router.push({ name: aurl, params: { friendEmail } });
+          });
+      } else if (aurl === 'GroupMainPage') {
+        params.append('gno', myParam);
+        var gno = myParam;
+        this.$router.push({ name: 'aurl', params: { gno } });
+      }
+      // else if(augb===''){//보드로보낼거
+
+      // }
     },
   },
 };
