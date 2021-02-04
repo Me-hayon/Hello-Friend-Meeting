@@ -303,6 +303,19 @@ public class GroupController {
 
 		return resultMap;
 	}
+	
+	@PostMapping("/getGroupApplyList")
+	public Object getGroupApplyList(@RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		List<GroupApply> list=null;
+		if(groupApplyRepository.findAllByGno(gno).isPresent()) 
+			list=groupApplyRepository.findAllByGno(gno).get();
+		
+		resultMap.put("applyList",list);
+		
+		return resultMap;
+	}
 
 	@PostMapping("/acceptApplyGroup")
 	public Object acceptJoinoinGroup(@RequestParam int uno, @RequestParam int gno) {
