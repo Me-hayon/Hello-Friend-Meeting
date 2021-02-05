@@ -56,10 +56,10 @@ export default {
       alarms: [],
       userInfo: {},
       imgPath: '',
+      tmp: '',
     };
   },
   created() {
-    console.log('ssssssssssss');
     this.getAlarmsList();
     setInterval(this.getAlarmsList, 10000);
     var storage = window.sessionStorage;
@@ -87,20 +87,24 @@ export default {
 
       params = new URLSearchParams();
       if (aurl === 'FriendInfo') {
-        params.append('uno', myParam);
-        axios.post('findEmailByUno', params).then((response) => {
-          var friendEmail = response.data.data;
-          this.$router.push({ name: aurl, params: { friendEmail } });
-        });
+        this.$store.commit('setUno', myParam);
+        this.$router.push('/user/friend-info').catch(() => {});
       } else if (aurl === 'GroupMainPage') {
-        params.append('gno', myParam);
         var gno = myParam;
-        console.log(gno);
-        this.$router.push({ name: aurl, params: { gno } }).catch(() => {
-          // this.$emit('changeProps', memberStatus);
-        });
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        params.append('gno', gno);
+        axios
+          .post('isGroupMember', params)
+          .then((response) => {
+            this.$store.commit('setGno', gno);
+            this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$router.push('/group').catch(() => {});
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
-      // else if(augb===''){//보드로보낼거
+      // else if(aurl===''){//보드로보낼거
 
       // }
     },

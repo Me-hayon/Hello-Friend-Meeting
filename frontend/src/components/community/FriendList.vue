@@ -100,9 +100,10 @@ export default {
       axios
         .post('profile', params)
         .then((response) => {
-          var friendEmail = response.data['user-email'];
+          var uno = response.data['user-uno'];
           // console.log(uno);
-          this.$router.push({ name: 'FriendInfo', params: { friendEmail } });
+          this.$store.commit('setUno', uno);
+          this.$router.push('/user/friend-info');
         })
         .catch((error) => {
           console.log(error);

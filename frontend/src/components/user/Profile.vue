@@ -113,7 +113,7 @@ export default {
   },
   created() {
     this.email = storage.getItem('user-email');
-
+    console.log('tlqkf');
     let params = new URLSearchParams();
     params.append('email', this.email);
     params.append('auth-token', storage.getItem('auth-token'));

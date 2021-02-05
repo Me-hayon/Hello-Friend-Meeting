@@ -39,7 +39,6 @@ export default [
     path: '/user/friend-info',
     name: 'FriendInfo',
     component: FriendInfo,
-    props: true,
   },
   {
     path: '/user/modify',
@@ -79,7 +78,6 @@ export default [
     path: '/group',
     name: 'GroupMainPage',
     component: GroupMainPage,
-    props: true,
   },
 
   {
@@ -91,7 +89,6 @@ export default [
     path: '/board/detail',
     name: 'GroupBoardDetail',
     component: GroupBoardDetail,
-    props: true,
   },
   {
     path: '*',

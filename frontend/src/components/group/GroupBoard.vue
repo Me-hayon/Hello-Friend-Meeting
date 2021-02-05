@@ -48,9 +48,43 @@
 <script>
 import axios from 'axios';
 export default {
-  props: ['gno', 'memberStatus'],
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+      var params = new URLSearchParams();
+      params.append('bgno', this.gno);
+      axios
+        .post('getBoardList', params)
+        .then((response) => {
+          this.table = response.data.notNotice;
+          this.tableNotice = response.data.notice;
+          for (var i = 0; i < this.table.length; i++) {
+            this.table[i].writerName = response.data.notNoticeWriter[i];
+          }
+          for (i = 0; i < this.tableNotice.length; i++) {
+            this.tableNotice[i].writerName = response.data.noticeWriter[i];
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   data() {
     return {
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
       table: [],
       tableNotice: [],
     };
