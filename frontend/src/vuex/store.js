@@ -9,6 +9,9 @@ Vue.use(Vuex);
 const state = {
   isHeader: false,
   isFooter: false,
+  vuexGno: { type: Number },
+  vuexUno: { type: Number },
+  vuexMemberStatus: { type: Number }
 };
 
 export default new Vuex.Store({
