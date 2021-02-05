@@ -62,7 +62,13 @@ public class BoardController {
 		Map<String,Object> resultMap=new HashMap<>();
 		Board board = boardRepository.findById(bno).get();
 		resultMap.put("curBoard",board);
-		resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
+		if(userInfoRepository.findById(board.getBwriter()).isPresent())
+			resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
+		else {
+			UserInfo ui=new UserInfo();
+			ui.setUname("(알수없음)");
+			resultMap.put("writer",ui);
+		}
 		return resultMap;
 	}
 	

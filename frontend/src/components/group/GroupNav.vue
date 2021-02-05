@@ -25,7 +25,11 @@
       </v-tab-item>
       <v-tab-item>
         <v-card flat
-          ><GroupMemberList :gno="gno" :memberStatus="memberStatus" />
+          ><GroupMemberList
+            :gno="gno"
+            :memberStatus="memberStatus"
+            @changeProps="change"
+          />
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -49,6 +53,11 @@ export default {
     return {
       tab: null,
     };
+  },
+  methods: {
+    change(ms) {
+      this.memberStatus = ms;
+    },
   },
 };
 </script>

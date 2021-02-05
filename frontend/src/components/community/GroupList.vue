@@ -75,35 +75,35 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   created() {
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
 
-    params.append("email", storage.getItem("user-email"));
+    params.append('email', storage.getItem('user-email'));
     axios
-      .post("http://localhost:8080/getGroupList", params)
+      .post('getGroupList', params)
       .then((response) => {
         this.groups = response.data.groupList;
         for (var i = 0; i < this.groups.length; i++) {
           this.groups[i].members =
-            this.groups[i].guserList.split(" ").length - 1;
+            this.groups[i].guserList.split(' ').length - 1;
         }
 
-        console.log("this is groups");
+        console.log('this is groups');
         console.log(this.groups);
       })
       .catch((error) => {
         console.log(error);
       });
     axios
-      .post("http://localhost:8080/getCategory")
+      .post('getCategory')
       .then((response) => {
         this.category = response.data.list;
 
-        console.log("this is category");
+        console.log('this is category');
         console.log(this.category);
       })
       .catch((error) => {
@@ -115,25 +115,25 @@ export default {
       groupMembers: [],
       groups: [],
       category: [],
-      boundary: "",
-      selectedCategory: "",
-      gname: "",
+      boundary: '',
+      selectedCategory: '',
+      gname: '',
     };
   },
   methods: {
     goToGroupPage(gno) {
-      this.$router.push({ name: "GroupMainPage", params: { gno } });
+      this.$router.push({ name: 'GroupMainPage', params: { gno } });
     },
     makeGroup() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append("email", storage.getItem("user-email"));
-      params.append("gname", this.gname);
-      params.append("gcategory", this.selectedCategory);
-      params.append("gboundary", this.boundary);
+      params.append('email', storage.getItem('user-email'));
+      params.append('gname', this.gname);
+      params.append('gcategory', this.selectedCategory);
+      params.append('gboundary', this.boundary);
 
       axios
-        .post("http://localhost:8080/makeGroup", params)
+        .post('makeGroup', params)
         .then((response) => {
           alert(response.data.data);
         })

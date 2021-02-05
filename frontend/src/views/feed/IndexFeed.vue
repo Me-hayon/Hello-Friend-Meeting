@@ -65,7 +65,7 @@ export default {
     // params.append('email', 'test@gmail.com');
     console.log(params);
     axios
-      .post('http://localhost:8080/getFeeds', params)
+      .post('getFeeds', params)
       .then((response) => {
         console.log(response);
         this.myFeeds = response.data;

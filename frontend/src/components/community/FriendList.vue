@@ -67,7 +67,7 @@ export default {
     params.append('email', this.email);
 
     axios
-      .post('http://localhost:8080/findFriendList', params)
+      .post('findFriendList', params)
       .then((response) => {
         if (response.data.isSuccess) {
           this.friends = response.data.friendList;
@@ -98,7 +98,7 @@ export default {
       var params = new URLSearchParams();
       params.append('email', email);
       axios
-        .post('http://localhost:8080/profile', params)
+        .post('profile', params)
         .then((response) => {
           var friendEmail = response.data['user-email'];
           // console.log(uno);
@@ -112,12 +112,10 @@ export default {
       var params = new URLSearchParams();
       params.append('tel', this.targetTel);
 
-      axios
-        .post('http://localhost:8080/profileByTel', params)
-        .then((response) => {
-          this.isPresent = response.data.isPresent;
-          this.findedFriend = response.data.data;
-        });
+      axios.post('profileByTel', params).then((response) => {
+        this.isPresent = response.data.isPresent;
+        this.findedFriend = response.data.data;
+      });
     },
     addFriend() {
       var params = new URLSearchParams();
@@ -125,7 +123,7 @@ export default {
       params.append('targetTel', this.targetTel);
 
       axios
-        .post('http://localhost:8080/addFriendByTel', params)
+        .post('addFriendByTel', params)
         .then((response) => {
           alert(response.data.data);
         })

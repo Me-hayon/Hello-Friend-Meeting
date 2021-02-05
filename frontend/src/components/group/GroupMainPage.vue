@@ -21,7 +21,7 @@ export default {
     params.append('email', storage.getItem('user-email'));
     params.append('gno', this.gno);
     axios
-      .post('http://localhost:8080/isGroupMember', params)
+      .post('isGroupMember', params)
       .then((response) => {
         this.memberStatus = response.data.memberStatus;
       })

@@ -59,7 +59,7 @@ public class AlarmController {
 		return response;
 	}
 	
-	@GetMapping("readAlarm")
+	@PostMapping("readAlarm")
 	public void readAlarm(@RequestParam(required=true) final int ano) {
 		
 		Alarm alarm=alarmRepository.findByAno(ano);
