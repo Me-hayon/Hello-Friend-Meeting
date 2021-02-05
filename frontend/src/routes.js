@@ -12,7 +12,7 @@ import Message from "@/views/message/Message.vue";
 import ErrorPage from "@/views/Error.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import ChangeAvatar from "@/views/user/ChangeAvatar.vue";
-
+import GroupBoardDetail from "@/components/group/GroupBoardDetail.vue";
 import FriendTest from "@/views/FriendTest.vue";
 
 import GroupMainPage from "@/components/group/GroupMainPage.vue";
@@ -93,6 +93,12 @@ export default [
     path: "/error",
     name: "ErrorPage",
     component: ErrorPage,
+  },
+  {
+    path: "/board/detail",
+    name: "GroupBoardDetail",
+    component: GroupBoardDetail,
+    props: true,
   },
   {
     path: "*",
