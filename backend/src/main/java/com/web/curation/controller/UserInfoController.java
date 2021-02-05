@@ -249,20 +249,23 @@ public class UserInfoController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
 	}
-
-	@PostMapping("/updateProfile")
-	public Object updateProfile(@RequestParam String email, @RequestParam String profileName) {
+	
+	@PutMapping("/changeAvatar")
+	public Object changeAvatar(@RequestParam String email, @RequestParam String profileImg) {
 		Map<String, Object> resultMap = new HashMap<>();
-
 		UserInfo user = userInfoRepository.findByEmail(email);
+		
+		System.out.println(email);
+		System.out.println(profileImg);
+		
 		if (user != null) {
-			user.setUprofileImg(profileName);
+			user.setUprofileImg(profileImg);
 			userInfoRepository.save(user);
-			resultMap.put("changed", profileName);
-			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-		} else {
+			resultMap.put("is-success", true);
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
+		
+		resultMap.put("is-success", false);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
-
 }

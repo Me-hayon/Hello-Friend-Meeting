@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar v-if="$store.state.isHeader" app dark flat>
+  <v-app-bar v-show="$store.getters.getIsHeader" app dark flat>
     <v-spacer></v-spacer>
     <alarm-btn />
   </v-app-bar>
