@@ -6,7 +6,7 @@ import store from './vuex/store';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
-
+import axios from 'axios'
 //fort-awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
@@ -20,7 +20,7 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueRouter);
-
+axios.defaults.baseURL='http://localhost:8080/'
 const router = new VueRouter({
   mode: 'history',
   routes,

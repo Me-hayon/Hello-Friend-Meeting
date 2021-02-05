@@ -38,7 +38,7 @@ export default {
       params.append('password', this.password);
 
       axios
-        .post('http://localhost:8080/delete', params)
+        .post('delete', params)
         .then((response) => {
           if (response.data['is-success']) {
             storage.removeItem('auth-token');

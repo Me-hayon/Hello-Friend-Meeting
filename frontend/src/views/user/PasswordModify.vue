@@ -152,7 +152,7 @@ export default {
               'auth-token': storage.getItem('auth-token'),
             },
           })
-          .post('http://localhost:8080/modify', params)
+          .post('modify', params)
           .then(
             (response) => {
               this.isSubmit = true;

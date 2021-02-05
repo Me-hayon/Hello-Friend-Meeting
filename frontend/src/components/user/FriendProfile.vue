@@ -83,7 +83,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('targetTel', tel);
       axios
-        .post('http://localhost:8080/addFriendByTel', params)
+        .post('addFriendByTel', params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -97,7 +97,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('friendEmail', friendEmail);
       axios
-        .post('http://localhost:8080/cancelRequest', params)
+        .post('cancelRequest', params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -112,7 +112,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('friendEmail', friendEmail);
       axios
-        .post('http://localhost:8080/acceptFriend', params)
+        .post('acceptFriend', params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -126,7 +126,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('friendEmail', friendEmail);
       axios
-        .post('http://localhost:8080/denyFriend', params)
+        .post('denyFriend', params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -140,7 +140,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('friendEmail', friendEmail);
       axios
-        .post('http://localhost:8080/delFriend', params)
+        .post('delFriend', params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -154,7 +154,7 @@ export default {
       params.append('myEmail', storage.getItem('user-email'));
       params.append('friendEmail', this.friendEmail);
       axios
-        .post('http://localhost:8080/isFriend', params)
+        .post('isFriend', params)
         .then((response) => {
           this.friendStatus = response.data;
         })
@@ -171,7 +171,7 @@ export default {
       params.append('mcontent', this.message.mcontent);
 
       axios
-        .post('http://localhost:8080/sendMessage', params)
+        .post('sendMessage', params)
         .then((response) => {
           console.log(response);
           alert('쪽지를 보냈습니다.');
@@ -206,7 +206,7 @@ export default {
     var params = new URLSearchParams();
     params.append('email', this.friendEmail);
     axios
-      .post('http://localhost:8080/profile', params)
+      .post('profile', params)
       .then((response) => {
         this.fname = response.data['user-name'];
         this.tel = response.data['user-tel'];

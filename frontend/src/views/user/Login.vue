@@ -133,7 +133,7 @@ export default {
       params.append('password', this.password);
 
       axios
-        .post('http://localhost:8080/login', params)
+        .post('login', params)
         .then((response) => {
           if (response.data['is-success']) {
             storage.setItem('auth-token', response.data['auth-token']);

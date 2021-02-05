@@ -58,7 +58,7 @@ export default {
           'auth-token': storage.getItem('auth-token'),
         },
       })
-      .post('http://localhost:8080/profile', params)
+      .post('profile', params)
       .then((response) => {
         this.tel = response.data['user-tel'];
         this.uname = response.data['user-name'];

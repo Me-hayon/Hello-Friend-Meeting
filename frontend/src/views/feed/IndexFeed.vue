@@ -35,10 +35,10 @@
 
 <script>
 // import { mapState } from "vuex";
-import "../../components/css/feed/feed-item.scss";
-import "../../components/css/feed/newsfeed.scss";
+import '../../components/css/feed/feed-item.scss';
+import '../../components/css/feed/newsfeed.scss';
 // import FeedItem from '../../components/feed/FeedItem.vue';
-import axios from "axios";
+import axios from 'axios';
 
 const storage = window.sessionStorage;
 export default {
@@ -48,35 +48,35 @@ export default {
     return {
       myFeeds: [
         {
-          ano: "",
-          aurl: "",
-          asummary: "",
-          adate: "",
-          createUser: "",
-          createUserName: "",
-          profileImg: "",
+          ano: '',
+          aurl: '',
+          asummary: '',
+          adate: '',
+          createUser: '',
+          createUserName: '',
+          profileImg: '',
         },
       ],
     };
   },
   created() {
     var params = new URLSearchParams();
-    params.append("email", storage.getItem("user-email"));
+    params.append('email', storage.getItem('user-email'));
     // params.append('email', 'test@gmail.com');
     console.log(params);
     axios
-      .post("http://localhost:8080/getFeeds", params)
+      .post('getFeeds', params)
       .then((response) => {
         console.log(response);
         this.myFeeds = response.data;
       })
       .catch((error) => {
         console.log(error);
-        console.log("error occur");
+        console.log('error occur');
       });
 
-    this.$store.commit("setIsHeader", true);
-    this.$store.commit("setIsFooter", true);
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
   },
 };
 </script>

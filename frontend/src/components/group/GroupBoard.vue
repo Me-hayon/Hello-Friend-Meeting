@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   props: ['gno', 'memberStatus'],
   data() {
@@ -57,9 +57,9 @@ export default {
   },
   created() {
     var params = new URLSearchParams();
-    params.append("bgno", this.gno);
+    params.append('bgno', this.gno);
     axios
-      .post("http://localhost:8080/getBoardList", params)
+      .post('getBoardList', params)
       .then((response) => {
         this.table = response.data.notNotice;
         this.tableNotice = response.data.notice;
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     boardDetail(bno) {
-      this.$router.push({ name: "GroupBoardDetail", params: { bno } });
+      this.$router.push({ name: 'GroupBoardDetail', params: { bno } });
     },
     createArticle() {},
   },

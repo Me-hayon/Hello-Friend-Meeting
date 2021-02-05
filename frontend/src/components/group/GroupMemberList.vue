@@ -49,10 +49,11 @@ export default {
   },
   methods: {
     getUsers() {
+      alert(this.gno);
       var params = new URLSearchParams();
       params.append('gno', this.gno);
       axios
-        .post('http://localhost:8080/getUserListInGroup', params)
+        .post('getUserListInGroup', params)
         .then((response) => {
           this.memberList = response.data.userList;
         })
@@ -60,7 +61,7 @@ export default {
           console.log(error);
         });
       axios
-        .post('http://localhost:8080/getGroupApplier', params)
+        .post('getGroupApplier', params)
         .then((response) => {
           this.applierList = response.data.applierList;
           console.log(this.applierList);
@@ -74,7 +75,7 @@ export default {
       params.append('uno', uno);
       params.append('gno', this.gno);
       axios
-        .post('http://localhost:8080/acceptApplyGroup', params)
+        .post('acceptApplyGroup', params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -88,7 +89,7 @@ export default {
       params.append('uno', uno);
       params.append('gno', this.gno);
       axios
-        .post('http://localhost:8080/denyApplyGroup', params)
+        .post('denyApplyGroup', params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -102,7 +103,7 @@ export default {
       params.append('uno', uno);
       params.append('gno', this.gno);
       axios
-        .post('http://localhost:8080/banishMember', params)
+        .post('banishMember', params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -119,7 +120,7 @@ export default {
         params.append('email', this.email);
         params.append('gno', this.gno);
         axios
-          .post('http://localhost:8080/getoutGroup', params)
+          .post('getoutGroup', params)
           .then((response) => {
             alert(response.data.data);
             this.$router.push('/');
@@ -134,17 +135,18 @@ export default {
       params.append('nextMaster', uno);
       params.append('gno', this.gno);
       axios
-        .post('http://localhost:8080/changeGroupMaster', params)
+        .post('changeGroupMaster', params)
         .then((response) => {
           alert(response.data.data);
           params = new URLSearchParams();
           params.append('email', this.email);
           params.append('gno', this.gno);
           axios
-            .post('http://localhost:8080/isGroupMember', params)
+            .post('isGroupMember', params)
             .then((response) => {
               var memberStatus = response.data.memberStatus;
-              this.$emit('changeProps', memberStatus);
+              var gno = this.gno;
+              this.$emit('changeTwoProps', gno, memberStatus);
             })
             .catch((error) => {
               console.log(error);

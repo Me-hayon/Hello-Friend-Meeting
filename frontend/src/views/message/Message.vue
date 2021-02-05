@@ -95,7 +95,7 @@ export default {
         var params = new URLSearchParams();
         params.append('uno', sender);
         axios
-          .post('http://localhost:8080/findUnameByUno', params)
+          .post('findUnameByUno', params)
           .then((response) => {
             this.msender = response.data.data;
           })
@@ -110,7 +110,7 @@ export default {
 
       params.append('uno', this.msenderUno);
       axios
-        .post('http://localhost:8080/findEmailByUno', params)
+        .post('findEmailByUno', params)
         .then((response) => {
           params = new URLSearchParams();
           params.append('email', storage.getItem('user-email'));
@@ -118,7 +118,7 @@ export default {
           params.append('mtitle', this.newMtitle);
           params.append('mcontent', this.newMcontent);
           axios
-            .post('http://localhost:8080/sendMessage', params)
+            .post('sendMessage', params)
             .then((resp) => {
               console.log(resp);
               this.getMessages();
@@ -138,7 +138,7 @@ export default {
       var params = new URLSearchParams();
       params.append('mno', mno);
       axios
-        .post('http://localhost:8080/delMessage', params)
+        .post('delMessage', params)
         .then((response) => {
           console.log(response);
           this.getMessages();
@@ -154,7 +154,7 @@ export default {
       var storage = window.sessionStorage;
       params.append('email', storage.getItem('user-email'));
       axios
-        .post('http://localhost:8080/getMessages', params)
+        .post('getMessages', params)
         .then((response) => {
           this.messages = response.data;
           console.log(response);

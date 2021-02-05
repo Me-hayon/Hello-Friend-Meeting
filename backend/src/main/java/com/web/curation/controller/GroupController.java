@@ -360,7 +360,7 @@ public class GroupController {
 	}
 
 	@PostMapping("/applyGroup")
-	public Object joinGroup(@RequestParam String email, @RequestParam int gno) {
+	public Object applyGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		UserInfo myInfo = userInfoRepository.findByEmail(email);

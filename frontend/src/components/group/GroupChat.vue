@@ -11,7 +11,7 @@ export default {
   props: ['gno', 'memberStatus'],
   methods: {
     aa() {
-      alert(this.memberStatus);
+      alert(this.memberStatus + ' ' + this.gno);
     },
   },
 };

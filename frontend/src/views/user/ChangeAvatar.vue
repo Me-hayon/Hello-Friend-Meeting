@@ -62,7 +62,7 @@ export default {
     params.append('email', storage.getItem('user-email'));
 
     axios
-      .post('http://localhost:8080/profile', params)
+      .post('profile', params)
       .then((response) => {
         this.myProfileNo = response.data['profile-img'];
       })
@@ -77,7 +77,7 @@ export default {
       params.append('email', storage.getItem('user-email'));
       params.append('profileName', profileName);
       axios
-        .post('http://localhost:8080/updateProfile', params)
+        .post('updateProfile', params)
         .then((response) => {
           this.myProfileNo = response.data['changed'];
         })
