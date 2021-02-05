@@ -4,7 +4,7 @@
       <img
         style="float: left; margin-right: 25px;"
         width="100"
-        src="@/assets/images/profile_default.png"
+        src="@/assets/images/avatars/profile_default.png"
       />
 
       <div>
