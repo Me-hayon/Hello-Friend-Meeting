@@ -48,36 +48,30 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
       menu: false,
       alarms: [],
       userInfo: {},
-      imgPath: '',
+      imgPath: "",
     };
   },
   created() {
+    console.log("ssssssssssss");
+    this.getAlarmsList();
+    setInterval(this.getAlarmsList, 10000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
-    params.append('email', storage.getItem('user-email'));
+    params.append("email", storage.getItem("user-email"));
 
     axios
-      .post('http://localhost:8080/getAlarms', params)
+      .post("http://localhost:8080/profile", params)
       .then((response) => {
-        this.alarms = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post('http://localhost:8080/profile', params)
-      .then((response) => {
-        this.userInfo.uname = response.data['user-name'];
-        this.userInfo.utel = response.data['user-tel'];
-        this.userInfo.uprofileImg = response.data['profile-img'];
+        this.userInfo.uname = response.data["user-name"];
+        this.userInfo.utel = response.data["user-tel"];
+        this.userInfo.uprofileImg = response.data["profile-img"];
         console.log(this.userInfo.uprofileImg);
         this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
       })
@@ -88,26 +82,40 @@ export default {
   methods: {
     goRouting(aurl, myParam, ano) {
       var params = new URLSearchParams();
-      params.append('ano', ano);
-      axios.post('http://localhost:8080/readAlarm', params);
+      params.append("ano", ano);
+      axios.post("http://localhost:8080/readAlarm", params);
 
       params = new URLSearchParams();
-      if (aurl === 'FriendInfo') {
-        params.append('uno', myParam);
+      if (aurl === "FriendInfo") {
+        params.append("uno", myParam);
         axios
-          .post('http://localhost:8080/findEmailByUno', params)
+          .post("http://localhost:8080/findEmailByUno", params)
           .then((response) => {
             var friendEmail = response.data.data;
             this.$router.push({ name: aurl, params: { friendEmail } });
           });
-      } else if (aurl === 'GroupMainPage') {
-        params.append('gno', myParam);
+      } else if (aurl === "GroupMainPage") {
+        params.append("gno", myParam);
         var gno = myParam;
-        this.$router.push({ name: 'aurl', params: { gno } });
+        this.$router.push({ name: aurl, params: { gno } });
       }
       // else if(augb===''){//보드로보낼거
 
       // }
+    },
+    getAlarmsList() {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+      params.append("email", storage.getItem("user-email"));
+
+      axios
+        .post("http://localhost:8080/getAlarms", params)
+        .then((response) => {
+          this.alarms = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
