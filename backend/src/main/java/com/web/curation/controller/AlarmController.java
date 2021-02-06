@@ -20,7 +20,7 @@ import com.web.curation.model.repository.UserInfoRepository;
 
 @RestController
 public class AlarmController {
-	
+	aaa
 	@Autowired
 	AlarmRepository alarmRepository;
 	
