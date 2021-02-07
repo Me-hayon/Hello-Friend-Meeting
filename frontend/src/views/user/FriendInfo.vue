@@ -1,6 +1,6 @@
 <template>
   <b-container style="background-color: rgb(247, 246, 232)">
-    <FriendProfile :friendEmail="friendEmail" />
+    <FriendProfile />
     <div>
       <table
         class="table b-table table-striped table-hover"
@@ -36,56 +36,99 @@
 </template>
 
 <script>
-import FriendProfile from '@/components/user/FriendProfile.vue';
-import axios from 'axios';
+import FriendProfile from "@/components/user/FriendProfile.vue";
+import axios from "axios";
 
 const storage = window.sessionStorage;
 
 export default {
+  computed: {
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+  },
+  watch: {
+    vuexUno(val) {
+      this.uno = val;
+      var params = new URLSearchParams();
+      params.append("uno", this.uno);
+      axios
+        .post("findEmailByUno", params)
+        .then((resp) => {
+          params = new URLSearchParams();
+          this.friendEmail = resp.data.data;
+          params.append("email", this.friendEmail);
+          axios
+            .post("profile", params)
+            .then((response) => {
+              this.fname = response.data["user-name"];
+              this.tel = response.data["user-tel"];
+              this.profileImg = response.data["profile-img"];
+
+              params = new URLSearchParams();
+              params.append("email", this.friendEmail);
+              axios
+                .post("getGroupList", params)
+                .then((response1) => {
+                  this.groups = response1.data.groupList;
+                  for (var i = 0; i < this.groups.length; i++) {
+                    this.groups[i].members =
+                      this.groups[i].guserList.split(" ").length - 1;
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          this.friendCheck();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
   created() {
-    this.$store.commit('setIsHeader', true);
-    this.$store.commit('setIsFooter', true);
+    this.$store.commit("setIsHeader", true);
+    this.$store.commit("setIsFooter", true);
 
     var params = new URLSearchParams();
-    params.append('email', this.friendEmail);
+    params.append("email", this.friendEmail);
     axios
-      .post('getGroupList', params)
+      .post("getGroupList", params)
       .then((response) => {
         this.groups = response.data.groupList;
         for (var i = 0; i < this.groups.length; i++) {
           this.groups[i].members =
-            this.groups[i].guserList.split(' ').length - 1;
+            this.groups[i].guserList.split(" ").length - 1;
         }
       })
       .catch((error) => {
         console.log(error);
       });
   },
-  props: {
-    friendEmail: {
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
       groups: [],
+      friendEmail: "",
     };
   },
   components: { FriendProfile },
   methods: {
     onClickState() {
-      storage.removeItem('auth-token');
-      storage.removeItem('user-email');
-      this.$router.push('/');
+      storage.removeItem("auth-token");
+      storage.removeItem("user-email");
+      this.$router.push("/");
     },
     applyGroup(gno) {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
-      params.append('gno', gno);
+      params.append("email", storage.getItem("user-email"));
+      params.append("gno", gno);
       axios
-        .post('applyGroup', params)
+        .post("applyGroup", params)
         .then((response) => {
           alert(response.data.data);
         })
