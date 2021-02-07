@@ -3,6 +3,7 @@ package com.web.curation.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -33,14 +34,16 @@ public class AlarmController {
 		
 		
 		int uid=userInfoRepository.findByEmail(email).getUno();
-		List<Alarm> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
+		Optional<List<Alarm>> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
 		
 		long notRead=alarmRepository.countByAuserAndAisRead(uid, false);//되는지 확인 필요함.
-		
-		resultMap.put("alarms",list);
+		if(list.isPresent())
+			resultMap.put("alarms",list.get());
+		else
+			resultMap.put("alarms",null);
 		resultMap.put("notReadAlarm",notRead);
 		
-		return list;
+		return resultMap;
 	}
 	
 	@GetMapping("/delAlarm")
@@ -50,7 +53,7 @@ public class AlarmController {
 
 		result.status=true;
 		
-		Alarm alarm=alarmRepository.findByAno(ano);
+		Alarm alarm=alarmRepository.findByAno(ano).get();
 		alarmRepository.delete(alarm);
 		result.data="해당 알림을 삭제했습니다.";
 		
@@ -62,7 +65,7 @@ public class AlarmController {
 	@PostMapping("readAlarm")
 	public void readAlarm(@RequestParam(required=true) final int ano) {
 		
-		Alarm alarm=alarmRepository.findByAno(ano);
+		Alarm alarm=alarmRepository.findByAno(ano).get();
 		alarm.setAisRead(true);
 		alarmRepository.save(alarm);
 	}

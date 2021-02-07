@@ -10,6 +10,13 @@ public class FeedDto {
 	private int createUser;
 	private String createUserName;
 	private String profileImg;
+	private int aurlNo;
+	public int getAurlNo() {
+		return aurlNo;
+	}
+	public void setAurlNo(int aurlNo) {
+		this.aurlNo = aurlNo;
+	}
 	public int getAno() {
 		return ano;
 	}

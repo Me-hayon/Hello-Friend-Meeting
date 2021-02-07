@@ -75,35 +75,17 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   created() {
-    var storage = window.sessionStorage;
-    var params = new URLSearchParams();
-
-    params.append('email', storage.getItem('user-email'));
+    this.getGroupList();
     axios
-      .post('getGroupList', params)
-      .then((response) => {
-        this.groups = response.data.groupList;
-        for (var i = 0; i < this.groups.length; i++) {
-          this.groups[i].members =
-            this.groups[i].guserList.split(' ').length - 1;
-        }
-
-        console.log('this is groups');
-        console.log(this.groups);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .post('getCategory')
+      .post("getCategory")
       .then((response) => {
         this.category = response.data.list;
 
-        console.log('this is category');
+        console.log("this is category");
         console.log(this.category);
       })
       .catch((error) => {
@@ -115,28 +97,50 @@ export default {
       groupMembers: [],
       groups: [],
       category: [],
-      boundary: '',
-      selectedCategory: '',
-      gname: '',
+      boundary: "",
+      selectedCategory: "",
+      gname: "",
     };
   },
   methods: {
+    getGroupList() {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+
+      params.append("email", storage.getItem("user-email"));
+      axios
+        .post("getGroupList", params)
+        .then((response) => {
+          this.groups = response.data.groupList;
+          for (var i = 0; i < this.groups.length; i++) {
+            this.groups[i].members =
+              this.groups[i].guserList.split(" ").length - 1;
+          }
+
+          console.log("this is groups");
+          console.log(this.groups);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     goToGroupPage(gno) {
-      this.$store.commit('setGno', gno);
-      this.$router.push('/group');
+      this.$store.commit("setGno", gno);
+      this.$router.push("/group");
     },
     makeGroup() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
-      params.append('gname', this.gname);
-      params.append('gcategory', this.selectedCategory);
-      params.append('gboundary', this.boundary);
+      params.append("email", storage.getItem("user-email"));
+      params.append("gname", this.gname);
+      params.append("gcategory", this.selectedCategory);
+      params.append("gboundary", this.boundary);
 
       axios
-        .post('makeGroup', params)
+        .post("makeGroup", params)
         .then((response) => {
           alert(response.data.data);
+          this.getGroupList();
         })
         .catch((error) => {
           console.log(error);
