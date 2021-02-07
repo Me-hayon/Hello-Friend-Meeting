@@ -95,24 +95,30 @@ export default {
     this.$store.commit("setIsFooter", true);
 
     var params = new URLSearchParams();
-    params.append("email", this.friendEmail);
-    axios
-      .post("getGroupList", params)
-      .then((response) => {
-        this.groups = response.data.groupList;
-        for (var i = 0; i < this.groups.length; i++) {
-          this.groups[i].members =
-            this.groups[i].guserList.split(" ").length - 1;
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    params.append("uno", this.uno);
+    axios.post("findEmailByUno", params).then((resp) => {
+      this.friendEmail = resp.data.data;
+      params = new URLSearchParams();
+      params.append("email", this.friendEmail);
+      axios
+        .post("getGroupList", params)
+        .then((response) => {
+          this.groups = response.data.groupList;
+          for (var i = 0; i < this.groups.length; i++) {
+            this.groups[i].members =
+              this.groups[i].guserList.split(" ").length - 1;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
   },
   data() {
     return {
       groups: [],
       friendEmail: "",
+      uno: this.$store.getters.getUno,
     };
   },
   components: { FriendProfile },
