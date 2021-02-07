@@ -23,7 +23,7 @@
       <v-icon>mdi-message</v-icon>
     </v-btn>
 
-    <v-btn value="info" to="/user/info">
+    <v-btn value="info" to="/user/profile">
       <span>내정보</span>
       <v-icon>mdi-account-box</v-icon>
     </v-btn>

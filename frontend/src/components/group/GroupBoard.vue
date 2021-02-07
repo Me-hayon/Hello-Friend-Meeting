@@ -36,17 +36,12 @@
         <b-col><b-form-input></b-form-input></b-col>
       </b-row>
       <b-form-textarea rows="8" style="margin-bottom:10px"></b-form-textarea>
-
-      <b-row>
-        <b-col>댓글</b-col>
-        <b-col></b-col>
-      </b-row>
     </b-modal>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   computed: {
     vuexGno() {
@@ -60,9 +55,9 @@ export default {
     vuexGno(val) {
       this.gno = val;
       var params = new URLSearchParams();
-      params.append('bgno', this.gno);
+      params.append("bgno", this.gno);
       axios
-        .post('getBoardList', params)
+        .post("getBoardList", params)
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
@@ -91,9 +86,9 @@ export default {
   },
   created() {
     var params = new URLSearchParams();
-    params.append('bgno', this.gno);
+    params.append("bgno", this.gno);
     axios
-      .post('getBoardList', params)
+      .post("getBoardList", params)
       .then((response) => {
         this.table = response.data.notNotice;
         this.tableNotice = response.data.notice;
@@ -110,7 +105,7 @@ export default {
   },
   methods: {
     boardDetail(bno) {
-      this.$router.push({ name: 'GroupBoardDetail', params: { bno } });
+      this.$router.push({ name: "GroupBoardDetail", params: { bno } });
     },
     createArticle() {},
   },
