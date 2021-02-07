@@ -5,7 +5,7 @@ import FeedMain from '@/views/feed/IndexFeed.vue';
 import Community from '@/views/Community.vue';
 import GroupList from '@/components/community/GroupList.vue';
 import FriendList from '@/components/community/FriendList.vue';
-import UserInfo from '@/views/user/Info.vue';
+import Profile from '@/views/user/Profile.vue';
 import FriendInfo from '@/views/user/FriendInfo.vue';
 import GroupMainPage from '@/components/group/GroupMainPage.vue';
 import GroupBoardDetail from '@/components/group/GroupBoardDetail.vue';
@@ -31,9 +31,9 @@ export default [
     component: Join,
   },
   {
-    path: '/user/info',
-    name: 'Info',
-    component: UserInfo,
+    path: '/user/profile',
+    name: 'Profile',
+    component: Profile,
   },
   {
     path: '/user/friend-info',
