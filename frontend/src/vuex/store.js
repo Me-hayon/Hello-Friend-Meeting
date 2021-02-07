@@ -15,6 +15,7 @@ const state = {
   vuexGno: { type: Number },
   vuexUno: { type: Number },
   vuexMemberStatus: { type: Number },
+  vuexBno: { type: Number }
 };
 function initEvent() {
   return {

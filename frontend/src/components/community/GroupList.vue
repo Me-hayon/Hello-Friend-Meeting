@@ -122,7 +122,8 @@ export default {
   },
   methods: {
     goToGroupPage(gno) {
-      this.$router.push({ name: 'GroupMainPage', params: { gno } });
+      this.$store.commit('setGno', gno);
+      this.$router.push('/group');
     },
     makeGroup() {
       var storage = window.sessionStorage;

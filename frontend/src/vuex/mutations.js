@@ -36,6 +36,9 @@ export default {
     state.dialog = false;
     state.event = initEvent();
   },
+  setBno: function (state, payload) {
+    state.vuexBno=payload
+  }
 };
 
 function initEvent() {
