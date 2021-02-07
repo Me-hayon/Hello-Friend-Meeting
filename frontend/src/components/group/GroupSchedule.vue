@@ -49,19 +49,30 @@
         </v-row>
         <v-sheet height="500">
           <v-calendar
-            ref="calendar"
-            @click:date="open"
+            :event-color="getEventColor"
+            :events="events"
             :start="start"
             :type="type"
+            @click:date="open"
+            @click:event="showEvent"
+            @click:more="moreEvent"
+            @click:time="open"
+            ref="calendar"
+            v-model="start"
           ></v-calendar>
         </v-sheet>
       </v-col>
     </v-row>
+    <Dialog />
   </div>
 </template>
 
 <script>
+import Dialog from "@/components/group/Dialog.vue";
 export default {
+  components: {
+    Dialog,
+    },
   computed: {
     vuexGno() {
       return this.$store.getters.getGno;
@@ -100,11 +111,7 @@ export default {
     console.log(month);
     console.log(startDate);
   },
-  methods: {
-    open(date) {
-      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
-    },
-  },
+
   data() {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
@@ -113,15 +120,19 @@ export default {
       uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
-      type: 'month',
+      type: "month",
       typeOptions: [
-        { text: 'Day', value: 'day' },
-        { text: 'Week', value: 'week' },
-        { text: 'Month', value: 'month' },
+        { text: "Day", value: "day" },
+        { text: "Week", value: "week" },
+        { text: "Month", value: "month" },
       ],
     };
   },
+  methods: {
+    open(date) {
+      console.log(date);
+      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
+    },
+  },
 };
 </script>
-
-<style></style>
