@@ -13,5 +13,8 @@ export default {
   },
   setMemberStatus: function (state, payload) {
     state.vuexMemberStatus = payload;
+  },
+  setBno: function (state, payload) {
+    state.vuexBno=payload
   }
 };

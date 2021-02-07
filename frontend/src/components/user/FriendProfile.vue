@@ -76,7 +76,41 @@ import axios from 'axios';
 const storage = window.sessionStorage;
 
 export default {
-  props: ['friendEmail'],
+  computed: {
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    fStatus() {
+      return this.friendStatus;
+    },
+  },
+  watch: {
+    vuexUno(val) {
+      this.uno = val;
+      var params = new URLSearchParams();
+      params.append('uno', this.uno);
+      axios
+        .post('findEmailByUno', params)
+        .then((resp) => {
+          params = new URLSearchParams();
+          params.append('email', resp.data.data);
+          axios
+            .post('profile', params)
+            .then((response) => {
+              this.fname = response.data['user-name'];
+              this.tel = response.data['user-tel'];
+              this.profileImg = response.data['profile-img'];
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          this.friendCheck();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
   methods: {
     friendRequest(tel) {
       var params = new URLSearchParams();
@@ -189,6 +223,7 @@ export default {
   },
   data() {
     return {
+      uno: this.$store.getters.getUno,
       fname: '',
       email: '',
       tel: '',
@@ -204,23 +239,27 @@ export default {
   },
   created() {
     var params = new URLSearchParams();
-    params.append('email', this.friendEmail);
+    params.append('uno', this.uno);
     axios
-      .post('profile', params)
-      .then((response) => {
-        this.fname = response.data['user-name'];
-        this.tel = response.data['user-tel'];
-        this.profileImg = response.data['profile-img'];
+      .post('findEmailByUno', params)
+      .then((resp) => {
+        params = new URLSearchParams();
+        params.append('email', resp.data.data);
+        axios
+          .post('profile', params)
+          .then((response) => {
+            this.fname = response.data['user-name'];
+            this.tel = response.data['user-tel'];
+            this.profileImg = response.data['profile-img'];
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        this.friendCheck();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-    this.friendCheck();
-  },
-  computed: {
-    fStatus() {
-      return this.friendStatus;
-    },
   },
 };
 </script>
