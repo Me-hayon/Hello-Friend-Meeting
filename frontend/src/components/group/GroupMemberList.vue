@@ -35,9 +35,41 @@
 <script>
 import axios from 'axios';
 export default {
-  props: ['gno', 'memberStatus'],
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+      this.getUsers();
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+      this.getUsers();
+    },
+  },
   data() {
     return {
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      uno: this.$store.getters.getUno,
       memberList: [],
       applierList: [],
       email: window.sessionStorage.getItem('user-email'),
@@ -49,7 +81,6 @@ export default {
   },
   methods: {
     getUsers() {
-      alert(this.gno);
       var params = new URLSearchParams();
       params.append('gno', this.gno);
       axios
@@ -146,7 +177,8 @@ export default {
             .then((response) => {
               var memberStatus = response.data.memberStatus;
               var gno = this.gno;
-              this.$emit('changeTwoProps', gno, memberStatus);
+              this.$store.commit('setGno', gno);
+              this.$store.commit('setMemberStatus', memberStatus);
             })
             .catch((error) => {
               console.log(error);

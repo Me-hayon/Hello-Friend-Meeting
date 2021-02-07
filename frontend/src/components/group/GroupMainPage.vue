@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GroupNav :gno="gno" :memberStatus="memberStatus" />
+    <GroupNav />
   </div>
 </template>
 
@@ -8,7 +8,34 @@
 import GroupNav from '@/components/group/GroupNav.vue';
 import axios from 'axios';
 export default {
-  props: ['gno'],
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   components: {
     GroupNav,
   },
@@ -31,7 +58,9 @@ export default {
   },
   data() {
     return {
-      memberStatus: '',
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      uno: this.$store.getters.getUno,
     };
   },
 };

@@ -62,6 +62,34 @@
 
 <script>
 export default {
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   created() {
     const today = new Date();
     console.log(today);
@@ -79,6 +107,10 @@ export default {
   },
   data() {
     return {
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      bno: this.$store.getters.getBno,
+      uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
       type: 'month',
@@ -89,7 +121,6 @@ export default {
       ],
     };
   },
-  props: ['gno', 'memberStatus'],
 };
 </script>
 

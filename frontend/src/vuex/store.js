@@ -11,7 +11,8 @@ const state = {
   isFooter: false,
   vuexGno: { type: Number },
   vuexUno: { type: Number },
-  vuexMemberStatus: { type: Number }
+  vuexMemberStatus: { type: Number },
+  vuexBno: { type: Number }
 };
 
 export default new Vuex.Store({
