@@ -105,7 +105,8 @@ public class BoardController {
 			int curUno=Integer.parseInt(uno);
 			Alarm alarm=new Alarm();
 			alarm.setAtype(1);
-			alarm.setCreateUser(board.getBno());
+			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(board.getBno());
 			alarm.setAurl("#");
 			alarm.setAuser(curUno);
 			alarm.setAsummary(asummary);

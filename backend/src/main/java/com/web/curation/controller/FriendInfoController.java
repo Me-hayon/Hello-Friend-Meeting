@@ -91,6 +91,7 @@ public class FriendInfoController {
 			alarm.setAurl("FriendInfo");
 			alarm.setAuser(friendId);
 			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(myInfo.getUno());
 			System.out.println(alarm);
 			alarmRepository.save(alarm);
 		}

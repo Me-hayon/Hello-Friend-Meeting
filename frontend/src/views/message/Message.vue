@@ -65,20 +65,20 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  props: ['uno'],
+  props: ["uno"],
   data() {
     return {
       messages: Array,
       modalShow: false,
-      mtitle: '',
-      mcontent: '',
-      msender: '',
-      msenderUno: '',
-      mno: '',
-      newMtitle: '',
-      newMcontent: '',
+      mtitle: "",
+      mcontent: "",
+      msender: "",
+      msenderUno: "",
+      mno: "",
+      newMtitle: "",
+      newMcontent: "",
     };
   },
   created() {
@@ -93,9 +93,9 @@ export default {
         this.msenderUno = sender;
         this.mno = mno;
         var params = new URLSearchParams();
-        params.append('uno', sender);
+        params.append("uno", sender);
         axios
-          .post('findUnameByUno', params)
+          .post("findUnameByUno", params)
           .then((response) => {
             this.msender = response.data.data;
           })
@@ -108,23 +108,32 @@ export default {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
 
-      params.append('uno', this.msenderUno);
+      params.append("uno", this.msenderUno);
+      if (this.newMtitle === "") {
+        alert("제목을 입력해주세요.");
+        return;
+      }
+
+      if (this.newMcontent === "") {
+        alert("내용을 입력해주세요.");
+        return;
+      }
       axios
-        .post('findEmailByUno', params)
+        .post("findEmailByUno", params)
         .then((response) => {
           params = new URLSearchParams();
-          params.append('email', storage.getItem('user-email'));
-          params.append('friendEmail', response.data.data);
-          params.append('mtitle', this.newMtitle);
-          params.append('mcontent', this.newMcontent);
+          params.append("email", storage.getItem("user-email"));
+          params.append("friendEmail", response.data.data);
+          params.append("mtitle", this.newMtitle);
+          params.append("mcontent", this.newMcontent);
           axios
-            .post('sendMessage', params)
+            .post("sendMessage", params)
             .then((resp) => {
               console.log(resp);
               this.getMessages();
-              alert('쪽지를 보냈습니다.');
-              this.newMcontent = '';
-              this.newMtitle = '';
+              alert("쪽지를 보냈습니다.");
+              this.newMcontent = "";
+              this.newMtitle = "";
             })
             .catch((err) => {
               console.log(err);
@@ -136,13 +145,13 @@ export default {
     },
     delMessage(mno) {
       var params = new URLSearchParams();
-      params.append('mno', mno);
+      params.append("mno", mno);
       axios
-        .post('delMessage', params)
+        .post("delMessage", params)
         .then((response) => {
           console.log(response);
           this.getMessages();
-          alert('쪽지를 삭제했습니다.');
+          alert("쪽지를 삭제했습니다.");
           this.modalShow = !this.modalShow;
         })
         .catch((error) => {
@@ -152,9 +161,9 @@ export default {
     getMessages() {
       var params = new URLSearchParams();
       var storage = window.sessionStorage;
-      params.append('email', storage.getItem('user-email'));
+      params.append("email", storage.getItem("user-email"));
       axios
-        .post('getMessages', params)
+        .post("getMessages", params)
         .then((response) => {
           this.messages = response.data;
           console.log(response);
