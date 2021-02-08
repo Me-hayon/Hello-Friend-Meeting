@@ -74,7 +74,7 @@
 import axios from 'axios';
 
 const storage = window.sessionStorage;
-
+export default {
   methods: {
     getImage() {
       const min = 550;
