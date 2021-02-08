@@ -47,6 +47,12 @@ export default {
   // props: ['keyword'],
 
   methods: {
+    getImage() {
+      const min = 550;
+      const max = 560;
+
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
     goRouting(aurl, myParam) {
       var params = new URLSearchParams();
       if (aurl === 'FriendInfo') {
@@ -99,6 +105,7 @@ export default {
           profileImg: '',
         },
       ],
+      myName: 'Hana',
     };
   },
   created() {
