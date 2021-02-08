@@ -13,6 +13,24 @@
         <p style="margin-bottom: 5px;">
           <strong>📧 {{ friendEmail }}</strong>
         </p>
+        <p>
+          <b-button v-b-modal.modal-1>쪽지보내기</b-button>
+
+          <b-modal
+            id="modal-1"
+            title="쪽지보내기"
+            @ok="sendMessage"
+            @hide="resetDatas"
+          >
+            제목 : <input type="text" v-model="message.mtitle" />
+            <hr />
+            <b-form-textarea
+              id="textarea-rows"
+              rows="8"
+              v-model="message.mcontent"
+            ></b-form-textarea>
+          </b-modal>
+        </p>
       </div>
     </div>
     <b-button
@@ -50,25 +68,56 @@
       @click="friendDelete(friendEmail)"
       >친구 삭제</b-button
     >
-    <input type="text" placeholder="title" v-model="message.mtitle" />
-    <input type="text" placeholder="content" v-model="message.mcontent" />
-    <button @click="sendMessage">send</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 const storage = window.sessionStorage;
 
 export default {
-  props: ['friendEmail'],
+  computed: {
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    fStatus() {
+      return this.friendStatus;
+    },
+  },
+  watch: {
+    vuexUno(val) {
+      this.uno = val;
+      var params = new URLSearchParams();
+      params.append("uno", this.uno);
+      axios
+        .post("findEmailByUno", params)
+        .then((resp) => {
+          params = new URLSearchParams();
+          params.append("email", resp.data.data);
+          axios
+            .post("profile", params)
+            .then((response) => {
+              this.fname = response.data["user-name"];
+              this.tel = response.data["user-tel"];
+              this.profileImg = response.data["profile-img"];
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          this.friendCheck();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
   methods: {
     friendRequest(tel) {
       var params = new URLSearchParams();
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('targetTel', tel);
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("targetTel", tel);
       axios
-        .post('http://localhost:8080/addFriendByTel', params)
+        .post("addFriendByTel", params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -79,10 +128,10 @@ export default {
     },
     friendCancel(friendEmail) {
       var params = new URLSearchParams();
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('friendEmail', friendEmail);
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("friendEmail", friendEmail);
       axios
-        .post('http://localhost:8080/cancelRequest', params)
+        .post("cancelRequest", params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -93,11 +142,11 @@ export default {
     },
     friendAccept(friendEmail) {
       var params = new URLSearchParams();
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('friendEmail', friendEmail);
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("friendEmail", friendEmail);
       axios
-        .post('http://localhost:8080/acceptFriend', params)
+        .post("acceptFriend", params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -108,10 +157,10 @@ export default {
     },
     friendDeny(friendEmail) {
       var params = new URLSearchParams();
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('friendEmail', friendEmail);
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("friendEmail", friendEmail);
       axios
-        .post('http://localhost:8080/denyFriend', params)
+        .post("denyFriend", params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -122,10 +171,10 @@ export default {
     },
     friendDelete(friendEmail) {
       var params = new URLSearchParams();
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('friendEmail', friendEmail);
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("friendEmail", friendEmail);
       axios
-        .post('http://localhost:8080/delFriend', params)
+        .post("delFriend", params)
         .then((response) => {
           alert(response.data.data);
           this.friendCheck();
@@ -136,10 +185,10 @@ export default {
     },
     friendCheck() {
       var params = new URLSearchParams();
-      params.append('myEmail', storage.getItem('user-email'));
-      params.append('friendEmail', this.friendEmail);
+      params.append("myEmail", storage.getItem("user-email"));
+      params.append("friendEmail", this.friendEmail);
       axios
-        .post('http://localhost:8080/isFriend', params)
+        .post("isFriend", params)
         .then((response) => {
           this.friendStatus = response.data;
         })
@@ -150,58 +199,78 @@ export default {
     sendMessage() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
-      params.append('friendEmail', this.friendEmail);
-      params.append('mtitle', this.message.mtitle);
-      params.append('mcontent', this.message.mcontent);
+      params.append("email", storage.getItem("user-email"));
+      params.append("friendEmail", this.friendEmail);
+      params.append("mtitle", this.message.mtitle);
+      params.append("mcontent", this.message.mcontent);
 
+      if (this.message.mtitle === "") {
+        alert("제목을 입력해주세요.");
+        return;
+      }
+
+      if (this.message.mcontent === "") {
+        alert("내용을 입력해주세요.");
+        return;
+      }
       axios
-        .post('http://localhost:8080/sendMessage', params)
+        .post("sendMessage", params)
         .then((response) => {
           console.log(response);
-          alert('쪽지를 보냈습니다.');
-          this.message.mtitle = '';
-          this.message.mcontent = '';
+          alert("쪽지를 보냈습니다.");
+          this.message.mtitle = "";
+          this.message.mcontent = "";
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    resetDatas() {
+      this.message.mtitle = "";
+      this.message.mcontent = "";
+    },
   },
   data() {
     return {
-      fname: '',
-      email: '',
-      tel: '',
+      uno: this.$store.getters.getUno,
+      fname: "",
+      email: "",
+      friendEmail: "",
+      tel: "",
       friendStatus: { type: Number, default: 4 },
-      profileImg: '',
+      profileImg: "",
       message: {
         msender: { type: Number },
         mreceiver: { type: Number },
-        mtitle: '',
-        mcontent: '',
+        mtitle: "",
+        mcontent: "",
       },
     };
   },
   created() {
     var params = new URLSearchParams();
-    params.append('email', this.friendEmail);
+    params.append("uno", this.uno);
     axios
-      .post('http://localhost:8080/profile', params)
-      .then((response) => {
-        this.fname = response.data['user-name'];
-        this.tel = response.data['user-tel'];
-        this.profileImg = response.data['profile-img'];
+      .post("findEmailByUno", params)
+      .then((resp) => {
+        params = new URLSearchParams();
+        this.friendEmail = resp.data.data;
+        params.append("email", this.friendEmail);
+        axios
+          .post("profile", params)
+          .then((response) => {
+            this.fname = response.data["user-name"];
+            this.tel = response.data["user-tel"];
+            this.profileImg = response.data["profile-img"];
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        this.friendCheck();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-    this.friendCheck();
-  },
-  computed: {
-    fStatus() {
-      return this.friendStatus;
-    },
   },
 };
 </script>

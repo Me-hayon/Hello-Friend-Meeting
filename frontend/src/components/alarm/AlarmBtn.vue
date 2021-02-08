@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
@@ -82,12 +82,14 @@ export default {
     };
   },
   created() {
+    this.getAlarmsList();
+    setInterval(this.getAlarmsList, 10000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
-    params.append('email', storage.getItem('user-email'));
+    params.append("email", storage.getItem("user-email"));
 
     axios
-      .post('http://localhost:8080/getAlarms', params)
+      .post("profile", params)
       .then((response) => {
         this.alarms = response.data;
         this.alarmLen = response.data.length;
@@ -110,14 +112,47 @@ export default {
       });
   },
   methods: {
-    goRouting(aurl, auno) {
+    goRouting(aurl, myParam, ano) {
       var params = new URLSearchParams();
-      params.append('uno', auno);
+      params.append("ano", ano);
+      axios.post("readAlarm", params);
+
+      params = new URLSearchParams();
+      if (aurl === "FriendInfo") {
+        this.$store.commit("setUno", myParam);
+        this.$router.push("/user/friend-info").catch(() => {});
+      } else if (aurl === "GroupMainPage") {
+        var gno = myParam;
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        params.append("gno", gno);
+        axios
+          .post("isGroupMember", params)
+          .then((response) => {
+            this.$store.commit("setGno", gno);
+            this.$store.commit("setMemberStatus", response.data.memberStatus);
+            this.$router.push("/group").catch(() => {});
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      // else if(aurl===''){//보드로보낼거
+
+      // }
+    },
+    getAlarmsList() {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+      params.append("email", storage.getItem("user-email"));
+
       axios
-        .post('http://localhost:8080/findEmailByUno', params)
+        .post("getAlarms", params)
         .then((response) => {
-          var friendEmail = response.data.data;
-          this.$router.push({ name: aurl, params: { friendEmail } });
+          this.alarms = response.data.alarms;
+          console.log(this.alarms);
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     delAlarm(ano) {

@@ -138,6 +138,7 @@ public class UserInfoController {
 			resultMap.put("user-name", user.getUname());
 			resultMap.put("user-email", user.getEmail());
 			resultMap.put("profile-img", user.getUprofileImg());
+			resultMap.put("user-uno",user.getUno());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		} else {
 			resultMap.put("user-tel", "앗! 전화번호를 불러올 수 없어요.");
@@ -184,6 +185,25 @@ public class UserInfoController {
 		
 	}
 
+	@PostMapping("/findUnameByUno")
+	public Object findUnameByUno(@RequestParam int uno) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		UserInfo user = null;
+		if(userInfoRepository.findById(uno).isPresent()) {
+			user=userInfoRepository.findById(uno).get();
+			resultMap.put("isPresent",true);
+		}
+		else {
+			resultMap.put("data","해당하는 사용자가 없습니다.");
+			resultMap.put("isPresent",false);
+			return resultMap;
+		}
+		resultMap.put("data",user.getUname());
+		return resultMap;
+		
+	}
+	
 	/////////////////////////////////// 비밀번호 변경
 
 	@PostMapping("/modify")
@@ -230,20 +250,23 @@ public class UserInfoController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
 	}
-
-	@PostMapping("/updateProfile")
-	public Object updateProfile(@RequestParam String email, @RequestParam String profileName) {
+	
+	@PutMapping("/changeAvatar")
+	public Object changeAvatar(@RequestParam String email, @RequestParam String profileImg) {
 		Map<String, Object> resultMap = new HashMap<>();
-
 		UserInfo user = userInfoRepository.findByEmail(email);
+		
+		System.out.println(email);
+		System.out.println(profileImg);
+		
 		if (user != null) {
-			user.setUprofileImg(profileName);
+			user.setUprofileImg(profileImg);
 			userInfoRepository.save(user);
-			resultMap.put("changed", profileName);
-			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-		} else {
+			resultMap.put("is-success", true);
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
+		
+		resultMap.put("is-success", false);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
-
 }

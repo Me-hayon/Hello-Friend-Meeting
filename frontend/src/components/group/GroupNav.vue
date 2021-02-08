@@ -9,20 +9,16 @@
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <v-card flat> <GroupBoard :gno="gno" :isGmaster="isGmaster"/></v-card>
+        <v-card flat> <GroupBoard /></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat>
-          <GroupSchedule :gno="gno" :isGmaster="isGmaster"
-        /></v-card>
+        <v-card flat> <GroupSchedule /></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupChat :gno="gno" :isGmaster="isGmaster" /> </v-card>
+        <v-card flat><GroupChat /> </v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat
-          ><GroupMemberList :gno="gno" :isGmaster="isGmaster" />
-        </v-card>
+        <v-card flat><GroupMemberList /> </v-card>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
@@ -33,7 +29,34 @@ import GroupSchedule from '@/components/group/GroupSchedule.vue';
 import GroupChat from '@/components/group/GroupChat.vue';
 import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
-  props: ['gno', 'isGmaster'],
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   components: {
     GroupBoard,
     GroupSchedule,
@@ -43,8 +66,17 @@ export default {
 
   data() {
     return {
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      uno: this.$store.getters.getUno,
+      bno: this.$store.getters.getBno,
       tab: null,
     };
+  },
+  methods: {
+    change(ms) {
+      this.memberStatus = ms;
+    },
   },
 };
 </script>

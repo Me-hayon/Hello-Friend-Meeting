@@ -49,7 +49,7 @@ export default {
     var params = new URLSearchParams();
     params.append('email', this.friendEmail);
     axios
-      .post('http://localhost:8080/getGroupList', params)
+      .post('getGroupList', params)
       .then((response) => {
         this.groups = response.data.groupList;
         for (var i = 0; i < this.groups.length; i++) {
@@ -85,7 +85,7 @@ export default {
       params.append('email', storage.getItem('user-email'));
       params.append('gno', gno);
       axios
-        .post('http://localhost:8080/applyGroup', params)
+        .post('applyGroup', params)
         .then((response) => {
           alert(response.data.data);
         })

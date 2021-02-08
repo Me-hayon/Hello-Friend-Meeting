@@ -24,6 +24,7 @@ public class Alarm {
 	private int ano;
 	
 	private String aurl;
+	private int aurlNo;
 	private String asummary;
 	private int atype;//0:알림, 1:피드
 	//알림 : 내 게시글에 달린 댓글, 친구요청, 그룹초대, 그룹 가입 신청

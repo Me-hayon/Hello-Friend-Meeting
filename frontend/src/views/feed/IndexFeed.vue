@@ -67,7 +67,14 @@
 </template>
 
 <script>
-import axios from 'axios';
+
+// import { mapState } from "vuex";
+// import "../../components/css/feed/feed-item.scss";
+// import "../../components/css/feed/newsfeed.scss";
+// import FeedItem from '../../components/feed/FeedItem.vue';
+import axios from "axios";
+
+
 const storage = window.sessionStorage;
 
 export default {
@@ -76,7 +83,7 @@ export default {
     this.$store.commit('setIsFooter', true);
 
     var params = new URLSearchParams();
-    params.append('email', storage.getItem('user-email'));
+    params.append("email", storage.getItem("user-email"));
     // params.append('email', 'test@gmail.com');
     console.log(params);
     axios
@@ -87,16 +94,16 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-      });
+      }
     axios
-      .post('http://localhost:8080/getFeeds', params)
+      .post("getFeeds", params)
       .then((response) => {
         console.log(response);
-        this.myFeeds = response.data;
+        this.myFeeds = response.data.list;
       })
       .catch((error) => {
         console.log(error);
-        console.log('error occur');
+        console.log("error occur");
       });
   },
   data: () => ({
@@ -112,22 +119,6 @@ export default {
       },
     ],
     myName: 'Hana',
-    // types: ['Places to Be', 'Places to See'],
-    // cards: ['Good', 'Best', 'Finest'],
-    // socials: [
-    //   {
-    //     icon: 'mdi-facebook',
-    //     color: 'indigo',
-    //   },
-    //   {
-    //     icon: 'mdi-linkedin',
-    //     color: 'cyan darken-1',
-    //   },
-    //   {
-    //     icon: 'mdi-instagram',
-    //     color: 'red lighten-3',
-    //   },
-    // ],
   }),
 
   methods: {
@@ -147,6 +138,7 @@ export default {
 
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
+    
   },
 };
 </script>

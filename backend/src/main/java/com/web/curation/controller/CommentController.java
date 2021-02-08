@@ -72,6 +72,7 @@ public class CommentController {
 		Alarm alarm=new Alarm();
 		alarm.setAurl("#");
 		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAurlNo(bno);
 		alarm.setAtype(0);
 		alarm.setAuser(alarmTargetInfo.getUno());
 		

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GroupNav :gno="gno" :isGmaster="isGmaster" />
+    <GroupNav />
   </div>
 </template>
 
@@ -8,7 +8,34 @@
 import GroupNav from '@/components/group/GroupNav.vue';
 import axios from 'axios';
 export default {
-  props: ['gno'],
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   components: {
     GroupNav,
   },
@@ -21,9 +48,9 @@ export default {
     params.append('email', storage.getItem('user-email'));
     params.append('gno', this.gno);
     axios
-      .post('http://localhost:8080/isGroupMaster', params)
+      .post('isGroupMember', params)
       .then((response) => {
-        this.isGmaster = response.data.isGmaster;
+        this.memberStatus = response.data.memberStatus;
       })
       .catch((error) => {
         console.log(error);
@@ -31,7 +58,9 @@ export default {
   },
   data() {
     return {
-      isGmaster: '',
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      uno: this.$store.getters.getUno,
     };
   },
 };

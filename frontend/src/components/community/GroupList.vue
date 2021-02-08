@@ -23,7 +23,9 @@
     <b-modal id="modal-center" centered title="그룹생성" @ok="makeGroup">
       <b-row style="margin-bottom:25px">
         <b-col style="margin-top:10px">그룹명</b-col>
-        <b-col><input v-model="gname" type="text" class="groupName"/></b-col>
+        <b-col
+          ><b-form-input v-model="gname" type="text" class="groupName"
+        /></b-col>
       </b-row>
       <b-row style="margin-bottom:25px">
         <b-col>카테고리</b-col>
@@ -73,35 +75,17 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   created() {
-    var storage = window.sessionStorage;
-    var params = new URLSearchParams();
-
-    params.append('email', storage.getItem('user-email'));
+    this.getGroupList();
     axios
-      .post('http://localhost:8080/getGroupList', params)
-      .then((response) => {
-        this.groups = response.data.groupList;
-        for (var i = 0; i < this.groups.length; i++) {
-          this.groups[i].members =
-            this.groups[i].guserList.split(' ').length - 1;
-        }
-
-        console.log('this is groups');
-        console.log(this.groups);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .post('http://localhost:8080/getCategory')
+      .post("getCategory")
       .then((response) => {
         this.category = response.data.list;
 
-        console.log('this is category');
+        console.log("this is category");
         console.log(this.category);
       })
       .catch((error) => {
@@ -113,27 +97,50 @@ export default {
       groupMembers: [],
       groups: [],
       category: [],
-      boundary: '',
-      selectedCategory: '',
-      gname: '',
+      boundary: "",
+      selectedCategory: "",
+      gname: "",
     };
   },
   methods: {
+    getGroupList() {
+      var storage = window.sessionStorage;
+      var params = new URLSearchParams();
+
+      params.append("email", storage.getItem("user-email"));
+      axios
+        .post("getGroupList", params)
+        .then((response) => {
+          this.groups = response.data.groupList;
+          for (var i = 0; i < this.groups.length; i++) {
+            this.groups[i].members =
+              this.groups[i].guserList.split(" ").length - 1;
+          }
+
+          console.log("this is groups");
+          console.log(this.groups);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     goToGroupPage(gno) {
-      this.$router.push({ name: 'GroupMainPage', params: { gno } });
+      this.$store.commit("setGno", gno);
+      this.$router.push("/group");
     },
     makeGroup() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
-      params.append('gname', this.gname);
-      params.append('gcategory', this.selectedCategory);
-      params.append('gboundary', this.boundary);
+      params.append("email", storage.getItem("user-email"));
+      params.append("gname", this.gname);
+      params.append("gcategory", this.selectedCategory);
+      params.append("gboundary", this.boundary);
 
       axios
-        .post('http://localhost:8080/makeGroup', params)
+        .post("makeGroup", params)
         .then((response) => {
           alert(response.data.data);
+          this.getGroupList();
         })
         .catch((error) => {
           console.log(error);

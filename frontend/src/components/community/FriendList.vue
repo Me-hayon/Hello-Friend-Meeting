@@ -47,7 +47,16 @@
             <p>
               <strong>📞 {{ findedFriend.tel }}</strong>
             </p>
-            <button @click="addFriend">추가</button>
+            <button @click="addFriend" v-if="isFriend === 0">추가</button>
+            <button v-if="isFriend === 1" disabled>
+              이미 요청을 보낸 사용자입니다.
+            </button>
+            <button v-if="isFriend === 2" @click="acceptRequest">
+              친구요청 수락
+            </button>
+            <button v-if="isFriend === 3" disabled>
+              이미 친구인 사용자입니다.
+            </button>
           </div>
           <div v-if="!this.isPresent">
             {{ findedFriend }}
@@ -59,21 +68,21 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   created() {
     var params = new URLSearchParams();
-    params.append('email', this.email);
+    params.append("email", this.email);
 
     axios
-      .post('http://localhost:8080/findFriendList', params)
+      .post("findFriendList", params)
       .then((response) => {
         if (response.data.isSuccess) {
           this.friends = response.data.friendList;
           console.log(this.friends);
         } else {
-          console.log('친구가 존재하지 않습니다.');
+          console.log("친구가 존재하지 않습니다.");
         }
       })
       .catch((error) => {
@@ -82,27 +91,31 @@ export default {
   },
   data() {
     return {
-      email: window.sessionStorage.getItem('user-email'),
+      email: window.sessionStorage.getItem("user-email"),
       friends: [],
       findedFriend: null,
-      targetTel: '',
+      targetTel: "",
       isPresent: null,
+      isFriend: 4,
     };
   },
   methods: {
     resetInput() {
       this.isPresent = null;
-      this.targetTel = '';
+      this.targetTel = "";
+      this.findedFriend = null;
+      this.isFriend = 4;
     },
     toFriendProfile(email) {
       var params = new URLSearchParams();
-      params.append('email', email);
+      params.append("email", email);
       axios
-        .post('http://localhost:8080/profile', params)
+        .post("profile", params)
         .then((response) => {
-          var friendEmail = response.data['user-email'];
+          var uno = response.data["user-uno"];
           // console.log(uno);
-          this.$router.push({ name: 'FriendInfo', params: { friendEmail } });
+          this.$store.commit("setUno", uno);
+          this.$router.push("/user/friend-info");
         })
         .catch((error) => {
           console.log(error);
@@ -110,28 +123,51 @@ export default {
     },
     findFriend() {
       var params = new URLSearchParams();
-      params.append('tel', this.targetTel);
+      params.append("tel", this.targetTel);
 
-      axios
-        .post('http://localhost:8080/profileByTel', params)
-        .then((response) => {
-          this.isPresent = response.data.isPresent;
-          this.findedFriend = response.data.data;
+      axios.post("profileByTel", params).then((response) => {
+        this.isPresent = response.data.isPresent;
+        this.findedFriend = response.data.data;
+
+        if (
+          window.sessionStorage.getItem("user-email") ===
+          this.findedFriend.email
+        ) {
+          this.isPresent = false;
+          this.findedFriend = "난데??";
+          return;
+        }
+
+        params = new URLSearchParams();
+        params.append("myEmail", window.sessionStorage.getItem("user-email"));
+        params.append("friendEmail", this.findedFriend.email);
+
+        axios.post("isFriend", params).then((resp) => {
+          this.isFriend = resp.data;
         });
+      });
     },
     addFriend() {
       var params = new URLSearchParams();
-      params.append('myEmail', this.email);
-      params.append('targetTel', this.targetTel);
+      params.append("myEmail", this.email);
+      params.append("targetTel", this.targetTel);
 
       axios
-        .post('http://localhost:8080/addFriendByTel', params)
+        .post("addFriendByTel", params)
         .then((response) => {
           alert(response.data.data);
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    acceptRequest() {
+      var params = new URLSearchParams();
+      params.append("myEmail", window.sessionStorage.getItem("user-email"));
+      params.append("friendEmail", this.findedFriend.email);
+      axios.post("acceptFriend", params).then((response) => {
+        alert(response.data);
+      });
     },
   },
 };

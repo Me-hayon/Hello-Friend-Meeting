@@ -49,21 +49,59 @@
         </v-row>
         <v-sheet height="500">
           <v-calendar
-            ref="calendar"
-            @click:date="open"
+            :event-color="getEventColor"
+            :events="events"
             :start="start"
             :type="type"
+            @click:date="open"
+            @click:event="showEvent"
+            @click:more="moreEvent"
+            @click:time="open"
+            ref="calendar"
+            v-model="start"
           ></v-calendar>
         </v-sheet>
       </v-col>
     </v-row>
+    <Dialog />
   </div>
 </template>
 
 <script>
+import Dialog from "@/components/group/Dialog.vue";
 export default {
+  components: {
+    Dialog,
+    },
+  computed: {
+    vuexGno() {
+      return this.$store.getters.getGno;
+    },
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+    vuexBno() {
+      return this.$store.getters.getBno;
+    },
+    vuexMemberStatus() {
+      return this.$store.getters.getMemberStatus;
+    },
+  },
+  watch: {
+    vuexGno(val) {
+      this.gno = val;
+    },
+    vuexUno(val) {
+      this.uno = val;
+    },
+    vuexBno(val) {
+      this.bno = val;
+    },
+    vuexMemberStatus(val) {
+      this.memberStatus = val;
+    },
+  },
   created() {
-    console.log(this.isGmaster);
     const today = new Date();
     console.log(today);
     const year = today.getFullYear();
@@ -73,25 +111,28 @@ export default {
     console.log(month);
     console.log(startDate);
   },
-  methods: {
-    open(date) {
-      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
-    },
-  },
+
   data() {
     return {
+      memberStatus: this.$store.getters.getMemberStatus,
+      gno: this.$store.getters.getGno,
+      bno: this.$store.getters.getBno,
+      uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
-      type: 'month',
+      type: "month",
       typeOptions: [
-        { text: 'Day', value: 'day' },
-        { text: 'Week', value: 'week' },
-        { text: 'Month', value: 'month' },
+        { text: "Day", value: "day" },
+        { text: "Week", value: "week" },
+        { text: "Month", value: "month" },
       ],
     };
   },
-  props: ['gno', 'isGmaster'],
+  methods: {
+    open(date) {
+      console.log(date);
+      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
+    },
+  },
 };
 </script>
-
-<style></style>

@@ -247,7 +247,7 @@ export default {
         alert('제대로 입력한 게 맞는 지 확인해주실래요 :(');
       } else {
         axios
-          .post('http://localhost:8080/authTel', params)
+          .post('authTel', params)
           .then((response) => {
             if (response.data['is-success']) {
               alert('인증번호 발송 성공!');
@@ -278,7 +278,7 @@ export default {
         this.isSubmit = false;
 
         axios
-          .post('http://localhost:8080/join', userInfo)
+          .post('join', userInfo)
           .then((resp) => {
             alert('회원가입이 완료되었습니다.');
             this.$router.push('/');

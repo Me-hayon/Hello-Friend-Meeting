@@ -52,20 +52,46 @@ public class GroupController {
 	
 	@Autowired
 	CategoryRepository categoryRepository;
-
-	@PostMapping("/isGroupMaster")
-	public Object isGroupMaster(@RequestParam String email,@RequestParam int gno) {
+	
+	@PostMapping("/isGroupMember")//0:미가입, 1:가입신청상태, 2:초대미수락상태, 3:그룹원, 4:그룹장
+	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
 		UserInfo userInfo=userInfoRepository.findByEmail(email);
 		
-		if(groupInfoRepository.findByGnoAndGmaster(gno, userInfo.getUno()).isPresent())
-			resultMap.put("isGmaster",true);
+		if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent()) {
+			if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).get().isAisApply())
+				resultMap.put("memberStatus",1);
+			else
+				resultMap.put("memberStatus",2);
+		}
 		
+		else if(groupInfoRepository.findByGnoAndGmaster(gno, userInfo.getUno()).isPresent())
+			resultMap.put("memberStatus",4);
+		else if(groupParticipantRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent())
+			resultMap.put("memberStatus",3);
 		else
-			resultMap.put("isGmaster",false);
+			resultMap.put("memberStatus",0);
 		
 		
+		return resultMap;
+	}
+	
+	@PostMapping("/getGroupApplier")
+	public Object getGroupApplier(@RequestParam int gno) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		Optional<List<GroupApply>> list = groupApplyRepository.findAllByGno(gno);
+		if(list.isPresent()) {
+			List<Integer> intList=new ArrayList<>();
+			for(GroupApply ga:list.get()) 
+				intList.add(ga.getUno());
+			
+			List<UserInfo> applierList=userInfoRepository.findAllByUnoIn(intList);
+			
+			resultMap.put("applierList", applierList);
+		}
+
 		return resultMap;
 	}
 	
@@ -145,9 +171,10 @@ public class GroupController {
 			for(FriendInfo fi:friendList) {
 				Alarm alarm=new Alarm();
 				alarm.setAtype(1);
-				alarm.setAurl("#");
+				alarm.setAurl("GroupMainPage");
 				alarm.setAuser(fi.getMyId());
-				alarm.setCreateUser(gmaster);
+				alarm.setCreateUser(myInfo.getUno());
+				alarm.setAurlNo(groupInfo.getGno());
 				alarm.setAsummary(sb.toString());
 				
 				alarmRepository.save(alarm);
@@ -192,8 +219,9 @@ public class GroupController {
 
 					Alarm alarm=new Alarm();
 					alarm.setAuser(ff);
-					alarm.setAurl("#");
-					alarm.setCreateUser(gmaster);
+					alarm.setAurl("GroupMainPage");
+					alarm.setCreateUser(myInfo.getUno());
+					alarm.setAurlNo(groupInfo.getGno());
 					alarm.setAtype(1);
 					alarm.setAsummary(asummary);
 					
@@ -246,8 +274,9 @@ public class GroupController {
 		alarm.setAsummary(sb.toString());
 		alarm.setAuser(friendId);
 		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAurlNo(gno);
 		alarm.setAtype(0);
-		alarm.setAurl("#");
+		alarm.setAurl("GroupMainPage");
 		alarmRepository.save(alarm);
 
 		GroupApply groupApply = new GroupApply();
@@ -292,10 +321,10 @@ public class GroupController {
 		for(FriendInfo fi:friendList) {
 			Alarm alarm = new Alarm();
 			alarm.setAtype(1);
-			alarm.setAurl("#");
+			alarm.setAurl("GroupMainPage");
 			alarm.setAuser(fi.getMyId());
 			alarm.setCreateUser(myInfo.getUno());
-
+			alarm.setAurlNo(gno);
 			alarm.setAsummary(sb2.toString());
 			alarmRepository.save(alarm);
 		}
@@ -306,9 +335,35 @@ public class GroupController {
 
 		return resultMap;
 	}
+	
+	@PostMapping("/denyInviteGroup")
+	public Object denyInviteGroup(@RequestParam int uno, @RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		Optional<GroupApply> groupApply=groupApplyRepository.findByUnoAndGno(uno, gno);
+		if(groupApply.isPresent()) 
+			groupApplyRepository.delete(groupApply.get());
+		
+		resultMap.put("data","초대를 거절했습니다.");
+		
+		return resultMap;
+	}
+	
+	@PostMapping("/denyApplyGroup")
+	public Object denyApplyGroup(@RequestParam int uno, @RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		Optional<GroupApply> groupApply=groupApplyRepository.findByUnoAndGno(uno, gno);
+		if(groupApply.isPresent()) 
+			groupApplyRepository.delete(groupApply.get());
+		
+		resultMap.put("data","가입 신청을 거절했습니다.");
+		
+		return resultMap;
+	}
 
 	@PostMapping("/applyGroup")
-	public Object joinGroup(@RequestParam String email, @RequestParam int gno) {
+	public Object applyGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		UserInfo myInfo = userInfoRepository.findByEmail(email);
@@ -333,10 +388,10 @@ public class GroupController {
 
 		Alarm alarm = new Alarm();
 		alarm.setAtype(0);
-		alarm.setAurl("#");
+		alarm.setAurl("GroupMainPage");
 		alarm.setAuser(groupInfo.getGmaster());
 		alarm.setCreateUser(myInfo.getUno());
-
+		alarm.setAurlNo(gno);
 		StringBuilder sb = new StringBuilder();
 		sb.append(myInfo.getUname());
 		sb.append("님이 ");
@@ -418,8 +473,8 @@ public class GroupController {
 		return resultMap;
 	}
 
-	@PostMapping("/banishGroup")
-	public Object banishGroup(@RequestParam int gno, @RequestParam int uno) {
+	@PostMapping("/banishMember")
+	public Object banishMember(@RequestParam int gno, @RequestParam int uno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
@@ -439,36 +494,6 @@ public class GroupController {
 
 		resultMap.put("data", "그룹에서 추방했습니다.");
 
-		return resultMap;
-	}
-	
-	@PostMapping("/groupJoinStatus")
-	public Object groupJoinStatus(int uno, int gno) {
-		Map<String,Object> resultMap=new HashMap<>();
-		StringBuilder sb=new StringBuilder();
-		int status;//0:비회원, 1:가입신청상태, 2:초대받은상태, 3:회원
-		
-		if(groupParticipantRepository.findByUnoAndGno(uno, gno).isPresent()) {
-			sb.append("회원");
-			status=3;
-		}
-		else if(groupApplyRepository.findByUnoAndGno(uno, gno).isPresent()) {
-			if(groupApplyRepository.findByUnoAndGno(uno, gno).get().isAisApply()) {
-				status=1;
-				sb.append("가입신청한상태");
-			}
-			else {
-				status=2;
-				sb.append("초대받은상태");
-			}
-		}
-		else {
-			sb.append("회원아님");
-			status=0;
-		}
-		resultMap.put("message",sb.toString());
-		resultMap.put("joinStatus",status);
-		
 		return resultMap;
 	}
 

@@ -62,7 +62,13 @@ public class BoardController {
 		Map<String,Object> resultMap=new HashMap<>();
 		Board board = boardRepository.findById(bno).get();
 		resultMap.put("curBoard",board);
-		resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
+		if(userInfoRepository.findById(board.getBwriter()).isPresent())
+			resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
+		else {
+			UserInfo ui=new UserInfo();
+			ui.setUname("(알수없음)");
+			resultMap.put("writer",ui);
+		}
 		return resultMap;
 	}
 	
@@ -80,7 +86,7 @@ public class BoardController {
 		board.setBcontent(content);
 		board.setBisNotice(bisNotice);
 
-		boardRepository.save(board);
+		board=boardRepository.save(board);
 		
 		GroupInfo groupInfo=groupInfoRepository.findById(bgno).get();
 		String guserList=groupInfo.getGuserList();
@@ -100,6 +106,7 @@ public class BoardController {
 			Alarm alarm=new Alarm();
 			alarm.setAtype(1);
 			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(board.getBno());
 			alarm.setAurl("#");
 			alarm.setAuser(curUno);
 			alarm.setAsummary(asummary);
