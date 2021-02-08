@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SchedulePaticipant {
+public class ScheduleParticipant {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
