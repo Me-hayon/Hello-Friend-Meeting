@@ -1,50 +1,79 @@
 <template>
-  <div class="feed newsfeed">
-    <div class="wrapB" style="margin-bottom:60px">
-      <h1>뉴스피드</h1>
-      <ul>
-        <li v-for="feed in myFeeds" :key="feed.ano">
-          <table class="table table-bordered">
-            <tr>
-              <td>
-                <div>
-                  <img
-                    :src="
-                      require(`@/assets/images/avatars/${feed.profileImg}.png`)
-                    "
-                  />{{ feed.createUserName }}
-                </div>
-                <div style="text-align:right">
-                  {{ feed.adate }}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td @click="goRouting(feed.aurl, feed.aurlNo)">
-                {{ feed.asummary }}
-              </td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-      <!-- <FeedItem />
-      <FeedItem />
-      <FeedItem />
-      <FeedItem /> -->
-    </div>
-  </div>
+  <v-card flat tile>
+    <v-row style="margin: 10px;">
+      <div style="font-size: 1.5rem;">
+        안녕하세요, <strong>{{ myName }}</strong
+        >님!
+      </div>
+      <div>친구들이 만든 그룹과 새로 등록된 일정을 볼 수 있어요.</div></v-row
+    >
+
+    <!-- <v-container v-for="type in types" :key="type" class="grey lighten-4" fluid> -->
+    <!-- <v-subheader>{{ type }}</v-subheader> -->
+    <v-container>
+      <v-row>
+        <v-spacer></v-spacer>
+        <v-col v-for="feed in myFeeds" :key="feed.ano" cols="12" sm="6" md="4">
+          <v-card>
+            <v-img
+              :src="`https://picsum.photos/200/300?image=${getImage()}`"
+              gradient="to top right, rgba(0,0,0,.7), rgba(25,32,72,0)"
+              height="150px"
+            >
+              <span
+                class="white--text pl-4 pt-4 d-inline-block"
+                v-text="feed.asummary"
+              ></span>
+            </v-img>
+
+            <v-card-actions class="white justify-left">
+              <span
+                class="white--text"
+                @click="goRouting(feed.aurl, feed.createUser)"
+                style="position: absolute; bottom: 40px; "
+                >클릭해서 보러 갈래요</span
+              >
+              <!-- <v-btn
+                v-for="(social, i) in socials"
+                :key="i"
+                :color="social.color"
+                class="white--text"
+                fab
+                icon
+                small
+              >
+                <v-icon>{{ social.icon }}</v-icon>
+              </v-btn> -->
+              <span
+                >From. <b>{{ feed.createUserName }}</b></span
+              >
+              <!-- <img
+                height="101"
+                style="position: absolute; right: 8px; bottom: 6px; "
+                src="@/assets/images/circle.png"
+              /> -->
+
+              <img
+                height="100"
+                style="position: absolute; right: 10px; bottom: 10px;  border-radius: 70%;"
+                :src="require(`@/assets/images/avatars/${feed.profileImg}.png`)"
+              />
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
 // import { mapState } from "vuex";
-import '../../components/css/feed/feed-item.scss';
-import '../../components/css/feed/newsfeed.scss';
+// import "../../components/css/feed/feed-item.scss";
+// import "../../components/css/feed/newsfeed.scss";
 // import FeedItem from '../../components/feed/FeedItem.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
-export default {
-  // props: ['keyword'],
 
   methods: {
     goRouting(aurl, myParam) {
@@ -102,6 +131,9 @@ export default {
     };
   },
   created() {
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
+
     var params = new URLSearchParams();
     params.append('email', storage.getItem('user-email'));
     // params.append('email', 'test@gmail.com');
@@ -125,3 +157,5 @@ export default {
   },
 };
 </script>
+
+<style></style>
