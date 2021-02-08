@@ -16,5 +16,8 @@ export default {
   },
   getBno: function (state) {
     return state.vuexBno;
+  },
+  getIsWriter: function (state) {
+    return state.isWriter;
   }
 };

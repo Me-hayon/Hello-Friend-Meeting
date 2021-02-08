@@ -48,15 +48,15 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   data() {
     return {
       menu: false,
       alarms: [],
       userInfo: {},
-      imgPath: "",
-      tmp: "",
+      imgPath: '',
+      tmp: '',
     };
   },
   created() {
@@ -64,14 +64,14 @@ export default {
     setInterval(this.getAlarmsList, 10000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
-    params.append("email", storage.getItem("user-email"));
+    params.append('email', storage.getItem('user-email'));
 
     axios
-      .post("profile", params)
+      .post('profile', params)
       .then((response) => {
-        this.userInfo.uname = response.data["user-name"];
-        this.userInfo.utel = response.data["user-tel"];
-        this.userInfo.uprofileImg = response.data["profile-img"];
+        this.userInfo.uname = response.data['user-name'];
+        this.userInfo.utel = response.data['user-tel'];
+        this.userInfo.uprofileImg = response.data['profile-img'];
         console.log(this.userInfo.uprofileImg);
         this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
       })
@@ -82,39 +82,53 @@ export default {
   methods: {
     goRouting(aurl, myParam, ano) {
       var params = new URLSearchParams();
-      params.append("ano", ano);
-      axios.post("readAlarm", params);
+      params.append('ano', ano);
+      axios.post('readAlarm', params);
 
       params = new URLSearchParams();
-      if (aurl === "FriendInfo") {
-        this.$store.commit("setUno", myParam);
-        this.$router.push("/user/friend-info").catch(() => {});
-      } else if (aurl === "GroupMainPage") {
+      if (aurl === 'FriendInfo') {
+        this.$store.commit('setUno', myParam);
+        this.$router.push('/user/friend-info').catch(() => {});
+      } else if (aurl === 'GroupMainPage') {
         var gno = myParam;
-        params.append("email", window.sessionStorage.getItem("user-email"));
-        params.append("gno", gno);
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        params.append('gno', gno);
         axios
-          .post("isGroupMember", params)
+          .post('isGroupMember', params)
           .then((response) => {
-            this.$store.commit("setGno", gno);
-            this.$store.commit("setMemberStatus", response.data.memberStatus);
-            this.$router.push("/group").catch(() => {});
+            this.$store.commit('setGno', gno);
+            this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$router.push('/group').catch(() => {});
           })
           .catch((error) => {
             console.log(error);
           });
-      }
-      // else if(aurl===''){//보드로보낼거
+      } else if (aurl === 'BoardDetail') {
+        var bno = myParam;
+        params.append('bno', bno);
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        axios.post('boardDetail', params).then((resp) => {
+          this.$store.commit('setIsWriter', resp.data.isWriter);
 
-      // }
+          params = new URLSearchParams();
+          params.append('email', window.sessionStorage.getItem('user-email'));
+          params.append('gno', resp.data.curBoard.bgno);
+
+          axios.post('isGroupMember', params).then((response) => {
+            this.$store.commit('setGno', gno);
+            this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$router.push('/board/detail').catch(() => {});
+          });
+        });
+      }
     },
     getAlarmsList() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append("email", storage.getItem("user-email"));
+      params.append('email', storage.getItem('user-email'));
 
       axios
-        .post("getAlarms", params)
+        .post('getAlarms', params)
         .then((response) => {
           this.alarms = response.data.alarms;
           console.log(this.alarms);
@@ -122,6 +136,21 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+
+      if (this.userInfo.uprofileImg === 'not') {
+        axios
+          .post('profile', params)
+          .then((response) => {
+            this.userInfo.uname = response.data['user-name'];
+            this.userInfo.utel = response.data['user-tel'];
+            this.userInfo.uprofileImg = response.data['profile-img'];
+            console.log(this.userInfo.uprofileImg);
+            this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
   },
 };

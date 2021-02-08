@@ -1,8 +1,8 @@
 export default {
-  setIsHeader: function(state, payload) {
+  setIsHeader: function (state, payload) {
     state.isHeader = payload;
   },
-  setIsFooter: function(state, payload) {
+  setIsFooter: function (state, payload) {
     state.isFooter = payload;
   },
   setGno: function (state, payload) {
@@ -15,6 +15,9 @@ export default {
     state.vuexMemberStatus = payload;
   },
   setBno: function (state, payload) {
-    state.vuexBno=payload
+    state.vuexBno = payload
+  },
+  setIsWriter: function (state, payload) {
+    state.isWriter=payload
   }
 };

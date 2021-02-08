@@ -12,7 +12,8 @@ const state = {
   vuexGno: { type: Number },
   vuexUno: { type: Number },
   vuexMemberStatus: { type: Number },
-  vuexBno: { type: Number }
+  vuexBno: { type: Number },
+  isWriter:{type:Boolean}
 };
 
 export default new Vuex.Store({

@@ -143,6 +143,7 @@ public class UserInfoController {
 		} else {
 			resultMap.put("user-tel", "앗! 전화번호를 불러올 수 없어요.");
 			resultMap.put("user-name", "앗! 이름을 불러올 수 없어요.");
+			resultMap.put("profile-img","not");
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
 	}
