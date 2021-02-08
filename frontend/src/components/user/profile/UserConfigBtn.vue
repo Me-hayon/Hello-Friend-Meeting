@@ -43,8 +43,7 @@
         <v-card-text>
           <v-text-field
             v-model="password"
-            hint="비밀번호를 입력해주세요."
-            single-line
+            placeholder="비밀번호를 입력해주세요."
             clearable
             required
             :type="passwordShow ? 'text' : 'password'"
