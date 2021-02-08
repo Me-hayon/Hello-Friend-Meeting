@@ -98,7 +98,7 @@ export default {
       .post('getFeeds', params)
       .then((response) => {
         console.log(response);
-        this.myFeeds = response.data.list;
+        this.myFeeds = response.data.feeds;
       })
       .catch((error) => {
         console.log(error);

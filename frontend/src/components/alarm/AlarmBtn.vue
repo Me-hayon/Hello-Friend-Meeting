@@ -166,7 +166,8 @@ export default {
         .post('delAlarm', params)
         .then((response) => {
           console.log(ano);
-          this.reloadAlarm();
+          this.getAlarmsList();
+          // this.reloadAlarm();
           // alert('삭제됨');
         })
         .catch((error) => {
@@ -174,21 +175,21 @@ export default {
           console.log(ano);
         });
     },
-    reloadAlarm() {
-      var storage = window.sessionStorage;
-      var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
+    // reloadAlarm() {
+    //   var storage = window.sessionStorage;
+    //   var params = new URLSearchParams();
+    //   params.append('email', storage.getItem('user-email'));
 
-      axios
-        .post('getAlarms', params)
-        .then((response) => {
-          this.alarms = response.data;
-          this.alarmLen = response.data.alarms.length;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    //   axios
+    //     .post('getAlarms', params)
+    //     .then((response) => {
+    //       this.alarms = response.data;
+    //       this.alarmLen = response.data.alarms.length;
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
   },
 };
 </script>
