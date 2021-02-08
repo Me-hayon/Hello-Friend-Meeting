@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -81,18 +81,19 @@ export default {
       offset: true,
     };
   },
+
   created() {
     this.getAlarmsList();
     setInterval(this.getAlarmsList, 10000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
-    params.append("email", storage.getItem("user-email"));
+    params.append('email', storage.getItem('user-email'));
 
     axios
-      .post("profile", params)
+      .post('profile', params)
       .then((response) => {
         this.alarms = response.data;
-        this.alarmLen = response.data.length;
+        this.alarmLen = response.data.alarms.length;
       })
       .catch((error) => {
         console.log(error);
@@ -111,26 +112,27 @@ export default {
         console.log(error);
       });
   },
+
   methods: {
     goRouting(aurl, myParam, ano) {
       var params = new URLSearchParams();
-      params.append("ano", ano);
-      axios.post("readAlarm", params);
+      params.append('ano', ano);
+      axios.post('readAlarm', params);
 
       params = new URLSearchParams();
-      if (aurl === "FriendInfo") {
-        this.$store.commit("setUno", myParam);
-        this.$router.push("/user/friend-info").catch(() => {});
-      } else if (aurl === "GroupMainPage") {
+      if (aurl === 'FriendInfo') {
+        this.$store.commit('setUno', myParam);
+        this.$router.push('/user/friend-info').catch(() => {});
+      } else if (aurl === 'GroupMainPage') {
         var gno = myParam;
-        params.append("email", window.sessionStorage.getItem("user-email"));
-        params.append("gno", gno);
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        params.append('gno', gno);
         axios
-          .post("isGroupMember", params)
+          .post('isGroupMember', params)
           .then((response) => {
-            this.$store.commit("setGno", gno);
-            this.$store.commit("setMemberStatus", response.data.memberStatus);
-            this.$router.push("/group").catch(() => {});
+            this.$store.commit('setGno', gno);
+            this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$router.push('/group').catch(() => {});
           })
           .catch((error) => {
             console.log(error);
@@ -143,12 +145,13 @@ export default {
     getAlarmsList() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append("email", storage.getItem("user-email"));
+      params.append('email', storage.getItem('user-email'));
 
       axios
-        .post("getAlarms", params)
+        .post('getAlarms', params)
         .then((response) => {
           this.alarms = response.data.alarms;
+          this.alarmLen = response.data.alarms.length;
           console.log(this.alarms);
         })
         .catch((error) => {
@@ -160,7 +163,7 @@ export default {
       params.append('ano', ano);
 
       axios
-        .post('http://localhost:8080/delAlarm', params)
+        .post('delAlarm', params)
         .then((response) => {
           console.log(ano);
           this.reloadAlarm();
@@ -177,10 +180,10 @@ export default {
       params.append('email', storage.getItem('user-email'));
 
       axios
-        .post('http://localhost:8080/getAlarms', params)
+        .post('getAlarms', params)
         .then((response) => {
           this.alarms = response.data;
-          this.alarmLen = response.data.length;
+          this.alarmLen = response.data.alarms.length;
         })
         .catch((error) => {
           console.log(error);

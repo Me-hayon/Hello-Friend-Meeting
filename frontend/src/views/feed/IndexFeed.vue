@@ -67,13 +67,11 @@
 </template>
 
 <script>
-
 // import { mapState } from "vuex";
 // import "../../components/css/feed/feed-item.scss";
 // import "../../components/css/feed/newsfeed.scss";
 // import FeedItem from '../../components/feed/FeedItem.vue';
-import axios from "axios";
-
+import axios from 'axios';
 
 const storage = window.sessionStorage;
 
@@ -83,7 +81,7 @@ export default {
     this.$store.commit('setIsFooter', true);
 
     var params = new URLSearchParams();
-    params.append("email", storage.getItem("user-email"));
+    params.append('email', storage.getItem('user-email'));
     // params.append('email', 'test@gmail.com');
     console.log(params);
     axios
@@ -94,16 +92,17 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-      }
+      });
+
     axios
-      .post("getFeeds", params)
+      .post('getFeeds', params)
       .then((response) => {
         console.log(response);
         this.myFeeds = response.data.list;
       })
       .catch((error) => {
         console.log(error);
-        console.log("error occur");
+        console.log('error occur');
       });
   },
   data: () => ({
@@ -125,12 +124,10 @@ export default {
     goRouting(aurl, auno) {
       var params = new URLSearchParams();
       params.append('uno', auno);
-      axios
-        .post('http://localhost:8080/findEmailByUno', params)
-        .then((response) => {
-          var friendEmail = response.data.data;
-          this.$router.push({ name: aurl, params: { friendEmail } });
-        });
+      axios.post('findEmailByUno', params).then((response) => {
+        var friendEmail = response.data.data;
+        this.$router.push({ name: aurl, params: { friendEmail } });
+      });
     },
     getImage() {
       const min = 550;
@@ -138,7 +135,6 @@ export default {
 
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
-    
   },
 };
 </script>
