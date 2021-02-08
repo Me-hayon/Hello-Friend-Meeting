@@ -100,7 +100,7 @@ export default {
       });
 
     axios
-      .post('http://localhost:8080/profile', params)
+      .post('profile', params)
       .then((response) => {
         this.userInfo.uname = response.data['user-name'];
         this.userInfo.utel = response.data['user-tel'];
@@ -137,10 +137,24 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-      }
-      // else if(aurl===''){//보드로보낼거
+      } else if (aurl === 'BoardDetail') {
+        var bno = myParam;
+        params.append('bno', bno);
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        axios.post('boardDetail', params).then((resp) => {
+          this.$store.commit('setIsWriter', resp.data.isWriter);
 
-      // }
+          params = new URLSearchParams();
+          params.append('email', window.sessionStorage.getItem('user-email'));
+          params.append('gno', resp.data.curBoard.bgno);
+
+          axios.post('isGroupMember', params).then((response) => {
+            this.$store.commit('setGno', gno);
+            this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$router.push('/board/detail').catch(() => {});
+          });
+        });
+      }
     },
     getAlarmsList() {
       var storage = window.sessionStorage;
@@ -157,6 +171,21 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+
+      if (this.userInfo.uprofileImg === 'not') {
+        axios
+          .post('profile', params)
+          .then((response) => {
+            this.userInfo.uname = response.data['user-name'];
+            this.userInfo.utel = response.data['user-tel'];
+            this.userInfo.uprofileImg = response.data['profile-img'];
+            console.log(this.userInfo.uprofileImg);
+            this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
     delAlarm(ano) {
       var params = new URLSearchParams();
