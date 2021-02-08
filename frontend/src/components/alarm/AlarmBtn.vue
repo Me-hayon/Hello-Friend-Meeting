@@ -114,11 +114,9 @@ export default {
 
   methods: {
     goRouting(aurl, myParam, ano) {
-      var params = new URLSearchParams();
-      params.append('ano', ano);
-      axios.post('readAlarm', params);
+      this.readAlarm(ano);
 
-      params = new URLSearchParams();
+      var params = new URLSearchParams();
       if (aurl === 'FriendInfo') {
         this.$store.commit('setUno', myParam);
         this.$router.push('/user/friend-info').catch(() => {});
@@ -207,6 +205,24 @@ export default {
           alert('에러');
           console.log(ano);
         });
+    },
+    readAlarm(ano) {
+      var params = new URLSearchParams();
+      params.append('ano', ano);
+      axios.post('readAlarm', params).then((resp) => {
+        params = new URLSearchParams();
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        axios
+          .post('getAlarms', params)
+          .then((response) => {
+            this.alarms = response.data.alarms;
+            this.alarmLen = response.data.notReadAlarm;
+            // console.log(this.alarms);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     },
     // reloadAlarm() {
     //   var storage = window.sessionStorage;
