@@ -117,7 +117,7 @@ export default {
       this.memberStatus = val;
     },
     isWriter(val) {
-      this.LocalIsWriter = val;
+      this.localIsWriter = val;
     },
   },
   data() {
@@ -125,7 +125,7 @@ export default {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
       bno: this.$store.getters.getBno,
-      LocalIsWriter: this.$store.getters.getIsWriter,
+      localIsWriter: this.$store.getters.getIsWriter,
       article: {},
       writer: '',
       comments: [],
@@ -145,6 +145,11 @@ export default {
       axios
         .post('boardDetail', params)
         .then((response) => {
+          if (!response.data.isExist) {
+            alert('삭제된 게시글입니다.');
+            this.$router.push('/');
+            return;
+          }
           this.article = response.data.curBoard;
           this.writer = response.data.writer.uname;
           this.localIsWriter = response.data.isWriter;

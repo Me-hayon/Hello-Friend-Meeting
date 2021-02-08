@@ -12,5 +12,5 @@ public interface AlarmRepository extends JpaRepository<Alarm,Integer>{
 
 	public Optional<List<Alarm>> findByAuserAndAtype(int auser,int atype,Sort sort);
 	public Optional<Alarm> findByAno(int ano);
-	public Long countByAuserAndAisRead(int auser, boolean aisRead);
+	public Long countByAuserAndAisReadAndAtype(int auser, boolean aisRead,int atype);
 }

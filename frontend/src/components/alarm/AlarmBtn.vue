@@ -41,7 +41,7 @@
           >
             <v-col cols="10" style="padding: 0;">
               <v-list-item
-                @click="goRouting(alarm.aurl, alarm.createUser)"
+                @click="goRouting(alarm.aurl, alarm.createUser, alarm.ano)"
                 style="padding-right: 0;"
               >
                 <v-list-item-title>
@@ -93,7 +93,6 @@ export default {
       .post('profile', params)
       .then((response) => {
         this.alarms = response.data;
-        this.alarmLen = response.data.alarms.length;
       })
       .catch((error) => {
         console.log(error);
@@ -142,6 +141,11 @@ export default {
         params.append('bno', bno);
         params.append('email', window.sessionStorage.getItem('user-email'));
         axios.post('boardDetail', params).then((resp) => {
+          if (!resp.data.isExist) {
+            alert('삭제된 게시글입니다.');
+            this.$router.push('/');
+            return;
+          }
           this.$store.commit('setIsWriter', resp.data.isWriter);
 
           params = new URLSearchParams();
@@ -165,8 +169,8 @@ export default {
         .post('getAlarms', params)
         .then((response) => {
           this.alarms = response.data.alarms;
-          this.alarmLen = response.data.alarms.length;
-          console.log(this.alarms);
+          this.alarmLen = response.data.notReadAlarm;
+          // console.log(this.alarms);
         })
         .catch((error) => {
           console.log(error);

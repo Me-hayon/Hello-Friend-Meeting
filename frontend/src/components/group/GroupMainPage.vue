@@ -50,6 +50,11 @@ export default {
     axios
       .post('isGroupMember', params)
       .then((response) => {
+        if (!response.data.isExist) {
+          alert('삭제된 그룹입니다.');
+          this.$router.push('/');
+          return;
+        }
         this.memberStatus = response.data.memberStatus;
       })
       .catch((error) => {

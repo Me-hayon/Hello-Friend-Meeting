@@ -57,6 +57,12 @@ public class GroupController {
 	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
+		if(!groupInfoRepository.findById(gno).isPresent()) {
+			resultMap.put("isExist",false);
+			return resultMap;
+		}
+		resultMap.put("isExist",true);
+		
 		UserInfo userInfo=userInfoRepository.findByEmail(email);
 		
 		if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent()) {

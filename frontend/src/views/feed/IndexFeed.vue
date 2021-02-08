@@ -29,7 +29,7 @@
             <v-card-actions class="white justify-left">
               <span
                 class="white--text"
-                @click="goRouting(feed.aurl, feed.createUser)"
+                @click="goRouting(feed.aurl, feed.aurlNo)"
                 style="position: absolute; bottom: 40px; "
                 >클릭해서 보러 갈래요</span
               >
@@ -107,7 +107,7 @@ export default {
         params.append('email', window.sessionStorage.getItem('user-email'));
         axios.post('boardDetail', params).then((resp) => {
           this.$store.commit('setIsWriter', resp.data.isWriter);
-
+          this.$store.commit('setBno', bno);
           params = new URLSearchParams();
           params.append('email', window.sessionStorage.getItem('user-email'));
           params.append('gno', resp.data.curBoard.bgno);

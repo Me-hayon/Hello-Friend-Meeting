@@ -36,7 +36,7 @@ public class AlarmController {
 		int uid=userInfoRepository.findByEmail(email).getUno();
 		Optional<List<Alarm>> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
 		
-		long notRead=alarmRepository.countByAuserAndAisRead(uid, false);//되는지 확인 필요함.
+		long notRead=alarmRepository.countByAuserAndAisReadAndAtype(uid, false,0);//되는지 확인 필요함.
 		if(list.isPresent())
 			resultMap.put("alarms",list.get());
 		else
@@ -67,6 +67,8 @@ public class AlarmController {
 	public void readAlarm(@RequestParam(required=true) final int ano) {
 		
 		Alarm alarm=alarmRepository.findByAno(ano).get();
+		if(alarm.isAisRead())
+			return;
 		alarm.setAisRead(true);
 		alarmRepository.save(alarm);
 	}
