@@ -32,8 +32,12 @@ public class AlarmController {
 	public Object getAlarms(@RequestParam(required=true) final String email){
 		Map<String,Object> resultMap=new HashMap<>();
 		
-		
+		if(userInfoRepository.findByEmail(email)==null) 
+			return null;
+	
 		int uid=userInfoRepository.findByEmail(email).getUno();
+		
+		
 		Optional<List<Alarm>> list=alarmRepository.findByAuserAndAtype(uid,0,Sort.by("ano").descending());
 		
 		long notRead=alarmRepository.countByAuserAndAisReadAndAtype(uid, false,0);//되는지 확인 필요함.

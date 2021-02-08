@@ -92,15 +92,6 @@ export default {
     axios
       .post('profile', params)
       .then((response) => {
-        this.alarms = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post('profile', params)
-      .then((response) => {
         this.userInfo.uname = response.data['user-name'];
         this.userInfo.utel = response.data['user-tel'];
         this.userInfo.uprofileImg = response.data['profile-img'];

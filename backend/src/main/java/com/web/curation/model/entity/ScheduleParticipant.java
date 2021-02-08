@@ -24,6 +24,6 @@ public class ScheduleParticipant {
 	
 	private int sno;
 	private int uno;
-	private int attendance;
+	private int attendance;//0:미정, 1:참가, 2:불참
 
 }
