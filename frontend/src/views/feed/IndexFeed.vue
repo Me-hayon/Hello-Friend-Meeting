@@ -109,8 +109,11 @@ export default {
     axios
       .post('getFeeds', params)
       .then((response) => {
+        console.log('asdfasdf');
         console.log(response);
-        this.myFeeds = response.data.list;
+        console.log('asdfa');
+
+        this.myFeeds = response.data.feeds;
       })
       .catch((error) => {
         console.log(error);
