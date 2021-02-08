@@ -27,7 +27,6 @@ const storage = window.sessionStorage;
 export default {
   components: { ProfileCover, ProfileImage, UserConfigBtn },
   created() {
-    console.log('profile create');
     this.email = storage.getItem('user-email');
 
     let params = new URLSearchParams();

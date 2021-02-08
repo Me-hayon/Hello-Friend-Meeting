@@ -34,7 +34,6 @@
         margin-right: 30px;
         border-radius: 10px; "
       >
-        <!-- <v-row style="margin-bottom: 15px;">adflakdjflkj</v-row> -->
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="email"
@@ -60,10 +59,10 @@
           ></v-text-field>
           <v-btn
             :disabled="!valid"
-            width="100%"
             color="success"
             class="font-weight-black"
             @click="validate"
+            block
           >
             로그인
           </v-btn>
