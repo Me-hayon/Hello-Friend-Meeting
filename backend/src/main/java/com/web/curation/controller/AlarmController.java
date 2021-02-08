@@ -43,8 +43,9 @@ public class AlarmController {
 		return list;
 	}
 	
-	@GetMapping("/delAlarm")
+	@PostMapping("/delAlarm")
 	public Object delAlarm(@RequestParam(required=true) final int ano) {
+		System.out.println(ano);
 		
 		final BasicResponse result = new BasicResponse();
 
