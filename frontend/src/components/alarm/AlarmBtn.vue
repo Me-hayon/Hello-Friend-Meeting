@@ -41,7 +41,7 @@
           >
             <v-col cols="10" style="padding: 0;">
               <v-list-item
-                @click="goRouting(alarm.aurl, alarm.createUser, alarm.ano)"
+                @click="goRouting(alarm.aurl, alarm.aurlNo, alarm.ano)"
                 style="padding-right: 0;"
               >
                 <v-list-item-title>
