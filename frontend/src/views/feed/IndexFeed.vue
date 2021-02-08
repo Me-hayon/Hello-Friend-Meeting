@@ -74,8 +74,14 @@
 import axios from 'axios';
 
 const storage = window.sessionStorage;
-
+export default {
   methods: {
+    getImage() {
+      const min = 550;
+      const max = 560;
+
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
     goRouting(aurl, myParam) {
       var params = new URLSearchParams();
       if (aurl === 'FriendInfo') {
@@ -128,6 +134,7 @@ const storage = window.sessionStorage;
           profileImg: '',
         },
       ],
+      myName: 'Hana',
     };
   },
   created() {
