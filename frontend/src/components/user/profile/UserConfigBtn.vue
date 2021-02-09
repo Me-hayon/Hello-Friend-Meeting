@@ -15,7 +15,7 @@
       </template>
 
       <!-- 회원탈퇴 -->
-      <v-btn fab dark small color="red" @click="modal = true">
+      <v-btn fab dark small color="red" @click="deleteModal = true">
         <v-icon>mdi-account-remove</v-icon>
       </v-btn>
 
@@ -31,12 +31,12 @@
     </v-speed-dial>
 
     <!-- 회원탈퇴 모달 -->
-    <v-dialog v-model="modal" persistent max-width="290">
+    <v-dialog v-model="deleteModal" persistent max-width="300">
       <v-card>
         <v-card-title>
           <span>회원탈퇴</span>
           <v-spacer></v-spacer>
-          <v-btn icon @click="modal = false">
+          <v-btn icon @click="deleteModal = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -54,12 +54,37 @@
         <v-card-actions style="padding-top: 0;">
           <v-row class="ma-0" justify="end">
             <v-btn
+              color="warning"
+              class="font-weight-black"
+              :disabled="!valid"
+              @click="deleteAlertModal = !deleteAlertModal"
+            >
+              탈퇴하기
+            </v-btn>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 회원탈퇴 경고 모달 -->
+    <v-dialog v-model="deleteAlertModal" persistent max-width="270px">
+      <v-card>
+        <v-card-title>
+          <span>정말 탈퇴하시겠습니까?</span>
+        </v-card-title>
+        <v-card-actions>
+          <v-row class="ma-0" justify="end">
+            <v-btn
               color="error"
               class="font-weight-black"
+              style="margin-right: 10px;"
               :disabled="!valid"
               @click="deleteUser"
             >
-              탈퇴하기
+              확인
+            </v-btn>
+            <v-btn color="success" @click="deleteAlertModal = false">
+              취소
             </v-btn>
           </v-row>
         </v-card-actions>
@@ -76,7 +101,8 @@ export default {
   data() {
     return {
       userConfigFab: false,
-      modal: false,
+      deleteModal: false,
+      deleteAlertModal: false,
       password: '',
       passwordShow: false,
       valid: false,
@@ -103,6 +129,7 @@ export default {
             this.$router.push('/');
           } else {
             alert('잘못된 비밀번호를 입력하였습니다.');
+            this.deleteAlertModal = false;
           }
         })
         .catch((error) => {
@@ -111,6 +138,9 @@ export default {
     },
   },
   watch: {
+    deleteModal(deleteModal) {
+      if (!deleteModal) this.password = '';
+    },
     password(password) {
       console.log(password);
       if (password == null || password.length == 0) this.valid = false;
