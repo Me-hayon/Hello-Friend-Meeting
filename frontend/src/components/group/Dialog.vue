@@ -10,13 +10,11 @@
             label="일정"
             v-model="calendar.title"
             prepend-icon="mdi-folder-marker"
-            :rules="inputRules"
           ></v-text-field>
           <v-textarea
             label="상세설명"
             v-model="calendar.content"
             prepend-icon="mdi-pencil"
-            :rules="inputRules"
           ></v-textarea>
           <v-row>
             <v-col cols="6" class="pb-0">
@@ -124,7 +122,7 @@ export default {
       localCalendar: {
         sno: 1,
         sgno: { type: Number },
-        smaster: { type: Number },
+        smaster: '',
         senddate: '',
         sstartdate: '',
         stitle: '',
@@ -135,7 +133,6 @@ export default {
   },
   computed: {
     dialog() {
-      console.log('확인');
       return this.$store.state.dialog;
     },
     calendar() {
@@ -143,22 +140,30 @@ export default {
     },
   },
   methods: {
-    submit() {
-      console.log(this.calendar);
+    setFormat() {
       this.localCalendar.sgno = this.$store.getters.getGno;
-      var params = new URLSearchParams();
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      axios.post('profile', params).then((resp) => {
-        this.localCalendar.smaster = resp.data['user-uno'];
-      });
       this.localCalendar.senddate =
         this.calendar.endDate + ' ' + this.calendar.endTime + ':00';
       this.localCalendar.sstartdate =
         this.calendar.startDate + ' ' + this.calendar.startTime + ':00';
       this.localCalendar.stitle = this.calendar.title;
       this.localCalendar.scontent = this.calendar.content;
+    },
+    submit() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch('REQUEST_ADD_EVENT', this.localCalendar);
+        this.setFormat();
+
+        var params = new URLSearchParams();
+        params.append('startDate', this.localCalendar.sstartdate);
+        params.append('endDate', this.localCalendar.senddate);
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        params.append('gno', this.$store.getters.getGno);
+        params.append('title', this.localCalendar.stitle);
+        params.append('content', this.localCalendar.scontent);
+
+        axios.post('addSchedule', params).then((resp) => {
+          this.$store.commit('ADD_EVENT', resp.data.createdSchedule);
+        });
       }
     },
     close() {
