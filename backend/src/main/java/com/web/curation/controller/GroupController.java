@@ -57,6 +57,12 @@ public class GroupController {
 	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
+		if(!groupInfoRepository.findById(gno).isPresent()) {
+			resultMap.put("isExist",false);
+			return resultMap;
+		}
+		resultMap.put("isExist",true);
+		
 		UserInfo userInfo=userInfoRepository.findByEmail(email);
 		
 		if(groupApplyRepository.findByUnoAndGno(userInfo.getUno(), gno).isPresent()) {
@@ -173,7 +179,8 @@ public class GroupController {
 				alarm.setAtype(1);
 				alarm.setAurl("GroupMainPage");
 				alarm.setAuser(fi.getMyId());
-				alarm.setCreateUser(groupInfo.getGno());
+				alarm.setCreateUser(myInfo.getUno());
+				alarm.setAurlNo(groupInfo.getGno());
 				alarm.setAsummary(sb.toString());
 				
 				alarmRepository.save(alarm);
@@ -219,7 +226,8 @@ public class GroupController {
 					Alarm alarm=new Alarm();
 					alarm.setAuser(ff);
 					alarm.setAurl("GroupMainPage");
-					alarm.setCreateUser(groupInfo.getGno());
+					alarm.setCreateUser(myInfo.getUno());
+					alarm.setAurlNo(groupInfo.getGno());
 					alarm.setAtype(1);
 					alarm.setAsummary(asummary);
 					
@@ -271,7 +279,8 @@ public class GroupController {
 		sb.append("그룹으로 초대하셨습니다!");
 		alarm.setAsummary(sb.toString());
 		alarm.setAuser(friendId);
-		alarm.setCreateUser(gno);
+		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAurlNo(gno);
 		alarm.setAtype(0);
 		alarm.setAurl("GroupMainPage");
 		alarmRepository.save(alarm);
@@ -320,8 +329,8 @@ public class GroupController {
 			alarm.setAtype(1);
 			alarm.setAurl("GroupMainPage");
 			alarm.setAuser(fi.getMyId());
-			alarm.setCreateUser(gno);
-
+			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(gno);
 			alarm.setAsummary(sb2.toString());
 			alarmRepository.save(alarm);
 		}
@@ -387,8 +396,8 @@ public class GroupController {
 		alarm.setAtype(0);
 		alarm.setAurl("GroupMainPage");
 		alarm.setAuser(groupInfo.getGmaster());
-		alarm.setCreateUser(gno);
-
+		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAurlNo(gno);
 		StringBuilder sb = new StringBuilder();
 		sb.append(myInfo.getUname());
 		sb.append("님이 ");

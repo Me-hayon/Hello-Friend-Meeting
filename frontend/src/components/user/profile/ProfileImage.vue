@@ -44,9 +44,6 @@ export default {
       profileImgFab: false,
     };
   },
-  created() {
-    console.log('image create');
-  },
   methods: {
     changeAvatar(pImage, index) {
       let prevImg = this.profileImg;

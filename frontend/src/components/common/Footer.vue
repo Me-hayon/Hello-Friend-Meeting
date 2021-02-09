@@ -1,6 +1,6 @@
 <template>
   <v-bottom-navigation
-    v-show="$store.getters.getIsFooter"
+    v-if="$store.getters.getIsFooter"
     v-model="currentPage"
     app
     grow

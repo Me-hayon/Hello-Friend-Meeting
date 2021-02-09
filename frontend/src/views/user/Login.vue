@@ -34,7 +34,6 @@
         margin-right: 30px;
         border-radius: 10px; "
       >
-        <!-- <v-row style="margin-bottom: 15px;">adflakdjflkj</v-row> -->
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="email"
@@ -60,10 +59,10 @@
           ></v-text-field>
           <v-btn
             :disabled="!valid"
-            width="100%"
             color="success"
             class="font-weight-black"
             @click="validate"
+            block
           >
             로그인
           </v-btn>
@@ -170,7 +169,12 @@ export default {
 
 <style>
 .bg {
-  background: url('~@/assets/images/night.gif') no-repeat center center fixed;
+  background: linear-gradient(
+      to right,
+      rgba(30, 75, 115, 0.8),
+      rgba(0, 0, 0, 0.3)
+    ),
+    url('~@/assets/images/night.gif') no-repeat center center fixed;
   background-size: cover;
 }
 </style>

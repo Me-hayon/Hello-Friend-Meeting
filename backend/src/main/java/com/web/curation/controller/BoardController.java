@@ -58,16 +58,27 @@ public class BoardController {
 	}
 
 	@PostMapping("/boardDetail")
-	public Object boardDetail(@RequestParam int bno) {
+	public Object boardDetail(@RequestParam int bno,@RequestParam String email) {
 		Map<String,Object> resultMap=new HashMap<>();
+		if(!boardRepository.findById(bno).isPresent()) {
+			resultMap.put("isExist",false);
+			return resultMap;
+		}
+		resultMap.put("isExist",true);
 		Board board = boardRepository.findById(bno).get();
 		resultMap.put("curBoard",board);
-		if(userInfoRepository.findById(board.getBwriter()).isPresent())
+		if(userInfoRepository.findById(board.getBwriter()).isPresent()) {
 			resultMap.put("writer", userInfoRepository.findById(board.getBwriter()));
+			if(email.equals(userInfoRepository.findById(board.getBwriter()).get().getEmail()))
+				resultMap.put("isWriter",true);
+			else
+				resultMap.put("isWriter",false);
+		}
 		else {
 			UserInfo ui=new UserInfo();
 			ui.setUname("(알수없음)");
 			resultMap.put("writer",ui);
+			resultMap.put("isWriter",false);
 		}
 		return resultMap;
 	}
@@ -102,11 +113,14 @@ public class BoardController {
 		String asummary=sb.toString();
 		
 		for(String uno:eachUser) {
+			if(Integer.parseInt(uno)==myInfo.getUno())
+				continue;
 			int curUno=Integer.parseInt(uno);
 			Alarm alarm=new Alarm();
 			alarm.setAtype(1);
-			alarm.setCreateUser(board.getBno());
-			alarm.setAurl("#");
+			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(board.getBno());
+			alarm.setAurl("BoardDetail");
 			alarm.setAuser(curUno);
 			alarm.setAsummary(asummary);
 			

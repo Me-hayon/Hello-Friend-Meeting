@@ -30,18 +30,29 @@
       centered
       title="게시글작성"
       @ok="createArticle"
+      @hide="resetDatas"
     >
       <b-row style="margin-bottom:10px">
-        <b-col>제목</b-col>
-        <b-col><b-form-input></b-form-input></b-col>
+        <b-col>
+          제목 공지사항으로 설정<input
+            type="checkbox"
+            v-model="newIsNotice"
+            :disabled="memberStatus != 4"
+          />
+        </b-col>
+        <b-col><b-form-input v-model="newTitle"></b-form-input></b-col>
       </b-row>
-      <b-form-textarea rows="8" style="margin-bottom:10px"></b-form-textarea>
+      <b-form-textarea
+        rows="8"
+        style="margin-bottom:10px"
+        v-model="newContent"
+      ></b-form-textarea>
     </b-modal>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   computed: {
     vuexGno() {
@@ -55,9 +66,9 @@ export default {
     vuexGno(val) {
       this.gno = val;
       var params = new URLSearchParams();
-      params.append("bgno", this.gno);
+      params.append('bgno', this.gno);
       axios
-        .post("getBoardList", params)
+        .post('getBoardList', params)
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
@@ -82,32 +93,56 @@ export default {
       gno: this.$store.getters.getGno,
       table: [],
       tableNotice: [],
+      newTitle: '',
+      newContent: '',
+      newIsNotice: false,
     };
   },
   created() {
-    var params = new URLSearchParams();
-    params.append("bgno", this.gno);
-    axios
-      .post("getBoardList", params)
-      .then((response) => {
-        this.table = response.data.notNotice;
-        this.tableNotice = response.data.notice;
-        for (var i = 0; i < this.table.length; i++) {
-          this.table[i].writerName = response.data.notNoticeWriter[i];
-        }
-        for (i = 0; i < this.tableNotice.length; i++) {
-          this.tableNotice[i].writerName = response.data.noticeWriter[i];
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.getBoardList();
   },
   methods: {
     boardDetail(bno) {
-      this.$router.push({ name: "GroupBoardDetail", params: { bno } });
+      this.$store.commit('setBno', bno);
+      this.$router.push('/board/detail');
     },
-    createArticle() {},
+    createArticle() {
+      var params = new URLSearchParams();
+      params.append('email', window.sessionStorage.getItem('user-email'));
+      params.append('bgno', this.gno);
+      params.append('title', this.newTitle);
+      params.append('content', this.newContent);
+      params.append('bisNotice', this.newIsNotice);
+
+      axios.post('writeBoard', params).then((resp) => {
+        alert(resp.data.data);
+        this.getBoardList();
+      });
+    },
+    resetDatas() {
+      this.newContent = '';
+      this.newTitle = '';
+      this.newIsNotice = false;
+    },
+    getBoardList() {
+      var params = new URLSearchParams();
+      params.append('bgno', this.gno);
+      axios
+        .post('getBoardList', params)
+        .then((response) => {
+          this.table = response.data.notNotice;
+          this.tableNotice = response.data.notice;
+          for (var i = 0; i < this.table.length; i++) {
+            this.table[i].writerName = response.data.notNoticeWriter[i];
+          }
+          for (i = 0; i < this.tableNotice.length; i++) {
+            this.tableNotice[i].writerName = response.data.noticeWriter[i];
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>

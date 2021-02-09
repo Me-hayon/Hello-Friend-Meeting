@@ -1,9 +1,10 @@
 package com.web.curation.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -11,10 +12,11 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.config.JwtService;
 import com.web.curation.config.SensService;
+import com.web.curation.model.entity.Board;
+import com.web.curation.model.entity.Comment;
 import com.web.curation.model.entity.UserInfo;
+import com.web.curation.model.repository.BoardRepository;
+import com.web.curation.model.repository.CommentRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -38,6 +44,12 @@ public class UserInfoController {
 
 	@Autowired
 	private UserInfoRepository userInfoRepository;
+	
+	@Autowired
+	private BoardRepository boardRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 
@@ -143,6 +155,7 @@ public class UserInfoController {
 		} else {
 			resultMap.put("user-tel", "앗! 전화번호를 불러올 수 없어요.");
 			resultMap.put("user-name", "앗! 이름을 불러올 수 없어요.");
+			resultMap.put("profile-img","not");
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		}
 	}
@@ -256,14 +269,49 @@ public class UserInfoController {
 		Map<String, Object> resultMap = new HashMap<>();
 		UserInfo user = userInfoRepository.findByEmail(email);
 		
-		System.out.println(email);
-		System.out.println(profileImg);
-		
 		if (user != null) {
 			user.setUprofileImg(profileImg);
 			userInfoRepository.save(user);
 			resultMap.put("is-success", true);
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+		}
+		
+		resultMap.put("is-success", false);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getPosts")
+	public Object getPosts(String email) {
+		Map<String, Object> resultMap = new HashMap<>();
+		UserInfo user = userInfoRepository.findByEmail(email);
+		
+		if(user!=null) {
+			Optional<List<Board>> optPosts = boardRepository.findByBwriter(user.getUno(), Sort.by("bno").descending());
+			
+			if(optPosts.isPresent()) {
+				resultMap.put("posts", optPosts.get());
+				resultMap.put("is-success", true);
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+			}
+		}
+		
+		resultMap.put("is-success", false);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getComments")
+	public Object getComments(String email) {
+		Map<String, Object> resultMap = new HashMap<>();
+		UserInfo user = userInfoRepository.findByEmail(email);
+		
+		if(user!=null) {
+			Optional<List<Comment>> optComments = commentRepository.findByCwriter(user.getUno(), Sort.by("cno").descending());
+			
+			if(optComments.isPresent()) {
+				resultMap.put("comments", optComments.get());
+				resultMap.put("is-success", true);
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+			}
 		}
 		
 		resultMap.put("is-success", false);

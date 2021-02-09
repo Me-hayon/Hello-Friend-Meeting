@@ -41,14 +41,21 @@ public class CommentController {
 	GroupInfoRepository groupInfoRepository;
 	
 	@PostMapping("/getCommentList")
-	public Object getCommentList(@RequestParam int bno) {
+	public Object getCommentList(@RequestParam int bno, @RequestParam String email) {
 		Map<String, Object> resultMap=new HashMap<>();
 		List<Comment> list=commentRepository.findAllByBno(bno);
 		
 		List<String> writerList=new ArrayList<>();
-		for(Comment comment:list) 
+		List<Boolean> isWriterList=new ArrayList<>();
+		for(Comment comment:list) {
 			writerList.add(userInfoRepository.findById(comment.getCwriter()).get().getUname());
+			if(userInfoRepository.findById(comment.getCwriter()).get().getEmail().equals(email))
+				isWriterList.add(true);
+			else
+				isWriterList.add(false);
+		}
 		
+		resultMap.put("isWriterList",isWriterList);
 		resultMap.put("comments",list);
 		resultMap.put("writerList", writerList);
 		return resultMap;
@@ -68,10 +75,17 @@ public class CommentController {
 		comment.setCcontent(ccontent);
 		comment.setCwriter(myInfo.getUno());
 		commentRepository.save(comment);
+
+		resultMap.put("data","댓글 작성에 성공했습니다.");
+		
+		if(alarmTargetInfo.getEmail().equals(email)) 
+			return resultMap;
+			
 		
 		Alarm alarm=new Alarm();
-		alarm.setAurl("#");
-		alarm.setCreateUser(bno);
+		alarm.setAurl("BoardDetail");
+		alarm.setCreateUser(myInfo.getUno());
+		alarm.setAurlNo(bno);
 		alarm.setAtype(0);
 		alarm.setAuser(alarmTargetInfo.getUno());
 		
@@ -84,7 +98,8 @@ public class CommentController {
 		sb.append("글에 댓글을 달았습니다.");
 		alarm.setAsummary(sb.toString());
 		
-		resultMap.put("data","댓글 작성에 성공했습니다.");
+		alarmRepository.save(alarm);
+		
 		
 		return resultMap;
 	}
