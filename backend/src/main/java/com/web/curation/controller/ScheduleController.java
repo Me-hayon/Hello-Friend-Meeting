@@ -88,7 +88,7 @@ public class ScheduleController {
 	public Object getSchedulesList(@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
-		Optional<List<Schedule>> list=scheduleRepository.findAllByGno(gno);
+		Optional<List<Schedule>> list=scheduleRepository.findAllBySgno(gno);
 		if(list.isPresent()) {
 			resultMap.put("isPresent",true);
 			resultMap.put("list",list.get());
