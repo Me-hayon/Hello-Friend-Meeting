@@ -41,7 +41,7 @@
           >
             <v-col cols="10" style="padding: 0;">
               <v-list-item
-                @click="goRouting(alarm.aurl, alarm.createUser, alarm.ano)"
+                @click="goRouting(alarm.aurl, alarm.aurlNo, alarm.ano)"
                 style="padding-right: 0;"
               >
                 <v-list-item-title>
@@ -92,15 +92,6 @@ export default {
     axios
       .post('profile', params)
       .then((response) => {
-        this.alarms = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    axios
-      .post('profile', params)
-      .then((response) => {
         this.userInfo.uname = response.data['user-name'];
         this.userInfo.utel = response.data['user-tel'];
         this.userInfo.uprofileImg = response.data['profile-img'];
@@ -114,11 +105,9 @@ export default {
 
   methods: {
     goRouting(aurl, myParam, ano) {
-      var params = new URLSearchParams();
-      params.append('ano', ano);
-      axios.post('readAlarm', params);
+      this.readAlarm(ano);
 
-      params = new URLSearchParams();
+      var params = new URLSearchParams();
       if (aurl === 'FriendInfo') {
         this.$store.commit('setUno', myParam);
         this.$router.push('/user/friend-info').catch(() => {});
@@ -207,6 +196,24 @@ export default {
           alert('에러');
           console.log(ano);
         });
+    },
+    readAlarm(ano) {
+      var params = new URLSearchParams();
+      params.append('ano', ano);
+      axios.post('readAlarm', params).then((resp) => {
+        params = new URLSearchParams();
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        axios
+          .post('getAlarms', params)
+          .then((response) => {
+            this.alarms = response.data.alarms;
+            this.alarmLen = response.data.notReadAlarm;
+            // console.log(this.alarms);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     },
     // reloadAlarm() {
     //   var storage = window.sessionStorage;

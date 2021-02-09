@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SchedulePaticipant {
+public class ScheduleParticipant {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -24,6 +24,6 @@ public class SchedulePaticipant {
 	
 	private int sno;
 	private int uno;
-	private int attendance;
+	private int attendance;//0:미정, 1:참가, 2:불참
 
 }
