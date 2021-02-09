@@ -119,6 +119,16 @@ export default {
     return {
       startTimer: false,
       endTimer: false,
+      localCalendar: {
+        sno: { type: Number },
+        sgno: { type: Number },
+        smaster: { type: Number },
+        senddate: "",
+        sstartdate: "",
+        stitle: "",
+        sspace: "",
+        scontent: "",
+      },
     };
   },
   computed: {
@@ -132,6 +142,7 @@ export default {
   },
   methods: {
     submit() {
+      console.log(this.calendar);
       if (this.$refs.form.validate()) {
         this.$store.dispatch("REQUEST_ADD_EVENT", this.calendar);
       }
