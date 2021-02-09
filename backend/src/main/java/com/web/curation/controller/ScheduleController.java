@@ -43,8 +43,18 @@ public class ScheduleController {
 	UserInfoRepository userInfoRepository;
 	
 	@PostMapping("/addSchedule")
-	public Object addSchedule(@RequestBody Schedule schedule) {
+	public Object addSchedule(@RequestParam String startDate, @RequestParam String endDate, @RequestParam int smaster,@RequestParam int gno,@RequestParam String title, @RequestParam String content ) {
 		Map<String,Object> resultMap=new HashMap<>();
+		
+		Schedule schedule=new Schedule();
+		schedule.setStitle(title);
+		schedule.setScontent(content);
+		schedule.setSstartdate(startDate);
+		schedule.setSenddate(endDate);
+		schedule.setSgno(gno);
+		schedule.setSmaster(smaster);
+		
+		System.out.println(schedule);
 		
 		scheduleRepository.save(schedule);
 		GroupInfo groupInfo=groupInfoRepository.findById(schedule.getSgno()).get();

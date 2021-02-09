@@ -22,10 +22,20 @@ const makeEvent = (event) => {
   };
 };
 const requestAddEvent = (param) => {
+  console.log(param)
+
+  var params = new URLSearchParams();
+  params.append('startDate',param.sstartdate)
+  params.append('endDate',param.senddate)
+  params.append('title',param.stitle)
+  params.append('content',param.scontent)
+  params.append('smaster',param.smaster)
+  params.append('gno',param.sgno)
   axios
-    .post("addSchedule", param)
+    .post("addSchedule", params)
     .then((res) => {
       console.log(res);
+      console.log("ehoTek")
     })
     .catch((error) => {
       console.log(error);
