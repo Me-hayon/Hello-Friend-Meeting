@@ -1,5 +1,6 @@
 package com.web.curation.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,10 +46,17 @@ public class MessageController {
 	}
 	
 	@PostMapping("/getMessages")
-	public List<Message> getMessage(@RequestParam String email){
+	public Object getMessage(@RequestParam String email){
+		Map<String,Object> resultMap=new HashMap<>();
 		int uno=userInfoRepository.findByEmail(email).getUno();
 		List<Message> list=messageRepository.findAllByMreceiver(uno,Sort.by("mno").descending());
-		return list;
+		resultMap.put("messagesList",list);
+		List<String> nameList=new ArrayList<>();
+		for(Message m:list) 
+			nameList.add(userInfoRepository.findById(m.getMsender()).get().getUname());
+		
+		resultMap.put("namesList",nameList);
+		return resultMap;
 	}
 	
 }
