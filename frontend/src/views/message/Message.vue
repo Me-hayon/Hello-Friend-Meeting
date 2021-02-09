@@ -25,7 +25,7 @@
             v-for="message in messages"
             :key="message.name"
           >
-            <td>{{ message.mtitle }}</td>
+            <td>{{ message.msenderName }}</td>
             <td>
               {{ message.mcontent }}
               <div style="float:right"></div>
@@ -165,7 +165,11 @@ export default {
       axios
         .post("getMessages", params)
         .then((response) => {
-          this.messages = response.data;
+          this.messages = response.data.messagesList;
+          var nameList = response.data.namesList;
+          for (var i = 0; i < this.messages.length; i++) {
+            this.messages[i].msenderName = nameList[i];
+          }
           console.log(response);
         })
         .catch((error) => {
