@@ -1,18 +1,26 @@
 <template>
   <v-container>
-    <!-- 프로필 커버 이미지 -->
-    <profile-cover />
-
     <!-- 사용자 설정 버튼 -->
     <user-config-btn />
 
     <!-- 프로필 사진 버튼 -->
     <profile-image
-      v-if="!isLoading"
+      v-if="!isLoadingProfileImg"
       :email="email"
       :currProfileImg="profileImg"
       :curr_pImages="pImages"
     />
+
+    <!-- 프로필 커버 이미지 -->
+    <profile-cover />
+
+    <!-- 사용자 글 관리 -->
+    <user-text-manage />
+
+    <v-divider></v-divider>
+
+    <!-- 사용자 활동 기록 -->
+    <user-history v-if="!isLoadingProfileImg" :currProfileImg="profileImg" />
   </v-container>
 </template>
 
@@ -21,13 +29,20 @@ import axios from 'axios';
 import ProfileCover from '@/components/user/profile/Cover.vue';
 import ProfileImage from '@/components/user/profile/ProfileImage.vue';
 import UserConfigBtn from '@/components/user/profile/UserConfigBtn.vue';
+import UserTextManage from '@/components/user/profile/UserTextManage.vue';
+import UserHistory from '@/components/user/profile/UserHistory.vue';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: { ProfileCover, ProfileImage, UserConfigBtn },
+  components: {
+    ProfileCover,
+    ProfileImage,
+    UserConfigBtn,
+    UserTextManage,
+    UserHistory,
+  },
   created() {
-    console.log('profile create');
     this.email = storage.getItem('user-email');
 
     let params = new URLSearchParams();
@@ -55,7 +70,7 @@ export default {
           if (this.pImages[i] == this.profileImg) this.pImages.splice(i--, 1);
         }
 
-        this.isLoading = false;
+        this.isLoadingProfileImg = false;
       })
       .catch((error) => {
         alert('토큰이 만료되었습니다ㅜ.ㅜ 다시 로그인 하러 갈까요?');
@@ -73,7 +88,7 @@ export default {
       email: '',
       profileImg: '',
       pImages: [],
-      isLoading: true,
+      isLoadingProfileImg: true,
     };
   },
 };
