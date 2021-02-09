@@ -63,15 +63,15 @@
         </v-sheet>
       </v-col>
     </v-row>
-    <!-- <Dialog /> -->
+    <Dialog />
   </div>
 </template>
 
 <script>
-// import Dialog from '@/components/group/Dialog.vue';
+import Dialog from '@/components/group/Dialog.vue';
 export default {
   components: {
-    // Dialog,
+    Dialog,
   },
   computed: {
     vuexGno() {
@@ -114,6 +114,16 @@ export default {
 
   data() {
     return {
+      openedDialog: {
+        sno: { type: Number },
+        sgno: { type: Number },
+        smaster: { type: Number },
+        senddate: '',
+        sstartdate: '',
+        stitle: '',
+        sspace: '',
+        scontetnt: '',
+      },
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
       bno: this.$store.getters.getBno,
@@ -125,6 +135,38 @@ export default {
         { text: 'Day', value: 'day' },
         { text: 'Week', value: 'week' },
         { text: 'Month', value: 'month' },
+      ],
+      dialogs: [
+        {
+          sno: 1,
+          sgno: 1,
+          smaster: 5,
+          senddate: '2021-02-15 13:13:13',
+          sstartdate: this.startDate,
+          stitle: 'first',
+          sspace: null,
+          scontetnt: '',
+        },
+        {
+          sno: 2,
+          sgno: 1,
+          smaster: 5,
+          senddate: '2021-02-15 13:13:13',
+          sstartdate: this.startDate,
+          stitle: 'second',
+          sspace: null,
+          scontetnt: '',
+        },
+        {
+          sno: 3,
+          sgno: 1,
+          smaster: 5,
+          senddate: '2021-02-15 13:13:13',
+          sstartdate: this.startDate,
+          stitle: 'third',
+          sspace: null,
+          scontetnt: '',
+        },
       ],
     };
   },

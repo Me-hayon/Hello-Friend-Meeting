@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.web.curation.model.entity.Schedule;
 
 public interface ScheduleRepository extends JpaRepository<Schedule,Integer>{
-	public Optional<List<Schedule>> findAllByGno(int gno);
+	public Optional<List<Schedule>> findAllBySgno(int sgno);
 
 }

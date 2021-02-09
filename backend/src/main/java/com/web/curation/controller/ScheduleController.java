@@ -43,8 +43,18 @@ public class ScheduleController {
 	UserInfoRepository userInfoRepository;
 	
 	@PostMapping("/addSchedule")
-	public Object addSchedule(@RequestBody Schedule schedule) {
+	public Object addSchedule(@RequestParam String startDate, @RequestParam String endDate, @RequestParam int smaster,@RequestParam int gno,@RequestParam String title, @RequestParam String content ) {
 		Map<String,Object> resultMap=new HashMap<>();
+		
+		Schedule schedule=new Schedule();
+		schedule.setStitle(title);
+		schedule.setScontent(content);
+		schedule.setSstartdate(startDate);
+		schedule.setSenddate(endDate);
+		schedule.setSgno(gno);
+		schedule.setSmaster(smaster);
+		
+		System.out.println(schedule);
 		
 		scheduleRepository.save(schedule);
 		GroupInfo groupInfo=groupInfoRepository.findById(schedule.getSgno()).get();
@@ -88,7 +98,7 @@ public class ScheduleController {
 	public Object getSchedulesList(@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
-		Optional<List<Schedule>> list=scheduleRepository.findAllByGno(gno);
+		Optional<List<Schedule>> list=scheduleRepository.findAllBySgno(gno);
 		if(list.isPresent()) {
 			resultMap.put("isPresent",true);
 			resultMap.put("list",list.get());

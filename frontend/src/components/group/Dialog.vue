@@ -114,26 +114,28 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       startTimer: false,
       endTimer: false,
       localCalendar: {
-        sno: { type: Number },
+        sno: 1,
         sgno: { type: Number },
         smaster: { type: Number },
-        senddate: "",
-        sstartdate: "",
-        stitle: "",
-        sspace: "",
-        scontent: "",
+        senddate: '',
+        sstartdate: '',
+        stitle: '',
+        sspace: '',
+        scontent: '',
       },
     };
   },
   computed: {
     dialog() {
-      console.log("확인");
+      console.log('확인');
       return this.$store.state.dialog;
     },
     calendar() {
@@ -143,21 +145,33 @@ export default {
   methods: {
     submit() {
       console.log(this.calendar);
+      this.localCalendar.sgno = this.$store.getters.getGno;
+      var params = new URLSearchParams();
+      params.append('email', window.sessionStorage.getItem('user-email'));
+      axios.post('profile', params).then((resp) => {
+        this.localCalendar.smaster = resp.data['user-uno'];
+      });
+      this.localCalendar.senddate =
+        this.calendar.endDate + ' ' + this.calendar.endTime + ':00';
+      this.localCalendar.sstartdate =
+        this.calendar.startDate + ' ' + this.calendar.startTime + ':00';
+      this.localCalendar.stitle = this.calendar.title;
+      this.localCalendar.scontent = this.calendar.content;
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("REQUEST_ADD_EVENT", this.calendar);
+        this.$store.dispatch('REQUEST_ADD_EVENT', this.localCalendar);
       }
     },
     close() {
-      this.$store.commit("CLOSE_CALENDAR_DIALOG");
+      this.$store.commit('CLOSE_CALENDAR_DIALOG');
     },
     selectTime() {
       this.endTimer = false;
       this.startTimer = false;
     },
     allowedDates(val) {
-      let endDate = val.split("-").reduce((a, b) => a + b);
+      let endDate = val.split('-').reduce((a, b) => a + b);
       let startDate = this.calendar.startDate
-        .split("-")
+        .split('-')
         .reduce((a, b) => a + b);
       return endDate >= startDate;
     },
