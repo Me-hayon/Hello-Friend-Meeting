@@ -3,48 +3,14 @@
     <v-row>
       <v-col cols="12" md="6" class="mb-4">
         <v-row>
-          <v-col cols="6">
-            <v-menu
-              ref="dateOpen"
-              v-model="dateOpen"
-              :close-on-content-click="false"
-              :return-value.sync="start"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="start"
-                  label="Start Date"
-                  prepend-icon="mdi-calendar"
-                  dense
-                  readonly
-                  outlined
-                  hide-details
-                  v-on="on"
-                ></v-text-field>
-              </template>
-
-              <v-date-picker v-model="start" no-title>
-                <v-spacer />
-                <v-btn text color="primary" @click="dateOpen = false"
-                  >Cancel</v-btn
-                >
-                <v-btn text color="primary" @click="$refs.dateOpen.save(start)"
-                  >OK</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
+          <v-col cols="2" align="center">
+            <v-icon @click="preMonth">mdi-chevron-left</v-icon>
           </v-col>
-          <v-col cols="6">
-            <v-select
-              v-model="type"
-              :items="typeOptions"
-              label="Type"
-              class="my-auto"
-              hide-details
-              outlined
-              dense
-            ></v-select>
+          <v-col cols="8">
+            <h3 style="text-align:center">{{ curYM }}</h3>
+          </v-col>
+          <v-col cols="2" align="center">
+            <v-icon @click="nextMonth">mdi-chevron-right</v-icon>
           </v-col>
         </v-row>
         <v-sheet height="500">
@@ -109,20 +75,30 @@ export default {
     },
     events(val) {
       this.localEvents = val;
+      // this.getSchedules(); //led에디션
     },
     eventsNum(val) {
       this.getSchedules();
     },
+    curMonth() {
+      this.start = `${this.curYear}-${this.curMonth}-01`;
+      this.curYM = `${this.curYear} . ${this.curMonth}`;
+    },
   },
   created() {
     const today = new Date();
-    console.log(today);
     const year = today.getFullYear();
     const month = today.getMonth();
     const date = today.getDate();
     const startDate = `${year}-${month}-${date}`;
-    console.log(month);
-    console.log(startDate);
+    console.log(today.getMonth());
+    this.curYear = year;
+    this.curMonth = month + 1;
+    if (this.curMonth < 10) this.curMonth = '0' + this.curMonth;
+    this.start = startDate;
+    console.log(this.curYear);
+    console.log(this.curMonth);
+    console.log(this.start);
     this.getSchedules();
   },
 
@@ -146,14 +122,36 @@ export default {
       dateOpen: false,
       start: this.startDate,
       type: 'month',
-      typeOptions: [
-        { text: 'Day', value: 'day' },
-        { text: 'Week', value: 'week' },
-        { text: 'Month', value: 'month' },
-      ],
+      curYear: this.year,
+      curMonth: this.month,
+      curYM: '',
     };
   },
   methods: {
+    preMonth() {
+      this.curMonth *= 1;
+      this.curMonth--;
+      if (this.curMonth === 0) {
+        this.curMonth = 12;
+        this.curYear *= 1;
+        this.curYear--;
+        this.curYear += '';
+      }
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
+    },
+    nextMonth() {
+      this.curMonth *= 1;
+      this.curMonth++;
+      if (this.curMonth === 13) {
+        this.curMonth = 1;
+        this.curYear *= 1;
+        this.curYear++;
+        this.curYear += '';
+      }
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
+    },
     open(date) {
       console.log(date);
       this.$store.commit('OPEN_CALENDAR_DIALOG', date);
