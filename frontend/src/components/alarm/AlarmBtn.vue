@@ -3,7 +3,12 @@
     <v-menu v-model="menu" :close-on-content-click="false" offset-x>
       <template v-slot:activator="{ on, attrs }">
         <v-btn v-bind="attrs" v-on="on">
-          <v-badge color="deep-purple accent-4" right overlap>
+          <v-badge
+            :value="alarmLen != 0"
+            color="deep-purple accent-4"
+            right
+            overlap
+          >
             <span slot="badge">{{ alarmLen }}</span>
             <v-icon>mdi-bell</v-icon>
           </v-badge>
@@ -32,19 +37,20 @@
 
         <v-divider></v-divider>
 
-        <v-list max-height="300" style="overflow-y: auto;">
+        <v-list width="300" max-height="300" style="overflow-y: auto;">
           <v-row
             no-gutters
             v-for="alarm in alarms"
             :key="alarm.ano"
+            :style="{ backgroundColor: alarmBgColor(alarm.aisRead) }"
             style="margin: 0;"
           >
-            <v-col cols="10" style="padding: 0;">
+            <v-col cols="9" style="padding: 0;">
               <v-list-item
                 @click="goRouting(alarm.aurl, alarm.aurlNo, alarm.ano)"
                 style="padding-right: 0;"
               >
-                <v-list-item-title>
+                <v-list-item-title style="letter-spacing: -1px;">
                   {{ alarm.asummary }}
                 </v-list-item-title>
               </v-list-item>
@@ -103,6 +109,14 @@ export default {
       });
   },
 
+  computed: {
+    alarmBgColor() {
+      return (aisRead) => {
+        return aisRead ? '#E6E6FA' : 'white';
+      };
+    },
+  },
+
   methods: {
     goRouting(aurl, myParam, ano) {
       this.readAlarm(ano);
@@ -159,7 +173,7 @@ export default {
         .then((response) => {
           this.alarms = response.data.alarms;
           this.alarmLen = response.data.notReadAlarm;
-          // console.log(this.alarms);
+          console.log(this.alarms);
         })
         .catch((error) => {
           console.log(error);
