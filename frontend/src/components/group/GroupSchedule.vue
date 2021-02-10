@@ -6,8 +6,8 @@
           <v-col cols="2" align="center">
             <v-icon @click="preMonth">mdi-chevron-left</v-icon>
           </v-col>
-          <v-col cols="8">
-            <h3 style="text-align:center">{{ curYM }}</h3>
+          <v-col cols="8" align="center">
+            <h3 align="center">{{ curYM }}</h3>
           </v-col>
           <v-col cols="2" align="center">
             <v-icon @click="nextMonth">mdi-chevron-right</v-icon>
