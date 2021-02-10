@@ -16,7 +16,6 @@ export default {
   },
 
   OPEN_CALENDAR_DIALOG(state, payload) {
-    console.log("dddddasdffasdfasfasf");
     state.calendar.startDate = payload.date;
     state.calendar.startTime = payload.time;
     state.calendar.hasTime = payload.hasTime;
@@ -25,14 +24,15 @@ export default {
   CLOSE_CALENDAR_DIALOG(state) {
     state.dialog = false;
   },
-  ADD_EVENTS(state, evnet) {
-    state.events[0] = evnet;
-    state.events[1] = evnet;
-    state.events[2] = evnet;
-    state.dialog = false;
+  ADD_EVENTS(state, event) {
+    state.events = [];
+    for (var i = 0; i < event.length; i++){
+      state.events.push(makeEvent(event[i]))
+      // alert(state.events[i].color)
+    }
   },
   ADD_EVENT(state, getEvent) {
-    state.events.push(getEvent);
+    state.events.push(makeEvent(getEvent));
     state.dialog = false;
     state.event = initEvent();
   },
@@ -43,6 +43,19 @@ export default {
     state.isWriter=payload
   }
 };
+
+const colors = ["blue", "indigo", "deep-purple", "green", "orange", "red"];
+
+const makeEvent = (event) => {
+  return {
+    name: event.stitle,
+    start: event.sstartdate,
+    end: event.senddate,
+    color: colors[Math.floor(Math.random() * 6)],
+    content:event.scontent
+  };
+};
+
 
 function initEvent() {
   return {

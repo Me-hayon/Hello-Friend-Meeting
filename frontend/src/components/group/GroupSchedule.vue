@@ -50,7 +50,7 @@
         <v-sheet height="500">
           <v-calendar
             :event-color="getEventColor"
-            :events="events"
+            :events="localEvents"
             :start="start"
             :type="type"
             @click:date="open"
@@ -69,6 +69,7 @@
 
 <script>
 import Dialog from '@/components/group/Dialog.vue';
+import axios from 'axios';
 export default {
   components: {
     Dialog,
@@ -86,6 +87,12 @@ export default {
     vuexMemberStatus() {
       return this.$store.getters.getMemberStatus;
     },
+    events() {
+      return this.$store.getters.getEvents;
+    },
+    eventsNum() {
+      return this.$store.getters.getEvents.length;
+    },
   },
   watch: {
     vuexGno(val) {
@@ -100,6 +107,12 @@ export default {
     vuexMemberStatus(val) {
       this.memberStatus = val;
     },
+    events(val) {
+      this.localEvents = val;
+    },
+    eventsNum(val) {
+      this.getSchedules();
+    },
   },
   created() {
     const today = new Date();
@@ -110,10 +123,12 @@ export default {
     const startDate = `${year}-${month}-${date}`;
     console.log(month);
     console.log(startDate);
+    this.getSchedules();
   },
 
   data() {
     return {
+      localEvents: [],
       openedDialog: {
         sno: { type: Number },
         sgno: { type: Number },
@@ -136,44 +151,25 @@ export default {
         { text: 'Week', value: 'week' },
         { text: 'Month', value: 'month' },
       ],
-      dialogs: [
-        {
-          sno: 1,
-          sgno: 1,
-          smaster: 5,
-          senddate: '2021-02-15 13:13:13',
-          sstartdate: this.startDate,
-          stitle: 'first',
-          sspace: null,
-          scontetnt: '',
-        },
-        {
-          sno: 2,
-          sgno: 1,
-          smaster: 5,
-          senddate: '2021-02-15 13:13:13',
-          sstartdate: this.startDate,
-          stitle: 'second',
-          sspace: null,
-          scontetnt: '',
-        },
-        {
-          sno: 3,
-          sgno: 1,
-          smaster: 5,
-          senddate: '2021-02-15 13:13:13',
-          sstartdate: this.startDate,
-          stitle: 'third',
-          sspace: null,
-          scontetnt: '',
-        },
-      ],
     };
   },
   methods: {
     open(date) {
       console.log(date);
       this.$store.commit('OPEN_CALENDAR_DIALOG', date);
+    },
+    getEventColor(event) {
+      return event.color;
+    },
+    showEvent() {},
+    moreEvent() {},
+    getSchedules() {
+      var params = new URLSearchParams();
+      params.append('gno', this.gno);
+      axios.post('getSchedulesList', params).then((resp) => {
+        if (resp.data.isPresent)
+          this.$store.commit('ADD_EVENTS', resp.data.list);
+      });
     },
   },
 };

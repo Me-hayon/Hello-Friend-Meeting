@@ -43,7 +43,8 @@ public class ScheduleController {
 	UserInfoRepository userInfoRepository;
 	
 	@PostMapping("/addSchedule")
-	public Object addSchedule(@RequestParam String startDate, @RequestParam String endDate, @RequestParam int smaster,@RequestParam int gno,@RequestParam String title, @RequestParam String content ) {
+	public Object addSchedule(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String email,
+			@RequestParam int gno, @RequestParam String title, @RequestParam String content ) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
 		Schedule schedule=new Schedule();
@@ -52,11 +53,11 @@ public class ScheduleController {
 		schedule.setSstartdate(startDate);
 		schedule.setSenddate(endDate);
 		schedule.setSgno(gno);
-		schedule.setSmaster(smaster);
+		schedule.setSmaster(userInfoRepository.findByEmail(email).getUno());
 		
 		System.out.println(schedule);
 		
-		scheduleRepository.save(schedule);
+		schedule=scheduleRepository.save(schedule);
 		GroupInfo groupInfo=groupInfoRepository.findById(schedule.getSgno()).get();
 		
 		String members=groupInfo.getGuserList();
@@ -88,8 +89,10 @@ public class ScheduleController {
 			
 			alarmRepository.save(alarm);
 		}
+		schedule.setSstartdate(schedule.getSstartdate().substring(0, schedule.getSstartdate().length()-3));
+		schedule.setSenddate(schedule.getSenddate().substring(0, schedule.getSenddate().length()-3));
 		
-		resultMap.put("data","새로운 일정을 추가했습니다.");
+		resultMap.put("createdSchedule",schedule);
 		
 		return resultMap;
 	}
@@ -101,6 +104,10 @@ public class ScheduleController {
 		Optional<List<Schedule>> list=scheduleRepository.findAllBySgno(gno);
 		if(list.isPresent()) {
 			resultMap.put("isPresent",true);
+			for(Schedule s:list.get()) {
+				s.setSstartdate(s.getSstartdate().substring(0, s.getSstartdate().length()-3));
+				s.setSenddate(s.getSenddate().substring(0, s.getSenddate().length()-3));
+			}
 			resultMap.put("list",list.get());
 		}
 		else 

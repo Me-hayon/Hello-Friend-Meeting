@@ -15,10 +15,11 @@ export default {
 const colors = ["blue", "indigo", "deep-purple", "green", "orange", "red"];
 const makeEvent = (event) => {
   return {
-    name: event.title,
-    start: event.startDate + getTime(event.startTime),
-    end: event.endDate + getTime(event.endTime),
+    name: event.stitle,
+    start: event.sstartdate,
+    end: event.senddate,
     color: colors[Math.floor(Math.random() * 6)],
+    content:event.scontent
   };
 };
 const requestAddEvent = (param) => {
@@ -40,7 +41,4 @@ const requestAddEvent = (param) => {
     .catch((error) => {
       console.log(error);
     });
-};
-const getTime = () => {
-  return;
 };
