@@ -7,7 +7,7 @@
             <th class="text-left">
               보낸사람
             </th>
-            <th class="text-center">
+            <th class="text-center ">
               내용
             </th>
           </tr>
@@ -26,7 +26,7 @@
             :key="message.name"
           >
             <td>{{ message.msenderName }}</td>
-            <td>
+            <td class="text-truncate" style="max-width: 150px;">
               {{ message.mcontent }}
               <div style="float:right"></div>
             </td>
