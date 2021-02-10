@@ -21,24 +21,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SensService {
-	public static int randNum;
 	public static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-	String hostNameUrl = "https://sens.apigw.ntruss.com"; // 호스트 URL
-	String requestUrl = "/sms/v2/services/"; // 요청 URL
-	String requestUrlType = "/messages"; // 요청 URL
-	String accessKey = "RHWhcDNAY2M8PqCSUALi"; // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키 (네이버 API 인증 Access Key ID)
-	String secretKey = "DBsVv3WzljxIwpmY9uKd2YAx8DI8xpQ1qq4khjTW"; // 2차 인증을 위해 서비스마다 할당되는 service secret (네이버 API 인증키
-																	// 관리의 Secret Key)
-	String serviceId = "ncp:sms:kr:263337650344:help-me"; // 콘솔 > 프로젝트에 할당된 SMS 서비스 ID
-	String method = "POST"; // 요청 method
-	String timestamp = Long.toString(System.currentTimeMillis()); // current timestamp (epoch)
-
 	public int makeBody(String toTel) {
+		
+		String hostNameUrl = "https://sens.apigw.ntruss.com"; // 호스트 URL
+		String requestUrl = "/sms/v2/services/"; // 요청 URL
+		String requestUrlType = "/messages"; // 요청 URL
+		String accessKey = "RHWhcDNAY2M8PqCSUALi"; // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키 (네이버 API 인증 Access Key ID)
+		String secretKey = "DBsVv3WzljxIwpmY9uKd2YAx8DI8xpQ1qq4khjTW"; // 2차 인증을 위해 서비스마다 할당되는 service secret (네이버 API 인증키
+		// 관리의 Secret Key)
+		String serviceId = "ncp:sms:kr:263337650344:help-me"; // 콘솔 > 프로젝트에 할당된 SMS 서비스 ID
+		String method = "POST"; // 요청 method
+		String timestamp = Long.toString(System.currentTimeMillis()); // current timestamp (epoch)
 
 		requestUrl += serviceId + requestUrlType;
 		String apiUrl = hostNameUrl + requestUrl;
-		randNum = (int) Math.floor((Math.random() * 8999) + 1000);
+		int randNum = (int) Math.floor((Math.random() * 8999) + 1000);
 
 		// JSON 을 활용한 body data 생성
 

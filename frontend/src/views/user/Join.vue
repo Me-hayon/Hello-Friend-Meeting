@@ -306,7 +306,7 @@ export default {
             this.realAuthNum = response.data['realAuthNum'];
             alert('인증 번호를 전송했어요!');
           } else {
-            alert('인증 번호 전송 실패');
+            alert('이미 등록된 번호입니다.');
           }
         })
         .catch((error) => {
