@@ -26,6 +26,18 @@
             ref="calendar"
             v-model="start"
           ></v-calendar>
+          <v-menu
+            v-model="selectedOpen"
+            :close-on-content-click="false"
+            :activator="selectedElement"
+            offset-x
+          >
+            <v-card color="grey lighten-4" min-width="200px" flat>
+              <v-toolbar :color="selectedEvent.color" dark></v-toolbar>
+              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              <v-spacer></v-spacer
+            ></v-card>
+          </v-menu>
         </v-sheet>
       </v-col>
     </v-row>
@@ -91,14 +103,10 @@ export default {
     const month = today.getMonth();
     const date = today.getDate();
     const startDate = `${year}-${month}-${date}`;
-    console.log(today.getMonth());
     this.curYear = year;
     this.curMonth = month + 1;
     if (this.curMonth < 10) this.curMonth = '0' + this.curMonth;
     this.start = startDate;
-    console.log(this.curYear);
-    console.log(this.curMonth);
-    console.log(this.start);
     this.getSchedules();
   },
 
@@ -123,8 +131,11 @@ export default {
       start: this.startDate,
       type: 'month',
       curYear: this.year,
-      curMonth: this.month,
+      curMonth: this.month + 1,
       curYM: '',
+      selectedEvent: {},
+      selectedElement: null,
+      selectedOpen: false,
     };
   },
   methods: {
@@ -159,7 +170,13 @@ export default {
     getEventColor(event) {
       return event.color;
     },
-    showEvent() {},
+    showEvent({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedEvent = event;
+        this.selectedElement = nativeEvent.target;
+        this.selectedOpen = false;
+      };
+    },
     moreEvent() {},
     getSchedules() {
       var params = new URLSearchParams();
