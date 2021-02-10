@@ -1,5 +1,13 @@
 <template>
   <div>
+    <input
+      type="text"
+      v-model="search"
+      placeholder="보낸사람 검색"
+      @input="handleSearchInput"
+      @keydown.tab="KeydownTab"
+    />
+
     <v-simple-table>
       <template v-slot:default>
         <thead>
@@ -14,6 +22,8 @@
         </thead>
         <tbody>
           <tr
+            v-for="message in searchList"
+            :key="message.name"
             @click="
               modalShowMethod(
                 message.mtitle,
@@ -22,10 +32,8 @@
                 message.mno
               )
             "
-            v-for="message in messages"
-            :key="message.name"
           >
-            <td>{{ message.msenderName }}</td>
+            <td :search="search">{{ message.msenderName }}</td>
             <td class="text-truncate" style="max-width: 150px;">
               {{ message.mcontent }}
               <div style="float:right"></div>
@@ -79,12 +87,33 @@ export default {
       mno: "",
       newMtitle: "",
       newMcontent: "",
+      search: "",
+      searchList: Array,
     };
   },
   created() {
     this.getMessages();
   },
   methods: {
+    handleSearchInput(e) {
+      this.search = e.target.value;
+      if (this.search.length !== 0) {
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => {
+          const filteredList = this.messages.filter((item) =>
+            item.msenderName.includes(this.search)
+          );
+          this.searchList = filteredList;
+          console.log("키키키", this.searchList);
+        }, 100);
+      } else {
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => {
+          this.searchList = this.messages;
+        }, 100);
+      }
+    },
+
     modalShowMethod(title, content, sender, mno) {
       this.modalShow = !this.modalShow;
       if (this.modalShow) {
@@ -166,6 +195,8 @@ export default {
         .post("getMessages", params)
         .then((response) => {
           this.messages = response.data.messagesList;
+          this.searchList = response.data.messagesList;
+
           var nameList = response.data.namesList;
           for (var i = 0; i < this.messages.length; i++) {
             this.messages[i].msenderName = nameList[i];
