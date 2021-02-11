@@ -35,9 +35,15 @@
           </v-list-item>
         </v-list>
 
-        <v-divider></v-divider>
+        <v-divider
+          style="margin-bottom: 0; border: dashed #D3D3D3 1px;"
+        ></v-divider>
 
-        <v-list width="300" max-height="300" style="overflow-y: auto;">
+        <v-list
+          width="300"
+          max-height="300"
+          style="overflow-y: auto; padding-top: 0;"
+        >
           <v-row
             no-gutters
             v-for="alarm in alarms"
