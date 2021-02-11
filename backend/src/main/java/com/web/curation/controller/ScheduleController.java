@@ -1,5 +1,6 @@
 package com.web.curation.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -93,6 +93,7 @@ public class ScheduleController {
 		schedule.setSenddate(schedule.getSenddate().substring(0, schedule.getSenddate().length()-3));
 		
 		resultMap.put("createdSchedule",schedule);
+		resultMap.put("userEmail",email);
 		
 		return resultMap;
 	}
@@ -104,13 +105,31 @@ public class ScheduleController {
 		Optional<List<Schedule>> list=scheduleRepository.findAllBySgno(gno);
 		if(list.isPresent()) {
 			resultMap.put("isPresent",true);
+			List<String> emailList=new ArrayList<>();
 			for(Schedule s:list.get()) {
 				s.setSstartdate(s.getSstartdate().substring(0, s.getSstartdate().length()-3));
 				s.setSenddate(s.getSenddate().substring(0, s.getSenddate().length()-3));
+				emailList.add(userInfoRepository.findById(s.getSmaster()).get().getEmail());
 			}
 			resultMap.put("list",list.get());
+			resultMap.put("emailList",emailList);
 		}
 		else 
+			resultMap.put("isPresent",false);
+		
+		return resultMap;
+	}
+	
+	@PostMapping("/delSchedule")
+	public Object delSchedule(@RequestParam int sno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		Optional<Schedule> schedule=scheduleRepository.findById(sno);
+		if(schedule.isPresent()) {
+			resultMap.put("isPresent",true);
+			scheduleRepository.delete(schedule.get());
+		}
+		else
 			resultMap.put("isPresent",false);
 		
 		return resultMap;
