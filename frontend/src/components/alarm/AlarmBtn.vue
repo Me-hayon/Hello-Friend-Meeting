@@ -35,16 +35,24 @@
           </v-list-item>
         </v-list>
 
-        <v-divider
-          style="margin-bottom: 0; border: dashed #D3D3D3 1px;"
-        ></v-divider>
+        <v-divider style="margin: 0; border: dashed #D3D3D3 1px;"></v-divider>
 
         <v-list
           width="300"
           max-height="300"
-          style="overflow-y: auto; padding-top: 0;"
-        >
+          style="overflow-y: auto; padding: 0;"
+          ><v-row
+            v-if="alarms == null || alarms.length == 0"
+            class="ma-0"
+            align="center"
+            justify="center"
+            style="height: 100px;"
+          >
+            알림 없음ㅋㅋ!! <br />
+            나중에... 이미지로 대체하고 싶삼
+          </v-row>
           <v-row
+            v-else
             no-gutters
             v-for="alarm in alarms"
             :key="alarm.ano"
@@ -68,7 +76,6 @@
             </v-col>
           </v-row>
         </v-list>
-
         <v-card-actions>
           <v-spacer></v-spacer>
 

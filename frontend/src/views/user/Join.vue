@@ -19,7 +19,12 @@
     </v-row>
     <v-row style="margin: 10px; margin-top: 25px;">
       <v-form ref="form" lazy-validation>
-        <v-carousel height="200" hide-delimiter-background show-arrows-on-hover>
+        <v-carousel
+          height="200"
+          hide-delimiter-background
+          show-arrows-on-hover
+          style="margin-left: -10px;"
+        >
           <template v-slot:prev="{ on, attrs }">
             <v-icon color=" rgb(70, 70, 70)" v-bind="attrs" v-on="on"
               >mdi-arrow-left-thick</v-icon
@@ -32,7 +37,10 @@
             >
             <!-- <v-btn color="info" v-bind="attrs" v-on="on">Next slide</v-btn> -->
           </template>
-          <v-carousel-item reverse-transition="fade-transition">
+          <v-carousel-item
+            reverse-transition="fade-transition"
+            style="width: 380px;"
+          >
             <v-row style="padding: 80px;">
               <v-text-field
                 ref="name"
@@ -40,14 +48,17 @@
                 :rules="nameRules"
                 :error-messages="errorMessages"
                 label="내 이름은..."
-                placeholder="찬찬규"
+                placeholder="김싸피"
                 counter="10"
                 required
               ></v-text-field>
             </v-row>
           </v-carousel-item>
 
-          <v-carousel-item reverse-transition="fade-transition">
+          <v-carousel-item
+            reverse-transition="fade-transition"
+            style=" width: 380px;"
+          >
             <v-row
               justify="center"
               style="padding-left: 45px; padding-right: 45px; padding-top: 30px;"
@@ -92,7 +103,10 @@
             </v-row>
           </v-carousel-item>
 
-          <v-carousel-item reverse-transition="fade-transition">
+          <v-carousel-item
+            reverse-transition="fade-transition"
+            style=" width: 380px;"
+          >
             <v-row
               style="padding-left: 80px; padding-right: 80px; padding-top: 20px;"
             >
@@ -119,7 +133,10 @@
             </v-row>
           </v-carousel-item>
 
-          <v-carousel-item reverse-transition="fade-transition">
+          <v-carousel-item
+            reverse-transition="fade-transition"
+            style=" width: 380px;"
+          >
             <v-row
               style="margin: 0; padding-left: 50px; padding-right: 60px; margin-top: 20px;"
             >
