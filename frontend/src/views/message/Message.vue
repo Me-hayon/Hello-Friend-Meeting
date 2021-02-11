@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-icon>mdi-magnify</v-icon>
     <input
       type="text"
       v-model="search"
@@ -41,13 +42,24 @@
           </tr>
         </tbody>
         <b-modal id="reply" centered title="쪽지쓰기" @ok="replyMessage()">
-          제목 : <input type="text" v-model="newMtitle"/>
+          제목
+          <v-text-field
+            full-width
+            value="Re: Vacation Request"
+            label="Subject"
+            single-line
+            v-model="newMtitle"
+          ></v-text-field>
+
           <hr />
-          <b-form-textarea
+          <v-textarea
             id="textarea-rows"
+            full-width
+            single-line
             rows="8"
+            label="Message"
             v-model="newMcontent"
-          ></b-form-textarea
+          ></v-textarea
         ></b-modal>
         <b-modal
           id="delete"
@@ -56,16 +68,18 @@
           @ok="delMessage(mno)"
         ></b-modal>
         <b-modal v-model="modalShow" centered hide-footer :title="mtitle">
-          <p>보낸사람 : {{ msender }}</p>
+          <p><span style="font-weight: bold;">보낸사람</span> {{ msender }}</p>
           <hr />
-          <p>내용 : {{ mcontent }}</p>
-          <b-button style="margin-right:15px" v-b-modal.reply>
-            답장
-          </b-button>
+          <p>{{ mcontent }}</p>
+          <div style="float:right">
+            <b-button style="margin-right:15px" v-b-modal.reply>
+              답장
+            </b-button>
 
-          <b-button v-b-modal.delete>
-            삭제
-          </b-button>
+            <b-button v-b-modal.delete>
+              삭제
+            </b-button>
+          </div>
         </b-modal>
       </template>
     </v-simple-table>
