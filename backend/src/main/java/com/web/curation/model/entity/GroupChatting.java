@@ -26,5 +26,5 @@ public class GroupChatting {
 	private int gcuno;
 	private String gccontent;
 	private String gcdate;
-
+	
 }

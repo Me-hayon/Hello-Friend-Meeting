@@ -13,4 +13,5 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Integer>{
 	public UserInfo findByEmailAndPassword(String email, String password);
 	public void deleteByEmail(String email);
 	public List<UserInfo> findAllByUnoIn(List<Integer> uno);
+	public UserInfo findByUno(int uno);
 }
