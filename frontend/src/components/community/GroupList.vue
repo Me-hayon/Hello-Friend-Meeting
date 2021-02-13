@@ -1,167 +1,65 @@
-<template
-  ><div>
-    <v-simple-table style="margin-top:50px; margin-bottom:70px">
-      <template v-slot:default>
-        <tbody>
-          <tr
-            style="height:100px"
-            v-for="item in groups"
-            :key="item.gname"
-            @click="goToGroupPage(item.gno)"
-          >
-            <td>{{ item.gname }}</td>
-            <td>
-              <i style="margin-right:10px" class="material-icons"
-                ><font-awesome-icon :icon="['far', 'user']"/></i
-              >{{ item.members }}
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
-    <button v-b-modal.modal-center class="add-group-btn">그룹+</button>
-    <b-modal id="modal-center" centered title="그룹생성" @ok="makeGroup">
-      <b-row style="margin-bottom:25px">
-        <b-col style="margin-top:10px">그룹명</b-col>
-        <b-col
-          ><b-form-input v-model="gname" type="text" class="groupName"
-        /></b-col>
-      </b-row>
-      <b-row style="margin-bottom:25px">
-        <b-col>카테고리</b-col>
-        <b-col>
-          <b-form-select v-model="selectedCategory">
-            <option
-              :value="item.cno"
-              v-for="item in category"
-              :key="item.cno"
-              >{{ item.cname }}</option
-            >
-          </b-form-select>
-        </b-col>
-      </b-row>
-      <b-row style="margin-bottom:25px">
-        <b-col>노출범위</b-col>
-        <b-form-radio-group>
-          <b-col>
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="1"
-                  >친구만</b-form-radio
-                >
-              </b-col>
-            </b-row>
+<template>
+  <!-- 그룹이 존재할 경우 -->
+  <v-list
+    v-if="groups.length != 0"
+    height="639"
+    style="overflow-y: auto;"
+    two-line
+  >
+    <template v-for="(group, index) in groups">
+      <v-divider
+        v-if="index == 0"
+        :key="'dividerUp' + index"
+        style="margin-top: 0;"
+      ></v-divider>
 
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="2"
-                  >친구의친구까지</b-form-radio
-                >
-              </b-col>
-            </b-row>
+      <v-list-item :key="group.gno">
+        <v-list-item-avatar>
+          <v-img src="@/assets/images/group-img/group_default.png"></v-img>
+        </v-list-item-avatar>
 
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="0"
-                  >비공개</b-form-radio
-                >
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-form-radio-group>
-      </b-row>
-    </b-modal>
-  </div>
+        <v-list-item-content>
+          <v-list-item-title v-text="group.gname"></v-list-item-title>
+          <v-list-item-subtitle v-text="group.gname"></v-list-item-subtitle>
+        </v-list-item-content>
+
+        <v-list-item-icon>
+          <v-icon color="deep-purple accent-4">{{
+            icons[group.gcategory - 1]
+          }}</v-icon>
+        </v-list-item-icon>
+      </v-list-item>
+
+      <v-divider :key="'dividerDown' + index"></v-divider>
+    </template>
+  </v-list>
+
+  <!-- 그룹이 존재하지 않을 경우 -->
+  <v-row v-else class="ma-0" style="height: 639px;" justify="center">
+    <v-icon color="red" size="100">mdi-close-circle</v-icon>
+  </v-row>
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
-  created() {
-    this.getGroupList();
-    axios
-      .post("getCategory")
-      .then((response) => {
-        this.category = response.data.list;
-
-        console.log("this is category");
-        console.log(this.category);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
+  props: ['groupList', 'categoryList', 'friendList'],
   data() {
     return {
-      groupMembers: [],
-      groups: [],
-      category: [],
-      boundary: "",
-      selectedCategory: "",
-      gname: "",
+      groups: this.groupList,
+      categories: this.categoryList,
+      friends: this.friendList,
+      icons: [
+        'mdi-controller-classic',
+        'mdi-book-open-page-variant',
+        'mdi-soccer',
+        'mdi-music-note',
+        'mdi-hand-shake',
+        'mdi-food-turkey',
+        'mdi-face-woman-shimmer',
+      ],
     };
-  },
-  methods: {
-    getGroupList() {
-      var storage = window.sessionStorage;
-      var params = new URLSearchParams();
-
-      params.append("email", storage.getItem("user-email"));
-      axios
-        .post("getGroupList", params)
-        .then((response) => {
-          this.groups = response.data.groupList;
-          for (var i = 0; i < this.groups.length; i++) {
-            this.groups[i].members =
-              this.groups[i].guserList.split(" ").length - 1;
-          }
-
-          console.log("this is groups");
-          console.log(this.groups);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    goToGroupPage(gno) {
-      this.$store.commit("setGno", gno);
-      this.$router.push("/group");
-    },
-    makeGroup() {
-      var storage = window.sessionStorage;
-      var params = new URLSearchParams();
-      params.append("email", storage.getItem("user-email"));
-      params.append("gname", this.gname);
-      params.append("gcategory", this.selectedCategory);
-      params.append("gboundary", this.boundary);
-
-      axios
-        .post("makeGroup", params)
-        .then((response) => {
-          alert(response.data.data);
-          this.getGroupList();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
 };
 </script>
 
-<style>
-.add-group-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-color: blue;
-  font-size: 20px;
-  color: white;
-  text-align: center;
-
-  position: fixed;
-  right: 5%;
-  bottom: 10%;
-}
-</style>
+<style></style>

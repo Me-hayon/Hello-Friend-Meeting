@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -177,37 +178,39 @@ public class FriendInfoController {
 		return result;
 	}
 	
-	@PostMapping("/findFriendList")
-	public Object findFriendList(@RequestParam(required = true) final String email) {
+	@PostMapping("/getFriendList")
+	public Object findFriendList(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		int myId = userInfoRepository.findByEmail(email).getUno();
-		
+		int myId = userInfoRepository.findByEmail(map.get("email")).getUno();
 		Optional<List<FriendInfo>> optFriendList = friendInfoRepository.findAllByMyId(myId);
 	
-		
 		if(optFriendList.isPresent()) {	// 친구 기록이 있을 경우
 			List<FriendInfo> friendListTmp = optFriendList.get();
 			List<UserInfo> friendList = new ArrayList<>();
+			List<UserInfo> favoriteFriendList = new ArrayList<>();
 			
 			for(FriendInfo friend: friendListTmp) {
 				Optional<FriendInfo> optFriendInfo = friendInfoRepository.findByMyIdAndFriendId(friend.getFriendId(),myId);
 				
 				if(optFriendInfo.isPresent()) {	// 해당 친구가 나를 친구 수락한 경우
-					friendList.add(userInfoRepository.findById(friend.getFriendId()).get());
+					UserInfo friendInfo = userInfoRepository.findById(friend.getFriendId()).get();
+					friendList.add(friendInfo);
+					if(friend.isFavorite()) favoriteFriendList.add(friendInfo);
 				}
 			}
 			
 			if(friendList.size()!=0) {	// 친구가 한명이라도 존재할 경우
 				resultMap.put("friendList", friendList);
-				resultMap.put("isSuccess", true);
+				resultMap.put("favoriteFriendList", favoriteFriendList);
+				resultMap.put("is-success", true);
 			}
 			else {	// 친구가 존재하지 않을 경우
-				resultMap.put("isSuccess", false);
+				resultMap.put("is-success", false);
 			}
 		}
 		else {	// 친구 기록이 없을 경우
-			resultMap.put("isSuccess", false);
+			resultMap.put("is-success", false);
 		}
 		
 		return resultMap;

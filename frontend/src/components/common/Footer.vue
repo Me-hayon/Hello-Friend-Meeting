@@ -1,6 +1,6 @@
 <template>
   <v-bottom-navigation
-    v-show="$store.getters.getIsFooter"
+    v-if="$store.getters.getIsFooter"
     v-model="currentPage"
     app
     grow
@@ -14,7 +14,7 @@
     </v-btn>
 
     <v-btn value="community" to="/community">
-      <span>그룹/친구</span>
+      <span>커뮤니티</span>
       <v-icon>mdi-account-group</v-icon>
     </v-btn>
 
@@ -25,7 +25,7 @@
 
     <v-btn value="info" to="/user/profile">
       <span>내정보</span>
-      <v-icon>mdi-account-box</v-icon>
+      <v-icon>mdi-card-account-details</v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>

@@ -1,190 +1,377 @@
 <template>
-  <b-row>
-    <b-col style="padding-left: 0; padding-right: 0">
-      <b-row
-        v-for="friend in friends"
-        :key="friend.fno"
-        style="border-bottom: 1px solid black;"
-        @click="toFriendProfile(friend.email)"
-      >
-        <b-col cols="3" style="padding-left: 0; padding-right: 0"
-          ><img
-            width="50"
-            :src="require(`@/assets/images/avatars/${friend.uprofileImg}.png`)"
-        /></b-col>
-        <b-col cols="9" style="padding-left: 0; padding-right: 0">{{
-          friend.uname
-        }}</b-col>
-      </b-row>
-    </b-col>
-    <button v-b-modal.modal-center class="add-friend-btn">친구+</button>
-    <b-modal
-      id="modal-center"
-      centered
-      title="친구찾기"
-      @hidden="resetInput"
-      hide-footer
+  <v-row
+    v-if="friends.length != 0"
+    id="friendList"
+    class="ma-0 overflow-y-auto"
+    style="height: 639px;"
+    v-scroll:#friendList="onScroll"
+  >
+    <!-- 상단 바 -->
+    <v-toolbar
+      width="100%"
+      :height="toolbarHeight"
+      :absolute="true"
+      elevation="0"
+      dense
     >
-      <div>
-        <input
-          style="width:70%"
-          type="text"
-          id="phone"
-          placeholder="-빼고 번호 입력"
-          v-model="targetTel"
-        />
-        <button v-on:click="findFriend" style="width:30%">
-          <b-icon-search></b-icon-search>
-        </button>
-        <div v-if="isPresent != null">
-          <div v-if="this.isPresent">
-            <p style="font-size: 1.5rem; margin-bottom: 3px;">
-              <strong>{{ findedFriend.uname }}</strong>
-            </p>
-            <p style="margin-bottom: 5px;">
-              <strong>📧 {{ findedFriend.email }}</strong>
-            </p>
-            <p>
-              <strong>📞 {{ findedFriend.tel }}</strong>
-            </p>
-            <button @click="addFriend" v-if="isFriend === 0">추가</button>
-            <button v-if="isFriend === 1" disabled>
-              이미 요청을 보낸 사용자입니다.
-            </button>
-            <button v-if="isFriend === 2" @click="acceptRequest">
-              친구요청 수락
-            </button>
-            <button v-if="isFriend === 3" disabled>
-              이미 친구인 사용자입니다.
-            </button>
-          </div>
-          <div v-if="!this.isPresent">
-            {{ findedFriend }}
-          </div>
-        </div>
-      </div>
-    </b-modal>
-  </b-row>
+      <v-row no-gutters>
+        <v-col>
+          <v-text-field
+            v-model="search"
+            label="검색"
+            append-icon="mdi-magnify"
+            @input="searchInput"
+            single-line
+            clearable
+          ></v-text-field>
+
+          <v-row v-if="search != null && search != ''" no-gutters>
+            <span>검색 결과</span>
+          </v-row>
+
+          <v-row v-if="search == null || search == ''" no-gutters>
+            <span>즐겨찾는 친구</span>
+            <v-spacer></v-spacer>
+            <v-btn
+              v-if="isFavoriteArea || favoriteIcon == 'mdi-chevron-up'"
+              small
+              icon
+              @click="
+                favoriteIcon =
+                  favoriteIcon == 'mdi-chevron-down'
+                    ? 'mdi-chevron-up'
+                    : 'mdi-chevron-down'
+              "
+              ><v-icon>{{ favoriteIcon }}</v-icon>
+            </v-btn>
+
+            <v-btn v-else small icon @click="moveFavorite"
+              ><v-icon>mdi-transfer-up</v-icon>
+            </v-btn>
+          </v-row>
+
+          <v-row
+            v-if="(search == null || search == '') && !isFavoriteArea"
+            class="mt-4"
+            no-gutters
+          >
+            <span>친구</span>
+            <v-spacer></v-spacer>
+            <v-btn
+              small
+              icon
+              @click="
+                allIcon =
+                  allIcon == 'mdi-chevron-down'
+                    ? 'mdi-chevron-up'
+                    : 'mdi-chevron-down'
+              "
+            >
+              <v-icon>{{ allIcon }}</v-icon>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-toolbar>
+
+    <!-- 친구 목록 -->
+    <v-col v-if="search == null || search == ''" class="pa-0">
+      <transition name="list-transition">
+        <v-list
+          v-if="favoriteIcon == 'mdi-chevron-down'"
+          class="py-0"
+          style="margin-top: 100px;"
+          width="100%"
+          flat
+        >
+          <v-list-item-group v-model="favoriteFriendListSelect">
+            <v-list-item
+              v-for="(favoriteFriend, index) in favoriteFriends"
+              :key="'favorite-' + index"
+              :value="favoriteFriend"
+            >
+              <v-list-item-avatar>
+                <v-img
+                  :src="
+                    require(`@/assets/images/avatars/${favoriteFriend.uprofileImg}.png`)
+                  "
+                ></v-img>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title
+                  v-text="favoriteFriend.uname"
+                ></v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </transition>
+
+      <v-row
+        id="allHeader"
+        class="px-4"
+        style="padding-bottom: 11px;"
+        :style="
+          favoriteIcon == 'mdi-chevron-up'
+            ? 'margin-top: 100px; padding-top: 5px;'
+            : 'margin-top: 32px;'
+        "
+        no-gutters
+      >
+        <span>친구</span>
+        <v-spacer></v-spacer>
+        <v-btn
+          small
+          icon
+          @click="
+            allIcon =
+              allIcon == 'mdi-chevron-down'
+                ? 'mdi-chevron-up'
+                : 'mdi-chevron-down'
+          "
+        >
+          <v-icon>{{ allIcon }}</v-icon>
+        </v-btn>
+      </v-row>
+
+      <transition name="list-transition">
+        <v-list
+          v-if="allIcon == 'mdi-chevron-down'"
+          id="allList"
+          class="py-0"
+          width="100%"
+          flat
+        >
+          <v-list-item-group v-model="allFriendListSelect">
+            <v-list-item
+              v-for="(friend, index) in friends"
+              :key="'all-' + index"
+              :value="friend"
+            >
+              <v-list-item-avatar>
+                <v-img
+                  :src="
+                    require(`@/assets/images/avatars/${friend.uprofileImg}.png`)
+                  "
+                ></v-img>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title v-text="friend.uname"></v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </transition>
+    </v-col>
+
+    <!-- 검색 결과 -->
+    <v-col v-else class="pa-0">
+      <transition name="list-transition">
+        <v-list class="py-0" style="margin-top: 100px;" width="100%" flat>
+          <v-list-item-group v-model="searchFriendListSelect">
+            <v-list-item
+              v-for="(friend, index) in searchFriends"
+              :key="index"
+              :value="friend"
+            >
+              <v-list-item-avatar>
+                <v-img
+                  :src="
+                    require(`@/assets/images/avatars/${friend.uprofileImg}.png`)
+                  "
+                ></v-img>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title v-text="friend.uname"></v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </transition>
+    </v-col>
+
+    <!-- 친구 프로필 모달 -->
+    <v-dialog
+      v-if="search != null"
+      v-model="friendProfileModal"
+      max-width="400"
+      persistent
+      scrollable
+    >
+      <v-card>
+        <v-card-title>
+          <span
+            ><strong>{{ search.uname }}</strong
+            >님의 프로필</span
+          >
+          <v-spacer></v-spacer>
+          <v-btn icon @click="friendProfileModal = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <friend-profile :info="search" />
+        </v-card-text>
+        <v-card-actions style="padding-top: 0;">
+          <v-row class="ma-0" justify="end">
+            <v-btn></v-btn>
+            <!-- <v-btn
+              color="warning"
+              class="font-weight-black"
+              :disabled="!valid"
+              @click="deleteAlertModal = !deleteAlertModal"
+            >
+              탈퇴하기
+            </v-btn> -->
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+
+  <!-- 친구가 존재하지 않을 경우 -->
+  <v-row v-else class="ma-0" style="height: 639px;" justify="center">
+    <v-icon color="red" size="100">mdi-close-circle</v-icon>
+  </v-row>
 </template>
 
 <script>
-import axios from "axios";
+import FriendProfile from '@/views/user/FriendProfile.vue';
 
 export default {
-  created() {
-    var params = new URLSearchParams();
-    params.append("email", this.email);
-
-    axios
-      .post("findFriendList", params)
-      .then((response) => {
-        if (response.data.isSuccess) {
-          this.friends = response.data.friendList;
-          console.log(this.friends);
-        } else {
-          console.log("친구가 존재하지 않습니다.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
+  components: { FriendProfile },
+  props: ['friendList', 'favoriteFriendList'],
   data() {
     return {
-      email: window.sessionStorage.getItem("user-email"),
-      friends: [],
-      findedFriend: null,
-      targetTel: "",
-      isPresent: null,
-      isFriend: 4,
+      friends: this.friendList,
+      favoriteFriends: this.favoriteFriendList,
+      searchFriends: [],
+      toolbarHeight: 100,
+      search: null,
+      isFavoriteArea: true,
+      searchFriendListSelect: null,
+      favoriteFriendListSelect: null,
+      allFriendListSelect: null,
+      favoriteIcon: 'mdi-chevron-down',
+      allHeaderTop: 0,
+      allIcon: 'mdi-chevron-down',
+      friendProfileModal: false,
     };
   },
+  mounted() {
+    this.getAllHeaderTop();
+  },
   methods: {
-    resetInput() {
-      this.isPresent = null;
-      this.targetTel = "";
-      this.findedFriend = null;
-      this.isFriend = 4;
+    onScroll(e) {
+      if (this.search != null && this.search != '') {
+        return;
+      } else if (
+        this.isFavoriteArea &&
+        e.target.scrollTop >= this.allHeaderTop
+      ) {
+        this.isFavoriteArea = false;
+        this.toolbarHeight = 150;
+      } else if (
+        !this.isFavoriteArea &&
+        e.target.scrollTop < this.allHeaderTop
+      ) {
+        this.isFavoriteArea = true;
+        this.toolbarHeight = 100;
+      }
     },
-    toFriendProfile(email) {
-      var params = new URLSearchParams();
-      params.append("email", email);
-      axios
-        .post("profile", params)
-        .then((response) => {
-          var uno = response.data["user-uno"];
-          // console.log(uno);
-          this.$store.commit("setUno", uno);
-          this.$router.push("/user/friend-info");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    findFriend() {
-      var params = new URLSearchParams();
-      params.append("tel", this.targetTel);
-
-      axios.post("profileByTel", params).then((response) => {
-        this.isPresent = response.data.isPresent;
-        this.findedFriend = response.data.data;
-
-        if (
-          window.sessionStorage.getItem("user-email") ===
-          this.findedFriend.email
-        ) {
-          this.isPresent = false;
-          this.findedFriend = "난데??";
-          return;
-        }
-
-        params = new URLSearchParams();
-        params.append("myEmail", window.sessionStorage.getItem("user-email"));
-        params.append("friendEmail", this.findedFriend.email);
-
-        axios.post("isFriend", params).then((resp) => {
-          this.isFriend = resp.data;
-        });
+    getAllHeaderTop() {
+      this.$nextTick(function() {
+        this.allHeaderTop =
+          document.querySelector('#allHeader').getBoundingClientRect().top -
+          150 -
+          56 -
+          72 +
+          28;
       });
     },
-    addFriend() {
-      var params = new URLSearchParams();
-      params.append("myEmail", this.email);
-      params.append("targetTel", this.targetTel);
-
-      axios
-        .post("addFriendByTel", params)
-        .then((response) => {
-          alert(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    moveFavorite() {
+      document.querySelector('#friendList').scrollTop = 0;
     },
-    acceptRequest() {
-      var params = new URLSearchParams();
-      params.append("myEmail", window.sessionStorage.getItem("user-email"));
-      params.append("friendEmail", this.findedFriend.email);
-      axios.post("acceptFriend", params).then((response) => {
-        alert(response.data);
-      });
+    searchInput() {
+      this.searchFriends = [];
+
+      for (let i = 0; i < this.friends.length; i++) {
+        if (this.friends[i].uname.includes(this.search))
+          this.searchFriends.push(this.friends[i]);
+      }
+    },
+  },
+  watch: {
+    favoriteIcon(favoriteIcon) {
+      if (favoriteIcon == 'mdi-chevron-down') {
+        this.isFavoriteArea = true;
+        this.toolbarHeight = 100;
+      }
+
+      this.getAllHeaderTop();
+
+      if (favoriteIcon == 'mdi-chevron-down')
+        document.querySelector('#friendList').scrollTop = 0;
+      else
+        this.allHeaderTop = document.querySelector(
+          '#friendList'
+        ).scrollTop = this.allHeaderTop;
+    },
+    allIcon(allIcon) {
+      if (allIcon == 'mdi-chevron-down') {
+        if (this.favoriteIcon == 'mdi-chevron-up') this.getAllHeaderTop();
+
+        this.$nextTick(function() {
+          document.querySelector('#friendList').scrollTop =
+            this.allHeaderTop + 5;
+        });
+      }
+    },
+    favoriteFriendListSelect(favoriteFriendListSelect) {
+      console.log(favoriteFriendListSelect);
+    },
+    allFriendListSelect(allFriendListSelect) {
+      console.log(allFriendListSelect);
     },
   },
 };
 </script>
 
 <style>
-.add-friend-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-color: green;
-  font-size: 20px;
-  color: white;
-  text-align: center;
+.list-transition-enter {
+  opacity: 0;
+}
 
-  position: fixed;
-  right: 5%;
-  bottom: 10%;
+.list-transition-enter-active {
+  transition: all 0.2s linear;
+}
+
+.list-transition-enter-to {
+  transform: translateY(10px);
+  opacity: 1;
+}
+
+.list-transition-leave-active {
+  transition: all 0.2s linear;
+}
+
+.list-transition-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
 }
 </style>

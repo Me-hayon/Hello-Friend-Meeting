@@ -31,7 +31,7 @@
     </v-speed-dial>
 
     <!-- 회원탈퇴 모달 -->
-    <v-dialog v-model="deleteModal" persistent max-width="300">
+    <v-dialog v-model="deleteModal" max-width="300" persistent>
       <v-card>
         <v-card-title>
           <span>회원탈퇴</span>
@@ -67,7 +67,7 @@
     </v-dialog>
 
     <!-- 회원탈퇴 경고 모달 -->
-    <v-dialog v-model="deleteAlertModal" persistent max-width="270px">
+    <v-dialog v-model="deleteAlertModal" max-width="270px" persistent>
       <v-card>
         <v-card-title>
           <span>정말 탈퇴하시겠습니까?</span>

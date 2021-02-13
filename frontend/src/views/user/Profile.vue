@@ -26,7 +26,7 @@
 
 <script>
 import axios from 'axios';
-import ProfileCover from '@/components/user/profile/Cover.vue';
+import ProfileCover from '@/components/user/profile/ProfileCover.vue';
 import ProfileImage from '@/components/user/profile/ProfileImage.vue';
 import UserConfigBtn from '@/components/user/profile/UserConfigBtn.vue';
 import UserTextManage from '@/components/user/profile/UserTextManage.vue';
@@ -41,6 +41,15 @@ export default {
     UserConfigBtn,
     UserTextManage,
     UserHistory,
+  },
+  data() {
+    return {
+      uname: '',
+      email: '',
+      profileImg: '',
+      pImages: [],
+      isLoadingProfileImg: true,
+    };
   },
   created() {
     this.email = storage.getItem('user-email');
@@ -81,15 +90,6 @@ export default {
 
     this.$store.commit('setIsHeader', true);
     this.$store.commit('setIsFooter', true);
-  },
-  data() {
-    return {
-      uname: '',
-      email: '',
-      profileImg: '',
-      pImages: [],
-      isLoadingProfileImg: true,
-    };
   },
 };
 </script>
