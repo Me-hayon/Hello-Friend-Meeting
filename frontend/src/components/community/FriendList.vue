@@ -332,13 +332,16 @@ export default {
       document.querySelector('#friendList').scrollTop = 0;
     },
     favoriteFriendListSelect(favoriteFriend) {
-      console.log(favoriteFriend);
+      this.friendInfo = favoriteFriend;
+      this.friendProfileModal = true;
     },
     allFriendListSelect(friend) {
-      console.log(friend);
+      this.friendInfo = friend;
+      this.friendProfileModal = true;
     },
     searchFriendListSelect(searchFriend) {
-      console.log(searchFriend);
+      this.friendInfo = searchFriend;
+      this.friendProfileModal = true;
     },
     isFavorite(friendUno) {
       for (let i = 0; i < this.favoriteFriends.length; i++) {
@@ -374,25 +377,8 @@ export default {
         });
       }
     },
-    // favoriteFriendListSelect(favoriteFriendListSelect) {
-    //   this.friendInfo = favoriteFriendListSelect;
-    //   this.friendProfileModal = true;
-    // },
-    // allFriendListSelect(allFriendListSelect) {
-    //   this.friendInfo = allFriendListSelect;
-    //   this.friendProfileModal = true;
-    // },
-    // searchFriendListSelect(searchFriendListSelect) {
-    //   this.friendInfo = searchFriendListSelect;
-    //   this.friendProfileModal = true;
-    // },
     friendProfileModal(friendProfileModal) {
-      if (!friendProfileModal) {
-        this.friendInfo = null;
-        // this.favoriteFriendListSelect = null;
-        // this.allFriendListSelect = null;
-        // this.searchFriendListSelect = null;
-      }
+      if (!friendProfileModal) this.friendInfo = null;
     },
   },
 };
