@@ -207,7 +207,6 @@
 
     <!-- 친구 프로필 모달 -->
     <v-dialog
-      v-if="search != null"
       v-model="friendProfileModal"
       max-width="400"
       persistent
@@ -216,7 +215,7 @@
       <v-card>
         <v-card-title>
           <span
-            ><strong>{{ search.uname }}</strong
+            ><strong>{{ friendInfo.uname }}</strong
             >님의 프로필</span
           >
           <v-spacer></v-spacer>
@@ -225,7 +224,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <friend-profile :info="search" />
+          <friend-profile :info="friendInfo" />
         </v-card-text>
         <v-card-actions style="padding-top: 0;">
           <v-row class="ma-0" justify="end">
@@ -271,6 +270,7 @@ export default {
       allHeaderTop: 0,
       allIcon: 'mdi-chevron-down',
       friendProfileModal: false,
+      friendInfo: {},
     };
   },
   mounted() {
@@ -343,10 +343,16 @@ export default {
       }
     },
     favoriteFriendListSelect(favoriteFriendListSelect) {
-      console.log(favoriteFriendListSelect);
+      this.friendInfo = favoriteFriendListSelect;
+      this.friendProfileModal = true;
     },
     allFriendListSelect(allFriendListSelect) {
-      console.log(allFriendListSelect);
+      this.friendInfo = allFriendListSelect;
+      this.friendProfileModal = true;
+    },
+    searchFriendListSelect(searchFriendListSelect) {
+      this.friendInfo = searchFriendListSelect;
+      this.friendProfileModal = true;
     },
   },
 };
