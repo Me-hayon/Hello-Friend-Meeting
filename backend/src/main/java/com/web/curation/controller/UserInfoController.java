@@ -214,7 +214,26 @@ public class UserInfoController {
 		return resultMap;
 		
 	}
+	
+	
+	@PostMapping("/findUserByEmail")
+	public Object findUserByEmail(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
 
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		if(user != null) {
+			resultMap.put("user-number",user.getUno());
+			resultMap.put("user-name",user.getUname());
+			resultMap.put("is-success",true);
+		}
+		else {
+			resultMap.put("is-success",false);
+		}
+		
+		return resultMap;		
+	}
+
+	
 	@PostMapping("/findUnameByUno")
 	public Object findUnameByUno(@RequestParam int uno) {
 		Map<String, Object> resultMap = new HashMap<>();
