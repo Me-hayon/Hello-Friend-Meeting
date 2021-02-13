@@ -71,6 +71,7 @@ export default {
     sendMessage(e) {
       if (this.gccontent !== '') {
         this.send();
+
         this.gccontent = '';
       }
     },
