@@ -26,11 +26,11 @@
           ></v-text-field>
 
           <v-row v-if="search != null && search != ''" no-gutters>
-            <span>검색 결과</span>
+            <span>검색 결과 ({{ searchFriends.length }})</span>
           </v-row>
 
           <v-row v-if="search == null || search == ''" no-gutters>
-            <span>즐겨찾는 친구</span>
+            <span>즐겨찾는 친구 ({{ favoriteFriends.length }})</span>
             <v-spacer></v-spacer>
             <v-btn
               v-if="isFavoriteArea || favoriteIcon == 'mdi-chevron-up'"
@@ -55,7 +55,7 @@
             class="mt-4"
             no-gutters
           >
-            <span>친구</span>
+            <span>친구 ({{ friends.length }})</span>
             <v-spacer></v-spacer>
             <v-btn
               small
@@ -82,15 +82,12 @@
           class="py-0"
           style="margin-top: 100px;"
           width="100%"
-          flat
         >
-          <v-list-item-group v-model="favoriteFriendListSelect">
-            <v-list-item
-              v-for="(favoriteFriend, index) in favoriteFriends"
-              :key="'favorite-' + index"
-              :value="favoriteFriend"
-            >
-              <v-list-item-avatar>
+          <template v-for="(favoriteFriend, index) in favoriteFriends">
+            <v-list-item :key="'favorite-' + index">
+              <v-list-item-avatar
+                @click="favoriteFriendListSelect(favoriteFriend)"
+              >
                 <v-img
                   :src="
                     require(`@/assets/images/avatars/${favoriteFriend.uprofileImg}.png`)
@@ -98,17 +95,19 @@
                 ></v-img>
               </v-list-item-avatar>
 
-              <v-list-item-content>
+              <v-list-item-content
+                @click="favoriteFriendListSelect(favoriteFriend)"
+              >
                 <v-list-item-title
                   v-text="favoriteFriend.uname"
                 ></v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-icon>
-                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+                <v-icon color="blue accent-4">mdi-star</v-icon>
               </v-list-item-icon>
             </v-list-item>
-          </v-list-item-group>
+          </template>
         </v-list>
       </transition>
 
@@ -123,7 +122,7 @@
         "
         no-gutters
       >
-        <span>친구</span>
+        <span>친구 ({{ friends.length }})</span>
         <v-spacer></v-spacer>
         <v-btn
           small
@@ -145,15 +144,10 @@
           id="allList"
           class="py-0"
           width="100%"
-          flat
         >
-          <v-list-item-group v-model="allFriendListSelect">
-            <v-list-item
-              v-for="(friend, index) in friends"
-              :key="'all-' + index"
-              :value="friend"
-            >
-              <v-list-item-avatar>
+          <template v-for="(friend, index) in friends">
+            <v-list-item :key="'all-' + index">
+              <v-list-item-avatar @click="allFriendListSelect(friend)">
                 <v-img
                   :src="
                     require(`@/assets/images/avatars/${friend.uprofileImg}.png`)
@@ -161,15 +155,18 @@
                 ></v-img>
               </v-list-item-avatar>
 
-              <v-list-item-content>
+              <v-list-item-content @click="allFriendListSelect(friend)">
                 <v-list-item-title v-text="friend.uname"></v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-icon>
-                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+                <v-icon
+                  color="blue accent-4"
+                  v-text="friend.favorite ? 'mdi-star' : 'mdi-star-outline'"
+                ></v-icon>
               </v-list-item-icon>
             </v-list-item>
-          </v-list-item-group>
+          </template>
         </v-list>
       </transition>
     </v-col>
@@ -177,36 +174,49 @@
     <!-- 검색 결과 -->
     <v-col v-else class="pa-0">
       <transition name="list-transition">
-        <v-list class="py-0" style="margin-top: 100px;" width="100%" flat>
-          <v-list-item-group v-model="searchFriendListSelect">
-            <v-list-item
-              v-for="(friend, index) in searchFriends"
-              :key="index"
-              :value="friend"
-            >
-              <v-list-item-avatar>
+        <v-list class="py-0" style="margin-top: 100px;" width="100%">
+          <template v-for="(searchFriend, index) in searchFriends">
+            <v-list-item :key="index">
+              <v-list-item-avatar @click="searchFriendListSelect(searchFriend)">
                 <v-img
                   :src="
-                    require(`@/assets/images/avatars/${friend.uprofileImg}.png`)
+                    require(`@/assets/images/avatars/${searchFriend.uprofileImg}.png`)
                   "
                 ></v-img>
               </v-list-item-avatar>
 
-              <v-list-item-content>
-                <v-list-item-title v-text="friend.uname"></v-list-item-title>
+              <v-list-item-content
+                @click="searchFriendListSelect(searchFriend)"
+              >
+                <v-list-item-title
+                  v-text="searchFriend.uname"
+                ></v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-icon>
-                <v-icon color="deep-purple accent-4">mdi-message</v-icon>
+                <v-icon
+                  color="blue accent-4"
+                  v-text="
+                    isFavorite(searchFriend.uno)
+                      ? 'mdi-star'
+                      : 'mdi-star-outline'
+                  "
+                ></v-icon>
               </v-list-item-icon>
             </v-list-item>
-          </v-list-item-group>
+          </template>
         </v-list>
       </transition>
     </v-col>
 
+    <!-- 친구 추가 버튼 -->
+    <v-btn color="success" style="bottom: 16px;" fab absolute right dark large>
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
+
     <!-- 친구 프로필 모달 -->
     <v-dialog
+      v-if="friendInfo != null"
       v-model="friendProfileModal"
       max-width="400"
       persistent
@@ -230,7 +240,7 @@
           <v-row class="ma-0" justify="end">
             <v-btn></v-btn>
             <!-- <v-btn
-              color="warning"
+              color="warning" 
               class="font-weight-black"
               :disabled="!valid"
               @click="deleteAlertModal = !deleteAlertModal"
@@ -263,14 +273,11 @@ export default {
       toolbarHeight: 100,
       search: null,
       isFavoriteArea: true,
-      searchFriendListSelect: null,
-      favoriteFriendListSelect: null,
-      allFriendListSelect: null,
       favoriteIcon: 'mdi-chevron-down',
       allHeaderTop: 0,
       allIcon: 'mdi-chevron-down',
       friendProfileModal: false,
-      friendInfo: {},
+      friendInfo: null,
     };
   },
   mounted() {
@@ -310,10 +317,35 @@ export default {
     searchInput() {
       this.searchFriends = [];
 
-      for (let i = 0; i < this.friends.length; i++) {
-        if (this.friends[i].uname.includes(this.search))
-          this.searchFriends.push(this.friends[i]);
+      if (this.search == null || this.search == '') {
+        this.favoriteIcon = 'mdi-chevron-down';
+        this.allIcon = 'mdi-chevron-down';
+        this.isFavoriteArea = true;
+      } else {
+        for (let i = 0; i < this.friends.length; i++) {
+          if (this.friends[i].uname.includes(this.search))
+            this.searchFriends.push(this.friends[i]);
+        }
       }
+
+      this.toolbarHeight = 100;
+      document.querySelector('#friendList').scrollTop = 0;
+    },
+    favoriteFriendListSelect(favoriteFriend) {
+      console.log(favoriteFriend);
+    },
+    allFriendListSelect(friend) {
+      console.log(friend);
+    },
+    searchFriendListSelect(searchFriend) {
+      console.log(searchFriend);
+    },
+    isFavorite(friendUno) {
+      for (let i = 0; i < this.favoriteFriends.length; i++) {
+        if (friendUno == this.favoriteFriends[i].uno) return true;
+      }
+
+      return false;
     },
   },
   watch: {
@@ -342,17 +374,25 @@ export default {
         });
       }
     },
-    favoriteFriendListSelect(favoriteFriendListSelect) {
-      this.friendInfo = favoriteFriendListSelect;
-      this.friendProfileModal = true;
-    },
-    allFriendListSelect(allFriendListSelect) {
-      this.friendInfo = allFriendListSelect;
-      this.friendProfileModal = true;
-    },
-    searchFriendListSelect(searchFriendListSelect) {
-      this.friendInfo = searchFriendListSelect;
-      this.friendProfileModal = true;
+    // favoriteFriendListSelect(favoriteFriendListSelect) {
+    //   this.friendInfo = favoriteFriendListSelect;
+    //   this.friendProfileModal = true;
+    // },
+    // allFriendListSelect(allFriendListSelect) {
+    //   this.friendInfo = allFriendListSelect;
+    //   this.friendProfileModal = true;
+    // },
+    // searchFriendListSelect(searchFriendListSelect) {
+    //   this.friendInfo = searchFriendListSelect;
+    //   this.friendProfileModal = true;
+    // },
+    friendProfileModal(friendProfileModal) {
+      if (!friendProfileModal) {
+        this.friendInfo = null;
+        // this.favoriteFriendListSelect = null;
+        // this.allFriendListSelect = null;
+        // this.searchFriendListSelect = null;
+      }
     },
   },
 };

@@ -144,6 +144,19 @@ export default {
             // 친구가 존재할 경우
             this.friends = response.data.friendList;
             this.favoriteFriends = response.data.favoriteFriendList;
+
+            for (let i = 0; i < this.friends.length; i++) {
+              for (let j = 0; j < this.favoriteFriends.length; j++) {
+                if (this.friends[i].uno == this.favoriteFriends[j].uno) {
+                  this.friends[i].favorite = true;
+                  break;
+                }
+
+                if (j == this.favoriteFriends.length - 1)
+                  this.friends[i].favorite = false;
+              }
+            }
+
             this.isLoadingFriends = 1;
           } else {
             // 친구가 존재하지 않을 경우

@@ -174,7 +174,6 @@ public class FriendInfoController {
 		result.status=true;
 		result.data="친구 요청을 삭제했습니다.";
 		
-		
 		return result;
 	}
 	
