@@ -1,15 +1,15 @@
 <template>
-  <div id="app">
-    gcuno:
-    <input v-model="gcuno" type="text" />
-    gcno:
-    <input v-model="gcno" type="text" />
-    gcgno:
-    <input v-model="gcgno" type="text" />
-    gcdate:
-    <input v-model="gcdate" type="text" />
-    내용: <input v-model="gccontent" type="text" @keyup="sendMessage" />
-    <div v-for="(item, idx) in recvList" :key="idx">
+  <div class="room">
+    <input
+      type="text"
+      v-model="gccontent"
+      placeholder="보낼 메세지"
+      size="100"
+      @keyup.enter="sendMessage"
+    />
+    <v-btn @click="sendMessage">SEND</v-btn>
+    <hr />
+    <div v-for="(item, idx) in chats" :key="idx">
       <h3>유저이름: {{ item.gcuno }}</h3>
       <h3>내용: {{ item.gccontent }}</h3>
     </div>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 
@@ -24,16 +25,43 @@ export default {
   data() {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
-      gno: this.$store.getters.getGno,
+      gcgno: this.$store.getters.getGno,
       gcno: '',
-      gcgno: '',
       gcuno: '',
       gcdate: '',
       gccontent: '',
-      recvList: [],
+      chats: [],
+      stompClient: null,
     };
   },
   created() {
+    this.gcuno = 5; // axios로 받아와야 함
+
+    axios({
+      method: 'get',
+      url: '/getChat/' + this.gcgno,
+      baseURL: 'http://localhost:8080/',
+    }).then(
+      (response) => {
+        this.chats = [];
+        console.log(response);
+        for (let i = 0; i < response.data.length; i++) {
+          let chat = {
+            gcuno: response.data[i].gcuno,
+            gccontent: response.data[i].gccontent,
+            // 'senderNickname':res.data[i].senderNickname,
+            // 'content':res.data[i].content,
+            // 'style': res.data[i].senderId == this.id ? 'myMsg':'otherMsg'
+          };
+          this.chats.push(chat);
+        }
+      },
+      (err) => {
+        console.log(err);
+        alert('error : 새로고침하세요');
+      }
+    );
+
     this.connect();
   },
   methods: {
@@ -41,42 +69,51 @@ export default {
       alert(this.memberStatus + ' ' + this.gno);
     },
     sendMessage(e) {
-      if (e.keyCode === 13 && this.gcuno !== '' && this.gccontent !== '') {
+      if (this.gccontent !== '') {
         this.send();
         this.gccontent = '';
       }
     },
     send() {
       console.log('Send message:' + this.gccontent);
+      console.log('group ID: ' + this.gcgno);
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
+          // gcno: 0, // ???
+          gcgno: this.gcgno,
           gcuno: this.gcuno,
           gccontent: this.gccontent,
+          // gcdate: new Date(),
         };
-        this.stompClient.send('/receive', JSON.stringify(msg), {});
+        console.log('Date...? ###################### ' + new Date());
+        this.stompClient.send('/pub/chat', JSON.stringify(msg), {});
       }
     },
     connect() {
-      const serverURL = 'http://localhost:8080';
+      const serverURL = 'http://localhost:8080/ws';
       let socket = new SockJS(serverURL);
 
       this.stompClient = Stomp.over(socket);
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2');
-      console.log(this.stompClient);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2');
+      // console.log(this.stompClient);
+      // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompClient.connect(
         {},
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
           console.log('소켓 연결 성공', frame);
-          // 서버의 메시지 전송 endpoint를 구독합니다.
-          // 이런형태를 pub sub 구조라고 합니다.
-          this.stompClient.subscribe('/send', (res) => {
+          this.stompClient.subscribe('/sub/' + this.gcgno, (res) => {
             console.log('구독으로 받은 메시지 입니다.', res.body);
-
+            //   let jsonBody = JSON.parse(res.body)
+            //    let m={
+            //   'senderNickname':jsonBody.senderNickname,
+            //   'content': jsonBody.content,
+            //   'style': jsonBody.senderId == this.id ? 'myMsg':'otherMsg'
+            // }
+            // this.chats.push(m)
             // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-            this.recvList.push(JSON.parse(res.body));
+            this.chats.push(JSON.parse(res.body));
           });
         },
         (error) => {
