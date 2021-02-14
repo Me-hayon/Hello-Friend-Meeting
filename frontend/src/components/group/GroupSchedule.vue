@@ -42,19 +42,56 @@
                   >mdi-trash-can</v-icon
                 >
                 <v-icon @click="closeSchedule">mdi-close</v-icon></v-toolbar
-              ><v-spacer>{{ selectedEvent.content }}</v-spacer></v-card
+              ><v-spacer
+                >{{ selectedEvent.content }}
+                <hr />
+                <ul>
+                  <li
+                    v-for="participant in selectedEvent.participants"
+                    :key="participant.uno"
+                  >
+                    {{ participant.name }}
+                  </li>
+                </ul>
+              </v-spacer></v-card
             >
           </v-menu>
         </v-sheet>
       </v-col>
     </v-row>
+    <v-dialog v-model="moreEventsDialog" width="500">
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ moreDate }}
+        </v-card-title>
+
+        <v-card-text>
+          <p
+            v-for="event in moreEvents"
+            :key="event.sno"
+            @click="showEventAtMore(event)"
+          >
+            {{ event.name }}
+          </p>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="moreEventsDialog = false">
+            close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <Dialog />
   </div>
 </template>
 
 <script>
-import Dialog from "@/components/group/Dialog.vue";
-import axios from "axios";
+import Dialog from '@/components/group/Dialog.vue';
+import axios from 'axios';
 export default {
   components: {
     Dialog,
@@ -112,7 +149,7 @@ export default {
     const startDate = `${year}-${month}-${date}`;
     this.curYear = year;
     this.curMonth = month + 1;
-    if (this.curMonth < 10) this.curMonth = "0" + this.curMonth;
+    if (this.curMonth < 10) this.curMonth = '0' + this.curMonth;
     this.start = startDate;
     this.getSchedules();
   },
@@ -124,11 +161,11 @@ export default {
         sno: { type: Number },
         sgno: { type: Number },
         smaster: { type: Number },
-        senddate: "",
-        sstartdate: "",
-        stitle: "",
-        sspace: "",
-        scontetnt: "",
+        senddate: '',
+        sstartdate: '',
+        stitle: '',
+        sspace: '',
+        scontetnt: '',
       },
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
@@ -136,14 +173,17 @@ export default {
       uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
-      type: "month",
+      type: 'month',
       curYear: this.year,
       curMonth: this.month + 1,
-      curYM: "",
+      curYM: '',
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-      myEmail: window.sessionStorage.getItem("user-email"),
+      myEmail: window.sessionStorage.getItem('user-email'),
+      moreEvents: '',
+      moreEventsDialog: false,
+      moreDate: '',
     };
   },
   methods: {
@@ -154,10 +194,10 @@ export default {
         this.curMonth = 12;
         this.curYear *= 1;
         this.curYear--;
-        this.curYear += "";
+        this.curYear += '';
       }
-      this.curMonth += "";
-      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
     },
     nextMonth() {
       this.curMonth *= 1;
@@ -166,63 +206,121 @@ export default {
         this.curMonth = 1;
         this.curYear *= 1;
         this.curYear++;
-        this.curYear += "";
+        this.curYear += '';
       }
-      this.curMonth += "";
-      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
     },
     open(date) {
       console.log(date);
-      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
+      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
     },
     getEventColor(event) {
       return event.color;
     },
     showEvent({ nativeEvent, event }) {
-      const open = () => {
-        this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
-        setTimeout(() => {
-          this.selectedOpen = true;
-        }, 10);
-      };
+      var params = new URLSearchParams();
+      params.append('sno', event.sno);
+      axios.post('getScheduleParticipants', params).then((resp) => {
+        var len = resp.data.list.length;
+        var participantList = [];
+        for (var i = 0; i < len; i++) {
+          var participantInfo = resp.data.list[i];
+          participantInfo.email = resp.data.emailList[i];
+          participantInfo.name = resp.data.nameList[i];
+          participantList.push(participantInfo);
+        }
+        const open = () => {
+          this.selectedEvent = event;
+          this.selectedElement = nativeEvent.target;
+          setTimeout(() => {
+            this.selectedOpen = true;
+          }, 10);
+        };
 
-      if (this.selectedOpen) {
-        this.selectedOpen = false;
-        setTimeout(open, 10);
-      } else open();
-
-      nativeEvent.stopPropagation();
+        if (this.selectedOpen) {
+          this.selectedOpen = false;
+          setTimeout(open, 10);
+        } else open();
+        nativeEvent.stopPropagation();
+        this.selectedEvent.participants = participantList;
+      });
+    },
+    showEventAtMore(event) {
+      var params = new URLSearchParams();
+      params.append('sno', event.sno);
+      axios.post('getScheduleParticipants', params).then((resp) => {
+        var len = resp.data.list.length;
+        var participantList = [];
+        for (var i = 0; i < len; i++) {
+          var participantInfo = resp.data.list[i];
+          participantInfo.email = resp.data.emailList[i];
+          participantInfo.name = resp.data.nameList[i];
+          participantList.push(participantInfo);
+        }
+        const open = () => {
+          this.selectedEvent = event;
+          setTimeout(() => {
+            this.selectedOpen = true;
+          }, 10);
+        };
+        if (this.selectedOpen) {
+          this.selectedOpen = false;
+          setTimeout(open, 10);
+        } else open();
+        this.selectedEvent.participants = participantList;
+      });
     },
     moreEvent(date) {
-      //split으로 날짜만 따서 해당날짜인거 가져오기
-      console.log(date);
+      console.log(date.date);
+      this.moreDate = date.date + '의 일정은??';
       console.log(this.localEvents);
+      this.moreEvents = [];
+      var selectedDate = this.returnToNum(date.date);
+      for (var i = 0; i < this.localEvents.length; i++) {
+        if (
+          this.returnToNum(this.localEvents[i].start.split(' ')[0]) <=
+            selectedDate &&
+          this.returnToNum(this.localEvents[i].end.split(' ')[0]) >=
+            selectedDate
+        ) {
+          this.moreEvents.push(this.localEvents[i]);
+        }
+      }
+      console.log(this.moreEvents);
+      this.moreEventsDialog = true;
     },
     getSchedules() {
       var params = new URLSearchParams();
-      params.append("gno", this.gno);
-      axios.post("getSchedulesList", params).then((resp) => {
+      params.append('gno', this.gno);
+      axios.post('getSchedulesList', params).then((resp) => {
         if (resp.data.isPresent) {
           var eventList = resp.data.list;
           var emailList = resp.data.emailList;
           for (var i = 0; i < eventList.length; i++)
             eventList[i].smasterEmail = emailList[i];
-          this.$store.commit("ADD_EVENTS", resp.data.list);
+          this.$store.commit('ADD_EVENTS', resp.data.list);
         }
       });
     },
     delSchedule() {
       console.log(this.selectedEvent);
       var params = new URLSearchParams();
-      params.append("sno", this.selectedEvent.sno);
-      axios.post("delSchedule", params).then(() => {
+      params.append('sno', this.selectedEvent.sno);
+      axios.post('delSchedule', params).then(() => {
         this.getSchedules();
-        alert("일정을 삭제했습니다.");
+        this.selectedOpen = false;
+        alert('일정을 삭제했습니다.');
       });
+      this.moreEventsDialog = false;
     },
     closeSchedule() {
       this.selectedOpen = false;
+    },
+    returnToNum(date) {
+      var toReturn = date.replace(/-/g, '');
+      toReturn *= 1;
+      return toReturn;
     },
   },
 };

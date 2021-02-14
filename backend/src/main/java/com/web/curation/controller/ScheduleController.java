@@ -157,7 +157,16 @@ public class ScheduleController {
 		Optional<List<ScheduleParticipant>> list=scheduleParticipantRepository.findAllBySno(sno);
 		if(list.isPresent()) {
 			resultMap.put("isPresent",true);
+			List<String> emailList=new ArrayList<>();
+			List<String> nameList=new ArrayList<>();
 			resultMap.put("list",list.get());
+			for(ScheduleParticipant sp:list.get()) {
+				UserInfo ui=userInfoRepository.findById(sp.getUno()).get();
+				emailList.add(ui.getEmail());
+				nameList.add(ui.getUname());
+			}
+			resultMap.put("emailList",emailList);
+			resultMap.put("nameList",nameList);
 		}
 		else 
 			resultMap.put("isPresent",false);
