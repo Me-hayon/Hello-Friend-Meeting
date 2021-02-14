@@ -28,6 +28,7 @@ public class GroupChatting {
 	private int gcgno;
 	private int gcuno;
 	private String gccontent;
+	private String gcuname;
 	
 	@Column(insertable=false,updatable=false)
 	private String gcdate;
