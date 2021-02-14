@@ -29,12 +29,17 @@
         </button>
       </li>
     </ul>
+    <geo-test />
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import GeoTest from "@/components/group/GeoTest.vue";
 export default {
+  components: {
+    GeoTest,
+  },
   computed: {
     vuexGno() {
       return this.$store.getters.getGno;
