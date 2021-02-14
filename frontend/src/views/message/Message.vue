@@ -11,7 +11,7 @@
 
     <v-simple-table>
       <template v-slot:default>
-        <thead>
+        <thead style="background-color: #f9f5fe;">
           <tr>
             <th class="text-left">
               보낸사람
@@ -72,13 +72,13 @@
           <hr />
           <p>{{ mcontent }}</p>
           <div style="float:right">
-            <b-button style="margin-right:15px" v-b-modal.reply>
+            <button class="btn-message" v-b-modal.reply>
               답장
-            </b-button>
+            </button>
 
-            <b-button v-b-modal.delete>
+            <button class="btn-message" v-b-modal.delete>
               삭제
-            </b-button>
+            </button>
           </div>
         </b-modal>
       </template>
@@ -225,4 +225,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.btn-message {
+  color: purple;
+  border-radius: 20%;
+  width: 80px;
+  height: 40px;
+  font-size: 18px;
+  margin-right: 15px;
+}
+.btn-message:hover {
+  background-color: #f9f5fe;
+}
+</style>
