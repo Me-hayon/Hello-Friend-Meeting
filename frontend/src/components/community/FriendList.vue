@@ -113,7 +113,7 @@
                 ></v-list-item-title>
               </v-list-item-content>
 
-              <v-list-item-icon>
+              <v-list-item-icon @click="favoriteFriendFavoriteChange(index)">
                 <v-icon color="blue accent-4">mdi-star</v-icon>
               </v-list-item-icon>
             </v-list-item>
@@ -169,7 +169,7 @@
                 <v-list-item-title v-text="friend.uname"></v-list-item-title>
               </v-list-item-content>
 
-              <v-list-item-icon @click="favoriteChange(index)">
+              <v-list-item-icon @click="allFriendFavoriteChange(index)">
                 <v-icon
                   color="blue accent-4"
                   v-text="friend.favorite ? 'mdi-star' : 'mdi-star-outline'"
@@ -186,7 +186,7 @@
       <transition name="list-transition">
         <v-list class="py-0" style="margin-top: 100px;" width="100%">
           <template v-for="(searchFriend, index) in searchFriends">
-            <v-list-item :key="index">
+            <v-list-item :key="'search-' + index">
               <v-list-item-avatar @click="searchFriendListSelect(searchFriend)">
                 <v-img
                   :src="
@@ -203,7 +203,7 @@
                 ></v-list-item-title>
               </v-list-item-content>
 
-              <v-list-item-icon>
+              <v-list-item-icon @click="searchFriendFavoriteChange(index)">
                 <v-icon
                   color="blue accent-4"
                   v-text="
@@ -356,25 +356,19 @@ export default {
 
       return false;
     },
-    favoriteChange(index) {
+    allFriendFavoriteChange(index) {
       this.friends[index].favorite = !this.friends[index].favorite;
       this.$set(this.friends, index, this.friends[index]);
 
-      console.log(this.friends[index].favorite);
       if (this.friends[index].favorite) {
-        console.log('1');
         if (this.favoriteFriends == null || this.favoriteFriends.length == 0) {
           this.favoriteFriends.splice(0, 0, this.friends[index]);
           this.allHeaderTop += 56;
         } else {
-          console.log('2');
-          console.log(this.favoriteFriends.length);
-          for (let i = 0; i < this.favoriteFriends.length; i++) {
-            console.log('i: ' + i);
-            console.log(this.friends[index].uno);
-            if (i == 10) break;
+          let size = this.favoriteFriends.length;
+
+          for (let i = 0; i < size; i++) {
             if (this.favoriteFriends[i].uno > this.friends[index].uno) {
-              console.log('push');
               this.favoriteFriends.splice(i, 0, this.friends[index]);
               this.allHeaderTop += 56;
               break;
@@ -385,7 +379,6 @@ export default {
           }
         }
       } else {
-        console.log('aaa');
         for (let i = 0; i < this.favoriteFriends.length; i++) {
           if (this.favoriteFriends[i].uno == this.friends[index].uno) {
             this.favoriteFriends.splice(i, 1);
@@ -400,6 +393,88 @@ export default {
           email: storage.getItem('user-email'),
           friendUno: this.friends[index].uno,
           isFavorite: this.friends[index].favorite,
+        })
+        .then((response) => {
+          if (!response.data['is-success']) {
+            alert('즐겨찾기 변경을 실패하였습니다.');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    favoriteFriendFavoriteChange(index) {
+      for (let i = 0; i < this.friends.length; i++) {
+        if (this.friends[i].uno == this.favoriteFriends[index].uno) {
+          this.friends[i].favorite = false;
+          this.$set(this.friends, i, this.friends[i]);
+          this.favoriteFriends.splice(index, 1);
+
+          axios
+            .put('favoriteChange', {
+              email: storage.getItem('user-email'),
+              friendUno: this.friends[i].uno,
+              isFavorite: false,
+            })
+            .then((response) => {
+              if (!response.data['is-success']) {
+                alert('즐겨찾기 변경을 실패하였습니다.');
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          break;
+        }
+      }
+    },
+    searchFriendFavoriteChange(index) {
+      this.searchFriends[index].favorite = !this.searchFriends[index].favorite;
+      this.$set(this.searchFriends, index, this.searchFriends[index]);
+
+      let idx = -1;
+
+      for (let i = 0; i < this.friends.length; i++) {
+        if (this.friends[i].uno == this.searchFriends[index].uno) {
+          idx = i;
+          break;
+        }
+      }
+
+      if (this.friends[idx].favorite) {
+        if (this.favoriteFriends == null || this.favoriteFriends.length == 0) {
+          this.favoriteFriends.splice(0, 0, this.friends[idx]);
+          this.allHeaderTop += 56;
+        } else {
+          let size = this.favoriteFriends.length;
+
+          for (let i = 0; i < size; i++) {
+            if (this.favoriteFriends[i].uno > this.friends[idx].uno) {
+              this.favoriteFriends.splice(i, 0, this.friends[idx]);
+              this.allHeaderTop += 56;
+              break;
+            }
+
+            if (i == this.favoriteFriends.length - 1)
+              this.favoriteFriends.push(this.friends[idx]);
+          }
+        }
+      } else {
+        for (let i = 0; i < this.favoriteFriends.length; i++) {
+          if (this.favoriteFriends[i].uno == this.friends[idx].uno) {
+            this.favoriteFriends.splice(i, 1);
+            this.allHeaderTop -= 56;
+            break;
+          }
+        }
+      }
+
+      axios
+        .put('favoriteChange', {
+          email: storage.getItem('user-email'),
+          friendUno: this.friends[idx].uno,
+          isFavorite: this.friends[idx].favorite,
         })
         .then((response) => {
           if (!response.data['is-success']) {
