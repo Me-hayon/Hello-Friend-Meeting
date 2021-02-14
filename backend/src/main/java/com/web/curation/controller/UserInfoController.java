@@ -57,25 +57,27 @@ public class UserInfoController {
 
 	// 이메일 중복 확인 체크 버튼을 눌렀을 경우
 	@PostMapping("/dckEmail")
-	public boolean dckEmail(@RequestParam("email") String email) {
+	public Object dckEmail(@RequestParam("email") String email, HttpServletResponse response) {
+		System.out.println("=====================");
+		System.out.println(email);
 
-		boolean result = true;
+		Map<String, Object> resultMap = new HashMap<>();
 		UserInfo userInfo = userInfoRepository.findByEmail(email);
 
 		if (userInfo == null) {
 			System.out.println();
-			result = false; // 중복이 아님
+			resultMap.put("is-success", true); // 중복이 아님
+			return resultMap;
 		} else {
-			result = true; // 중복임
+			resultMap.put("is-success", false); // 중복임
+			return resultMap;
 		}
-
-		return result;
 	}
 
 	// 나중에 SENS API 사용한 인증으로 바꿔야 함
 	// 전화 중복 확인 체크 버튼을 눌렀을 경우
 	@PostMapping("/authTel")
-	public Object authTel(@RequestParam("phone") String tel, HttpServletResponse response) {
+	public Object authTel(@RequestParam("tel") String tel, HttpServletResponse response) {
 
 		Map<String, Object> resultMap = new HashMap<>();
 		UserInfo userInfo = null;
@@ -83,9 +85,10 @@ public class UserInfoController {
 			userInfo=userInfoRepository.findByTel(tel).get();
 
 		if (userInfo == null) { // 중복이 아님
-			sensService.makeBody(tel);
+			int realAuthNum = sensService.makeBody(tel);
 			System.out.println(tel + "에 문자 전송");
 			resultMap.put("is-success", true);
+			resultMap.put("realAuthNum", realAuthNum);
 			return resultMap;
 		} else { // 중복임
 			System.out.println("ㅡㅡ짱나");
@@ -98,9 +101,23 @@ public class UserInfoController {
 	public UserInfo join(@RequestBody UserInfo userInfo) {
 
 		userInfoRepository.save(userInfo);
+		
 		return userInfo;
 	}
 
+//	@PostMapping("/join")
+//	public UserInfo join(@RequestParam String uname, @RequestParam String email, @RequestParam String tel, @RequestParam String password) {
+//		
+//		UserInfo userinfo = null;
+//		userinfo.setUname(uname);
+//		userinfo.setEmail(email);
+//		userinfo.setPassword(password);
+//		userinfo.setTel(tel);
+//		
+//		userInfoRepository.save(userinfo);
+//		return userinfo;
+//	}
+	
 	/////////////////////////////////// 로그인
 
 	@PostMapping("/login")
@@ -197,7 +214,26 @@ public class UserInfoController {
 		return resultMap;
 		
 	}
+	
+	
+	@PostMapping("/findUserByEmail")
+	public Object findUserByEmail(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
 
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		if(user != null) {
+			resultMap.put("user-number",user.getUno());
+			resultMap.put("user-name",user.getUname());
+			resultMap.put("is-success",true);
+		}
+		else {
+			resultMap.put("is-success",false);
+		}
+		
+		return resultMap;		
+	}
+
+	
 	@PostMapping("/findUnameByUno")
 	public Object findUnameByUno(@RequestParam int uno) {
 		Map<String, Object> resultMap = new HashMap<>();

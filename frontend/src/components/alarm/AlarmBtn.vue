@@ -3,7 +3,12 @@
     <v-menu v-model="menu" :close-on-content-click="false" offset-x>
       <template v-slot:activator="{ on, attrs }">
         <v-btn v-bind="attrs" v-on="on">
-          <v-badge color="deep-purple accent-4" right overlap>
+          <v-badge
+            :value="alarmLen != 0"
+            color="deep-purple accent-4"
+            right
+            overlap
+          >
             <span slot="badge">{{ alarmLen }}</span>
             <v-icon>mdi-bell</v-icon>
           </v-badge>
@@ -30,21 +35,36 @@
           </v-list-item>
         </v-list>
 
-        <v-divider></v-divider>
+        <v-divider style="margin: 0; border: dashed #D3D3D3 1px;"></v-divider>
 
-        <v-list max-height="300" style="overflow-y: auto;">
+        <v-list
+          width="300"
+          max-height="300"
+          style="overflow-y: auto; padding: 0;"
+          ><v-row
+            v-if="alarms == null || alarms.length == 0"
+            class="ma-0"
+            align="center"
+            justify="center"
+            style="height: 100px;"
+          >
+            알림 없음ㅋㅋ!! <br />
+            나중에... 이미지로 대체하고 싶삼
+          </v-row>
           <v-row
+            v-else
             no-gutters
             v-for="alarm in alarms"
             :key="alarm.ano"
+            :style="{ backgroundColor: alarmBgColor(alarm.aisRead) }"
             style="margin: 0;"
           >
-            <v-col cols="10" style="padding: 0;">
+            <v-col cols="9" style="padding: 0;">
               <v-list-item
                 @click="goRouting(alarm.aurl, alarm.aurlNo, alarm.ano)"
                 style="padding-right: 0;"
               >
-                <v-list-item-title>
+                <v-list-item-title style="letter-spacing: -1px;">
                   {{ alarm.asummary }}
                 </v-list-item-title>
               </v-list-item>
@@ -56,7 +76,6 @@
             </v-col>
           </v-row>
         </v-list>
-
         <v-card-actions>
           <v-spacer></v-spacer>
 
@@ -101,6 +120,14 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+  },
+
+  computed: {
+    alarmBgColor() {
+      return (aisRead) => {
+        return aisRead ? '#E6E6FA' : 'white';
+      };
+    },
   },
 
   methods: {
@@ -159,7 +186,7 @@ export default {
         .then((response) => {
           this.alarms = response.data.alarms;
           this.alarmLen = response.data.notReadAlarm;
-          // console.log(this.alarms);
+          console.log(this.alarms);
         })
         .catch((error) => {
           console.log(error);

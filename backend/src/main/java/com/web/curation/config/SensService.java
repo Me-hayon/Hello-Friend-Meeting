@@ -23,29 +23,32 @@ import org.springframework.stereotype.Service;
 public class SensService {
 	public static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-	String hostNameUrl = "https://sens.apigw.ntruss.com"; // 호스트 URL
-	String requestUrl = "/sms/v2/services/"; // 요청 URL
-	String requestUrlType = "/messages"; // 요청 URL
-	String accessKey = "RHWhcDNAY2M8PqCSUALi"; // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키 (네이버 API 인증 Access Key ID)
-	String secretKey = "DBsVv3WzljxIwpmY9uKd2YAx8DI8xpQ1qq4khjTW"; // 2차 인증을 위해 서비스마다 할당되는 service secret (네이버 API 인증키
-																	// 관리의 Secret Key)
-	String serviceId = "ncp:sms:kr:263337650344:help-me"; // 콘솔 > 프로젝트에 할당된 SMS 서비스 ID
-	String method = "POST"; // 요청 method
-	String timestamp = Long.toString(System.currentTimeMillis()); // current timestamp (epoch)
-
-	public void makeBody(String toTel) {
+	public int makeBody(String toTel) {
+		
+		String hostNameUrl = "https://sens.apigw.ntruss.com"; // 호스트 URL
+		String requestUrl = "/sms/v2/services/"; // 요청 URL
+		String requestUrlType = "/messages"; // 요청 URL
+		String accessKey = "RHWhcDNAY2M8PqCSUALi"; // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키 (네이버 API 인증 Access Key ID)
+		String secretKey = "DBsVv3WzljxIwpmY9uKd2YAx8DI8xpQ1qq4khjTW"; // 2차 인증을 위해 서비스마다 할당되는 service secret (네이버 API 인증키
+		// 관리의 Secret Key)
+		String serviceId = "ncp:sms:kr:263337650344:help-me"; // 콘솔 > 프로젝트에 할당된 SMS 서비스 ID
+		String method = "POST"; // 요청 method
+		String timestamp = Long.toString(System.currentTimeMillis()); // current timestamp (epoch)
 
 		requestUrl += serviceId + requestUrlType;
 		String apiUrl = hostNameUrl + requestUrl;
+		int randNum = (int) Math.floor((Math.random() * 8999) + 1000);
 
 		// JSON 을 활용한 body data 생성
 
 		JSONObject bodyJson = new JSONObject();
 		JSONObject toJson = new JSONObject();
 		JSONArray toArr = new JSONArray();
+		
+		String authNum = Integer.toString(randNum);
 
 		toJson.put("subject", ""); // 메시지 제목 * LMS Type에서만 사용할 수 있습니다.
-		toJson.put("content", "toJson!!!!"); // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
+		toJson.put("content", "인증번호는 [" + authNum + "] 입니다. 입력해주세요."); // 메시지 내용 * Type별로 최대 byte 제한이 다릅니다.* SMS: 80byte / LMS: 2000byte
 		toJson.put("to", toTel); // 수신번호 목록 * 최대 50개까지 한번에 전송할 수 있습니다.
 		toArr.add(toJson);
 
@@ -107,7 +110,7 @@ public class SensService {
 			System.out.println(e);
 		}
 
-		return;
+		return randNum;
 	}
 
 	public static String makeSignature(String url, String timestamp, String method, String accessKey, String secretKey)
