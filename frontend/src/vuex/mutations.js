@@ -19,9 +19,15 @@ export default {
     state.calendar.startDate = payload.date;
     state.calendar.startTime = payload.time;
     state.calendar.hasTime = payload.hasTime;
+    state.calendar.endDate=payload.date;
+    state.calendar.endTime='';
+    state.calendar.title='';
+    state.calendar.content=''
     state.dialog = true;
   },
   CLOSE_CALENDAR_DIALOG(state) {
+    state.calendar.stitle = '';
+    state.calendar.scontent=''
     state.dialog = false;
   },
   ADD_EVENTS(state, event) {
@@ -52,7 +58,9 @@ const makeEvent = (event) => {
     start: event.sstartdate,
     end: event.senddate,
     color: colors[Math.floor(Math.random() * 6)],
-    content:event.scontent
+    content:event.scontent,
+    smasterEmail:event.smasterEmail,
+    sno:event.sno
   };
 };
 

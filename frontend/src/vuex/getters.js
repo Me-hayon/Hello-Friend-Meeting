@@ -22,5 +22,8 @@ export default {
   },
   getEvents: function (state) {
     return state.events
+  },
+  getCalendar:function(state){
+    return state.calendar;
   }
 };
