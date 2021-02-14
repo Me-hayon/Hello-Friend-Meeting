@@ -16,20 +16,26 @@
     >
       <v-row no-gutters>
         <v-col>
-          <v-text-field
-            v-model="search"
-            label="검색"
-            append-icon="mdi-magnify"
-            @input="searchInput"
-            single-line
-            clearable
-          ></v-text-field>
-
-          <v-row v-if="search != null && search != ''" no-gutters>
-            <span>검색 결과 ({{ searchFriends.length }})</span>
+          <v-row no-gutters>
+            <v-col cols="2">
+              <!-- 친구 추가 버튼 -->
+              <v-btn color="success" fab dark depressed small>
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="search"
+                label="검색"
+                append-icon="mdi-magnify"
+                @input="searchInput"
+                single-line
+                clearable
+              ></v-text-field>
+            </v-col>
           </v-row>
 
-          <v-row v-if="search == null || search == ''" no-gutters>
+          <v-row v-if="search == null || search == ''" class="mt-0" no-gutters>
             <span>즐겨찾는 친구 ({{ favoriteFriends.length }})</span>
             <v-spacer></v-spacer>
             <v-btn
@@ -69,6 +75,10 @@
             >
               <v-icon>{{ allIcon }}</v-icon>
             </v-btn>
+          </v-row>
+
+          <v-row v-if="search != null && search != ''" class="mt-0" no-gutters>
+            <span>검색 결과 ({{ searchFriends.length }})</span>
           </v-row>
         </v-col>
       </v-row>
@@ -159,7 +169,7 @@
                 <v-list-item-title v-text="friend.uname"></v-list-item-title>
               </v-list-item-content>
 
-              <v-list-item-icon>
+              <v-list-item-icon @click="favoriteChange(index)">
                 <v-icon
                   color="blue accent-4"
                   v-text="friend.favorite ? 'mdi-star' : 'mdi-star-outline'"
@@ -197,9 +207,7 @@
                 <v-icon
                   color="blue accent-4"
                   v-text="
-                    isFavorite(searchFriend.uno)
-                      ? 'mdi-star'
-                      : 'mdi-star-outline'
+                    searchFriend.favorite ? 'mdi-star' : 'mdi-star-outline'
                   "
                 ></v-icon>
               </v-list-item-icon>
@@ -208,11 +216,6 @@
         </v-list>
       </transition>
     </v-col>
-
-    <!-- 친구 추가 버튼 -->
-    <v-btn color="success" style="bottom: 16px;" fab absolute right dark large>
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
 
     <!-- 친구 프로필 모달 -->
     <v-dialog
@@ -260,7 +263,10 @@
 </template>
 
 <script>
+import axios from 'axios';
 import FriendProfile from '@/views/user/FriendProfile.vue';
+
+const storage = window.sessionStorage;
 
 export default {
   components: { FriendProfile },
@@ -349,6 +355,60 @@ export default {
       }
 
       return false;
+    },
+    favoriteChange(index) {
+      this.friends[index].favorite = !this.friends[index].favorite;
+      this.$set(this.friends, index, this.friends[index]);
+
+      console.log(this.friends[index].favorite);
+      if (this.friends[index].favorite) {
+        console.log('1');
+        if (this.favoriteFriends == null || this.favoriteFriends.length == 0) {
+          this.favoriteFriends.splice(0, 0, this.friends[index]);
+          this.allHeaderTop += 56;
+        } else {
+          console.log('2');
+          console.log(this.favoriteFriends.length);
+          for (let i = 0; i < this.favoriteFriends.length; i++) {
+            console.log('i: ' + i);
+            console.log(this.friends[index].uno);
+            if (i == 10) break;
+            if (this.favoriteFriends[i].uno > this.friends[index].uno) {
+              console.log('push');
+              this.favoriteFriends.splice(i, 0, this.friends[index]);
+              this.allHeaderTop += 56;
+              break;
+            }
+
+            if (i == this.favoriteFriends.length - 1)
+              this.favoriteFriends.push(this.friends[index]);
+          }
+        }
+      } else {
+        console.log('aaa');
+        for (let i = 0; i < this.favoriteFriends.length; i++) {
+          if (this.favoriteFriends[i].uno == this.friends[index].uno) {
+            this.favoriteFriends.splice(i, 1);
+            this.allHeaderTop -= 56;
+            break;
+          }
+        }
+      }
+
+      axios
+        .put('favoriteChange', {
+          email: storage.getItem('user-email'),
+          friendUno: this.friends[index].uno,
+          isFavorite: this.friends[index].favorite,
+        })
+        .then((response) => {
+          if (!response.data['is-success']) {
+            alert('즐겨찾기 변경을 실패하였습니다.');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   watch: {

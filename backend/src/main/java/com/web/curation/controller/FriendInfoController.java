@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -211,6 +212,27 @@ public class FriendInfoController {
 		else {	// 친구 기록이 없을 경우
 			resultMap.put("is-success", false);
 		}
+		
+		return resultMap;
+	}
+	
+	@PutMapping("/favoriteChange")
+	public Object favoriteChange(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(user!=null) {
+			Optional<FriendInfo> optFriendInfo = friendInfoRepository.findByMyIdAndFriendId(user.getUno(), Integer.parseInt(map.get("friendUno")));
+			
+			if(optFriendInfo.isPresent()) {
+				FriendInfo friendInfo = optFriendInfo.get();
+				friendInfo.setFavorite(Boolean.parseBoolean(map.get("isFavorite")));
+				friendInfoRepository.save(friendInfo);
+				resultMap.put("is-success", true);
+			}
+			else resultMap.put("is-success", false);
+		}
+		else resultMap.put("is-success", false);
 		
 		return resultMap;
 	}
