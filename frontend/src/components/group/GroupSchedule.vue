@@ -45,14 +45,30 @@
               ><v-spacer
                 >{{ selectedEvent.content }}
                 <hr />
-                <ul class="mb-0">
+                <ul class="mb-0" style="float:left;width:50%">
+                  <li>참가인원</li>
                   <li
                     v-for="participant in selectedEvent.participants"
                     :key="participant.uno"
+                    v-show="participant.attendance === 1"
                   >
                     {{ participant.name }}
                   </li>
                 </ul>
+                <ul class="mb-0" style="float:left;width:50%">
+                  <li>불참인원</li>
+                  <li
+                    v-for="participant in selectedEvent.participants"
+                    :key="participant.uno"
+                    v-show="participant.attendance === 2"
+                  >
+                    {{ participant.name }}
+                  </li>
+                </ul>
+                <div>
+                  <button @click="vote(selectedEvent.sno, 1)">참가</button>
+                  <button @click="vote(selectedEvent.sno, 2)">불참</button>
+                </div>
               </v-spacer></v-card
             >
           </v-menu>
@@ -90,8 +106,8 @@
 </template>
 
 <script>
-import Dialog from '@/components/group/Dialog.vue';
-import axios from 'axios';
+import Dialog from "@/components/group/Dialog.vue";
+import axios from "axios";
 export default {
   components: {
     Dialog,
@@ -149,7 +165,7 @@ export default {
     const startDate = `${year}-${month}-${date}`;
     this.curYear = year;
     this.curMonth = month + 1;
-    if (this.curMonth < 10) this.curMonth = '0' + this.curMonth;
+    if (this.curMonth < 10) this.curMonth = "0" + this.curMonth;
     this.start = startDate;
     this.getSchedules();
   },
@@ -161,11 +177,11 @@ export default {
         sno: { type: Number },
         sgno: { type: Number },
         smaster: { type: Number },
-        senddate: '',
-        sstartdate: '',
-        stitle: '',
-        sspace: '',
-        scontetnt: '',
+        senddate: "",
+        sstartdate: "",
+        stitle: "",
+        sspace: "",
+        scontetnt: "",
       },
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
@@ -173,17 +189,17 @@ export default {
       uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
-      type: 'month',
+      type: "month",
       curYear: this.year,
       curMonth: this.month + 1,
-      curYM: '',
+      curYM: "",
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-      myEmail: window.sessionStorage.getItem('user-email'),
-      moreEvents: '',
+      myEmail: window.sessionStorage.getItem("user-email"),
+      moreEvents: "",
       moreEventsDialog: false,
-      moreDate: '',
+      moreDate: "",
     };
   },
   methods: {
@@ -194,10 +210,10 @@ export default {
         this.curMonth = 12;
         this.curYear *= 1;
         this.curYear--;
-        this.curYear += '';
+        this.curYear += "";
       }
-      this.curMonth += '';
-      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
+      this.curMonth += "";
+      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
     },
     nextMonth() {
       this.curMonth *= 1;
@@ -206,22 +222,22 @@ export default {
         this.curMonth = 1;
         this.curYear *= 1;
         this.curYear++;
-        this.curYear += '';
+        this.curYear += "";
       }
-      this.curMonth += '';
-      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
+      this.curMonth += "";
+      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
     },
     open(date) {
       console.log(date);
-      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
+      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
     },
     getEventColor(event) {
       return event.color;
     },
     showEvent({ nativeEvent, event }) {
       var params = new URLSearchParams();
-      params.append('sno', event.sno);
-      axios.post('getScheduleParticipants', params).then((resp) => {
+      params.append("sno", event.sno);
+      axios.post("getScheduleParticipants", params).then((resp) => {
         var len = resp.data.list.length;
         var participantList = [];
         for (var i = 0; i < len; i++) {
@@ -248,8 +264,8 @@ export default {
     },
     showEventAtMore(event) {
       var params = new URLSearchParams();
-      params.append('sno', event.sno);
-      axios.post('getScheduleParticipants', params).then((resp) => {
+      params.append("sno", event.sno);
+      axios.post("getScheduleParticipants", params).then((resp) => {
         var len = resp.data.list.length;
         var participantList = [];
         for (var i = 0; i < len; i++) {
@@ -273,15 +289,15 @@ export default {
     },
     moreEvent(date) {
       console.log(date.date);
-      this.moreDate = date.date + '의 일정은??';
+      this.moreDate = date.date + "의 일정은??";
       console.log(this.localEvents);
       this.moreEvents = [];
       var selectedDate = this.returnToNum(date.date);
       for (var i = 0; i < this.localEvents.length; i++) {
         if (
-          this.returnToNum(this.localEvents[i].start.split(' ')[0]) <=
+          this.returnToNum(this.localEvents[i].start.split(" ")[0]) <=
             selectedDate &&
-          this.returnToNum(this.localEvents[i].end.split(' ')[0]) >=
+          this.returnToNum(this.localEvents[i].end.split(" ")[0]) >=
             selectedDate
         ) {
           this.moreEvents.push(this.localEvents[i]);
@@ -292,25 +308,25 @@ export default {
     },
     getSchedules() {
       var params = new URLSearchParams();
-      params.append('gno', this.gno);
-      axios.post('getSchedulesList', params).then((resp) => {
+      params.append("gno", this.gno);
+      axios.post("getSchedulesList", params).then((resp) => {
         if (resp.data.isPresent) {
           var eventList = resp.data.list;
           var emailList = resp.data.emailList;
           for (var i = 0; i < eventList.length; i++)
             eventList[i].smasterEmail = emailList[i];
-          this.$store.commit('ADD_EVENTS', resp.data.list);
+          this.$store.commit("ADD_EVENTS", resp.data.list);
         }
       });
     },
     delSchedule() {
       console.log(this.selectedEvent);
       var params = new URLSearchParams();
-      params.append('sno', this.selectedEvent.sno);
-      axios.post('delSchedule', params).then(() => {
+      params.append("sno", this.selectedEvent.sno);
+      axios.post("delSchedule", params).then(() => {
         this.getSchedules();
         this.selectedOpen = false;
-        alert('일정을 삭제했습니다.');
+        alert("일정을 삭제했습니다.");
       });
       this.moreEventsDialog = false;
     },
@@ -318,9 +334,33 @@ export default {
       this.selectedOpen = false;
     },
     returnToNum(date) {
-      var toReturn = date.replace(/-/g, '');
+      var toReturn = date.replace(/-/g, "");
       toReturn *= 1;
       return toReturn;
+    },
+    vote(sno, attendance) {
+      var params = new URLSearchParams();
+      params.append("sno", sno);
+      params.append("email", this.myEmail);
+      params.append("attendance", attendance);
+      axios.post("changeScheduleAttendance", params).then((resp) => {
+        if (resp.data.isPresent) {
+          axios.post("getScheduleParticipants", params).then((resp) => {
+            var len = resp.data.list.length;
+            var participantList = [];
+            for (var i = 0; i < len; i++) {
+              var participantInfo = resp.data.list[i];
+              participantInfo.email = resp.data.emailList[i];
+              participantInfo.name = resp.data.nameList[i];
+              participantList.push(participantInfo);
+            }
+            alert("투표했음");
+            this.selectedOpen = false;
+            this.selectedEvent.participants = participantList;
+            console.log(this.selectedEvent.participants);
+          });
+        }
+      });
     },
   },
 };

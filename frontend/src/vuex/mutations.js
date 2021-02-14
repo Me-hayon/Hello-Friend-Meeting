@@ -21,8 +21,8 @@ export default {
     state.calendar.hasTime = payload.hasTime;
     state.calendar.endDate=payload.date;
     state.calendar.endTime='';
-    state.calendar.stitle='';
-    state.calendar.scontent=''
+    state.calendar.title='';
+    state.calendar.content=''
     state.dialog = true;
   },
   CLOSE_CALENDAR_DIALOG(state) {
