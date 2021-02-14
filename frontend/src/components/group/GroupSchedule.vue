@@ -45,7 +45,7 @@
               ><v-spacer
                 >{{ selectedEvent.content }}
                 <hr />
-                <ul>
+                <ul class="mb-0">
                   <li
                     v-for="participant in selectedEvent.participants"
                     :key="participant.uno"

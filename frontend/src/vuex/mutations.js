@@ -26,6 +26,8 @@ export default {
     state.dialog = true;
   },
   CLOSE_CALENDAR_DIALOG(state) {
+    state.calendar.stitle = '';
+    state.calendar.scontent=''
     state.dialog = false;
   },
   ADD_EVENTS(state, event) {
