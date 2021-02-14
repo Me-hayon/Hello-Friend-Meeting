@@ -5,7 +5,6 @@
         type="text"
         v-model="gccontent"
         placeholder="보낼 메세지"
-        size="100"
         @keyup.enter="sendMessage"
       />
       <v-btn @click="sendMessage">SEND</v-btn>
@@ -21,7 +20,57 @@
       >
         <v-col cols="8">
           <!-- <v-row :justify="chat.uno == gcuno ? 'end' : 'start'" no-gutters> -->
-          <v-row
+          <div style="float:right" v-if="chat.style == 'myStyle'">
+            <!-- <h5>{{ chat.uname }}</h5> -->
+            <span
+              style="
+              font-size:13px; 
+              position:absolute; 
+              display:inline-block; 
+              margin-right:15px; 
+              bottom:0; 
+              color:black"
+            >
+              {{ chat.parsedDate }}
+            </span>
+            <div class="speech-bubble-right">
+              <h5>{{ chat.gccontent }}</h5>
+            </div>
+          </div>
+          <div v-else>
+            <h5 style="color:black">{{ chat.uname }}</h5>
+            <div class="speech-bubble-left">
+              <h5>{{ chat.gccontent }}</h5>
+            </div>
+            <span
+              style="
+              display:inline-block;
+              color:black;
+              position:absolute;
+              bottom:0;
+              font-size:13px;
+              margin-left:5px"
+            >
+              {{ chat.parsedDate }}
+            </span>
+          </div>
+          <!-- <h5>{{ chat.uname }}</h5>
+
+          <div
+            :class="[
+              { 'speech-bubble-left': !LorR },
+              { 'speech-bubble-right': LorR },
+            ]"
+          >
+            <h5>{{ chat.gccontent }}</h5>
+          </div>
+          <span
+            style="display:inline-block; font-size:13px;margin-bottom:0px; margin-left:5px"
+          >
+            {{ chat.parsedDate }}
+          </span> -->
+
+          <!-- <v-row
             :justify="chat.uno == gcuno ? 'end' : 'start'"
             no-gutters
             style="font-size: 1rem; letter-spacing: -1px; margin: 0;"
@@ -40,7 +89,7 @@
             no-gutters
             style="font-size: 0.8rem; letter-spacing: -1px; margin: 0;"
             >{{ chat.parsedDate }}</v-row
-          >
+          > -->
           <!-- </v-row> -->
         </v-col>
       </v-row>
@@ -50,9 +99,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Stomp from 'webstomp-client';
-import SockJS from 'sockjs-client';
+import axios from "axios";
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
 
 const storage = window.sessionStorage;
 
@@ -61,38 +110,39 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gcgno: this.$store.getters.getGno,
-      gcno: '',
-      gcuno: '',
-      gcdate: '',
-      parsedDate: '',
-      gccontent: '',
-      uname: '',
+      gcno: "",
+      gcuno: "",
+      gcdate: "",
+      parsedDate: "",
+      gccontent: "",
+      uname: "",
       chats: [],
       stompClient: null,
+      LorR: true,
     };
   },
   created() {
     axios
-      .post('/findUserByEmail', { email: storage.getItem('user-email') })
+      .post("/findUserByEmail", { email: storage.getItem("user-email") })
       .then((response) => {
-        if (response.data['is-success']) {
-          this.gcuno = response.data['user-number'];
-          this.uname = response.data['user-name'];
+        if (response.data["is-success"]) {
+          this.gcuno = response.data["user-number"];
+          this.uname = response.data["user-name"];
         } else {
-          alert('너 누구야');
+          alert("너 누구야");
         }
       });
 
     axios({
-      method: 'get',
-      url: '/getChat/' + this.gcgno,
-      baseURL: 'http://localhost:8080/',
+      method: "get",
+      url: "/getChat/" + this.gcgno,
+      baseURL: "http://localhost:8080/",
     }).then(
       (response) => {
         this.chats = [];
         console.log(response);
-        let chatList = response.data['chat-list'];
-        let unameList = response.data['uname-list'];
+        let chatList = response.data["chat-list"];
+        let unameList = response.data["uname-list"];
 
         for (let i = 0; i < chatList.length; i++) {
           let chat = {
@@ -101,8 +151,11 @@ export default {
             gccontent: chatList[i].gccontent,
             gcdate: chatList[i].gcdate,
             parsedDate: chatList[i].gcdate.substring(11, 16),
-            style: chatList[i].gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
+            style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
           };
+          if (chatList[i].gcuno == this.gcuno) {
+            this.LorR = true;
+          }
 
           this.chats.push(chat);
         }
@@ -120,7 +173,7 @@ export default {
       },
       (err) => {
         console.log(err);
-        alert('error : 새로고침하세요');
+        alert("error : 새로고침하세요");
       }
     );
 
@@ -128,18 +181,18 @@ export default {
   },
   methods: {
     aa() {
-      alert(this.memberStatus + ' ' + this.gno);
+      alert(this.memberStatus + " " + this.gno);
     },
     sendMessage(e) {
-      if (this.gccontent !== '') {
+      if (this.gccontent !== "") {
         this.send();
 
-        this.gccontent = '';
+        this.gccontent = "";
       }
     },
     send() {
-      console.log('Send message:' + this.gccontent);
-      console.log('group ID: ' + this.gcgno);
+      console.log("Send message:" + this.gccontent);
+      console.log("group ID: " + this.gcgno);
       if (this.stompClient && this.stompClient.connected) {
         const chat = {
           gcgno: this.gcgno,
@@ -147,11 +200,11 @@ export default {
           gcuname: this.uname,
           gccontent: this.gccontent,
         };
-        this.stompClient.send('/pub/chat', JSON.stringify(chat), {});
+        this.stompClient.send("/pub/chat", JSON.stringify(chat), {});
       }
     },
     connect() {
-      const serverURL = 'http://localhost:8080/ws';
+      const serverURL = "http://localhost:8080/ws";
       let socket = new SockJS(serverURL);
       let tmp = {};
 
@@ -161,9 +214,9 @@ export default {
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log('소켓 연결 성공', frame);
-          this.stompClient.subscribe('/sub/' + this.gcgno, (response) => {
-            console.log('구독으로 받은 메시지 입니다???.', response.body);
+          console.log("소켓 연결 성공", frame);
+          this.stompClient.subscribe("/sub/" + this.gcgno, (response) => {
+            console.log("구독으로 받은 메시지 입니다???.", response.body);
             //   let jsonBody = JSON.parse(res.body)
             //    let m={
             //   'senderNickname':jsonBody.senderNickname,
@@ -176,14 +229,14 @@ export default {
             // this.chats.push(JSON.parse(response.body));
 
             let parseTmp = JSON.parse(response.body);
-            console.log('★★★★★★★★★★★★★', parseTmp);
+            console.log("★★★★★★★★★★★★★", parseTmp);
             tmp = {
               uno: parseTmp.gcuno,
               uname: parseTmp.gcuname,
               gccontent: parseTmp.gccontent,
               gcdate: parseTmp.gcdate,
               parsedDate: parseTmp.gcdate.substring(11, 16),
-              style: parseTmp.gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
+              style: parseTmp.gcuno == this.gcuno ? "myStyle" : "yourStyle",
             };
 
             this.chats.push(tmp);
@@ -191,7 +244,7 @@ export default {
         },
         (error) => {
           // 소켓 연결 실패
-          console.log('소켓 연결 실패', error);
+          console.log("소켓 연결 실패", error);
           this.connected = false;
         }
       );
@@ -230,9 +283,57 @@ export default {
 
 <style scoped>
 .myStyle {
-  color: rgb(252, 29, 29);
+  color: black;
 }
 .yourStyle {
-  color: gray;
+  color: black;
+}
+.speech-bubble-left {
+  margin-left: 15px;
+  padding: 5px;
+  position: relative;
+  background: #c7dcf0;
+  border-radius: 0.4em;
+  display: inline-block;
+  max-width: 200px;
+}
+
+.speech-bubble-left:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 10;
+  height: 0;
+  border: 15px solid transparent;
+  border-right-color: #c7dcf0;
+  border-left: 0;
+  border-top: 0;
+  margin-top: -13.5px;
+  margin-left: -15px;
+}
+.speech-bubble-right {
+  margin-left: 40px;
+  padding: 5px;
+  position: relative;
+  background: #ebccf3;
+  border-radius: 0.4em;
+  display: inline-block;
+  max-width: 200px;
+}
+
+.speech-bubble-right:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 10;
+  height: 0;
+  border: 15px solid transparent;
+  border-left-color: #ebccf3;
+  border-right: 0;
+  border-top: 0;
+  margin-top: -13.5px;
+  margin-right: -15px;
 }
 </style>
