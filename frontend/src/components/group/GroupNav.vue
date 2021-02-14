@@ -24,10 +24,10 @@
   </v-card>
 </template>
 <script>
-import GroupBoard from '@/components/group/GroupBoard.vue';
-import GroupSchedule from '@/components/group/GroupSchedule.vue';
-import GroupChat from '@/components/group/GroupChat.vue';
-import GroupMemberList from '@/components/group/GroupMemberList.vue';
+import GroupBoard from "@/components/group/GroupBoard.vue";
+import GroupSchedule from "@/components/group/GroupSchedule.vue";
+import GroupChat from "@/components/group/GroupChat.vue";
+import GroupMemberList from "@/components/group/GroupMemberList.vue";
 export default {
   computed: {
     vuexGno() {
