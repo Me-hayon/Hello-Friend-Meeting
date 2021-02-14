@@ -25,7 +25,10 @@
           <v-tab-item :value="'tab-1'">
             <v-row
               v-if="
-                isLoadingGroups || isLoadingCategories || isLoadingFriends == -1
+                isLoadingUno ||
+                  isLoadingGroups ||
+                  isLoadingCategories ||
+                  isLoadingFriends == -1
               "
               class="ma-0"
               style="height: 639px;"
@@ -40,7 +43,8 @@
 
             <group-list
               v-if="
-                !isLoadingGroups &&
+                !isLoadingUno &&
+                  !isLoadingGroups &&
                   !isLoadingCategories &&
                   isLoadingFriends != -1
               "
@@ -52,7 +56,7 @@
 
           <v-tab-item :value="'tab-2'">
             <v-row
-              v-if="isLoadingFriends == -1"
+              v-if="isLoadingUno || isLoadingFriends == -1"
               class="ma-0"
               style="height: 639px;"
               align="center"
@@ -65,7 +69,8 @@
             </v-row>
 
             <friend-list
-              v-if="isLoadingFriends != -1"
+              v-if="!isLoadingUno && isLoadingFriends != -1"
+              :uno="uno"
               :friendList="friends"
               :favoriteFriendList="favoriteFriends"
             />
@@ -87,17 +92,28 @@ export default {
   components: { GroupList, FriendList },
   data() {
     return {
+      uno: -1,
       tab: null,
       groups: [],
       categories: [],
       friends: [],
       favoriteFriends: [],
+      isLoadingUno: true,
       isLoadingGroups: true,
       isLoadingCategories: true,
       isLoadingFriends: -1,
     };
   },
   created() {
+    axios
+      .post('findUno', { email: storage.getItem('user-email') })
+      .then((response) => {
+        if (response.data['is-success']) {
+          this.uno = response.data.uno;
+          this.isLoadingUno = false;
+        } else alert('사용자 정보를 불러오는데 오류가 발생하였습니다.');
+      });
+
     this.getGroupList();
     this.getCategory();
     this.getFriendList();

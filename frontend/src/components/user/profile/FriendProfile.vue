@@ -17,8 +17,8 @@
       ></v-img>
     </v-btn>
 
-    <!-- 사용자 글 관리 -->
-    <user-text-manage />
+    <!-- 친구 관리 버튼 -->
+    <friend-manage-btn :uno="uno" :info="info" @deleteFriend="deleteFriend" />
 
     <v-divider></v-divider>
 
@@ -33,7 +33,7 @@
 <script>
 import axios from 'axios';
 import ProfileCover from '@/components/user/profile/ProfileCover.vue';
-import UserTextManage from '@/components/user/profile/UserTextManage.vue';
+import FriendManageBtn from '@/components/user/profile/FriendManageBtn.vue';
 import UserHistory from '@/components/user/profile/UserHistory.vue';
 
 const storage = window.sessionStorage;
@@ -41,14 +41,14 @@ const storage = window.sessionStorage;
 export default {
   components: {
     ProfileCover,
-    UserTextManage,
+    FriendManageBtn,
     UserHistory,
   },
-  props: ['info'],
-  data() {
-    return {
-      isLoadingProfileImg: true,
-    };
+  props: ['uno', 'info'],
+  methods: {
+    deleteFriend(friendUno) {
+      this.$emit('deleteFriend', friendUno);
+    },
   },
   created() {
     // axios

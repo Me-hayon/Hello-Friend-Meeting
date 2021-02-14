@@ -217,6 +217,21 @@ public class UserInfoController {
 		
 	}
 	
+	@PostMapping("/findUno")
+	public Object findUno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(user!=null) {
+			resultMap.put("uno", user.getUno());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
+	}
+	
 	/////////////////////////////////// 비밀번호 변경
 
 	@PostMapping("/modify")

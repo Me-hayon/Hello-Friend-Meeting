@@ -237,7 +237,11 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <friend-profile :info="friendInfo" />
+          <friend-profile
+            :uno="uno"
+            :info="friendInfo"
+            @deleteFriend="deleteFriend"
+          />
         </v-card-text>
         <v-card-actions style="padding-top: 0;">
           <v-row class="ma-0" justify="end">
@@ -264,13 +268,13 @@
 
 <script>
 import axios from 'axios';
-import FriendProfile from '@/views/user/FriendProfile.vue';
+import FriendProfile from '@/components/user/profile/FriendProfile.vue';
 
 const storage = window.sessionStorage;
 
 export default {
   components: { FriendProfile },
-  props: ['friendList', 'favoriteFriendList'],
+  props: ['uno', 'friendList', 'favoriteFriendList'],
   data() {
     return {
       friends: this.friendList,
@@ -374,8 +378,10 @@ export default {
               break;
             }
 
-            if (i == this.favoriteFriends.length - 1)
+            if (i == this.favoriteFriends.length - 1) {
               this.favoriteFriends.push(this.friends[index]);
+              this.allHeaderTop += 56;
+            }
           }
         }
       } else {
@@ -456,8 +462,10 @@ export default {
               break;
             }
 
-            if (i == this.favoriteFriends.length - 1)
+            if (i == this.favoriteFriends.length - 1) {
               this.favoriteFriends.push(this.friends[idx]);
+              this.allHeaderTop += 56;
+            }
           }
         }
       } else {
@@ -484,6 +492,31 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    deleteFriend(friendUno) {
+      for (let i = 0; i < this.friends.length; i++) {
+        if (this.friends[i].uno == friendUno) {
+          this.friends.splice(i, 1);
+          break;
+        }
+      }
+
+      for (let i = 0; i < this.favoriteFriends.length; i++) {
+        if (this.favoriteFriends[i].uno == friendUno) {
+          this.favoriteFriends.splice(i, 1);
+          this.allHeaderTop -= 56;
+          break;
+        }
+      }
+
+      for (let i = 0; i < this.searchFriends.length; i++) {
+        if (this.searchFriends[i].uno == friendUno) {
+          this.searchFriends.splice(i, 1);
+          break;
+        }
+      }
+
+      this.friendProfileModal = false;
     },
   },
   watch: {

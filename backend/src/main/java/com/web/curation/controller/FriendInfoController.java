@@ -38,17 +38,18 @@ public class FriendInfoController {
 	AlarmRepository alarmRepository;
 
 	@PostMapping("/isFriend")
-	public int isFriend(@RequestParam(required = true) final String myEmail,
-			@RequestParam(required = true) final String friendEmail) {
-
-		int myId=userInfoRepository.findByEmail(myEmail).getUno();
-		int friendId=userInfoRepository.findByEmail(friendEmail).getUno();
+	public int isFriend(@RequestBody Map<String, String> map) {
+		int myId = Integer.parseInt(map.get("myUno"));
+		int friendId = Integer.parseInt(map.get("friendUno"));
+		
 		Optional<FriendInfo> friendInfoOpt1 = friendInfoRepository.findFriendInfoByMyIdAndFriendId(myId, friendId);
 		Optional<FriendInfo> friendInfoOpt2 = friendInfoRepository.findFriendInfoByMyIdAndFriendId(friendId, myId);
 
 		int friendStatus = 0;
+		
 		if (friendInfoOpt1.isPresent())
 			friendStatus++;
+		
 		if (friendInfoOpt2.isPresent())
 			friendStatus += 2;
 
@@ -56,6 +57,7 @@ public class FriendInfoController {
 		// 1 : 친구요청 보냈지만 아직 수락 못받은 경우
 		// 2 : 친구요청을 받았지만 아직 수락하지 않은 경우
 		// 3 : 친구인 경우
+		
 		return friendStatus;
 	}
 
@@ -140,25 +142,28 @@ public class FriendInfoController {
 		return response;
 	}
 
-	@PostMapping("/delFriend")
-	public Object delFriend(@RequestParam(required = true) final String myEmail,
-			@RequestParam(required = true) final String friendEmail) {
-		int myId = userInfoRepository.findByEmail(myEmail).getUno();
-		int friendId=userInfoRepository.findByEmail(friendEmail).getUno();
-		final BasicResponse result=new BasicResponse();
-		result.status=true;
+	@PostMapping("/deleteFriend")
+	public Object deleteFriend(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
 		
-		FriendInfo fi=friendInfoRepository.findByMyIdAndFriendId(myId,friendId).get();
-		friendInfoRepository.delete(fi);
-		fi=friendInfoRepository.findByMyIdAndFriendId(friendId, myId).get();
-		friendInfoRepository.delete(fi);
+		int myId = Integer.parseInt(map.get("myUno"));
+		int friendId = Integer.parseInt(map.get("friendUno"));
 		
-		result.data="친구를 삭제했습니다.";
+		Optional<FriendInfo> optFriendInfo = friendInfoRepository.findByMyIdAndFriendId(myId, friendId);
 		
-		ResponseEntity response = null;
-		response = new ResponseEntity<>(result, HttpStatus.OK);
+		if(optFriendInfo.isPresent()) {
+			friendInfoRepository.delete(optFriendInfo.get());
+			optFriendInfo = friendInfoRepository.findByMyIdAndFriendId(friendId, myId);
+			
+			if(optFriendInfo.isPresent()) {
+				friendInfoRepository.delete(optFriendInfo.get());
+				resultMap.put("is-success", true);
+			}
+			else resultMap.put("is-success", false);
+		}
+		else resultMap.put("is-success", false);
 		
-		return result;
+		return resultMap;
 	}
 	
 	@PostMapping("/cancelRequest")
