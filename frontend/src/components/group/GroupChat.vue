@@ -1,21 +1,52 @@
 <template>
-  <div class="room">
-    <input
-      type="text"
-      v-model="gccontent"
-      placeholder="보낼 메세지"
-      size="100"
-      @keyup.enter="sendMessage"
-    />
-    <v-btn @click="sendMessage">SEND</v-btn>
+  <v-container>
+    <v-row>
+      <input
+        type="text"
+        v-model="gccontent"
+        placeholder="보낼 메세지"
+        size="100"
+        @keyup.enter="sendMessage"
+      />
+      <v-btn @click="sendMessage">SEND</v-btn>
+    </v-row>
     <hr />
+
     <div v-for="(chat, idx) in chats" :key="idx">
-      <h3>유저이름: {{ chat.uname }}</h3>
-      <h3>내용: {{ chat.gccontent }}</h3>
-      <h5>날짜: {{ chat.gcdate }}</h5>
+      <v-row
+        id="wow"
+        :class="chat.style"
+        :justify="chat.uno == gcuno ? 'end' : 'start'"
+        no-gutters
+      >
+        <v-col cols="8">
+          <!-- <v-row :justify="chat.uno == gcuno ? 'end' : 'start'" no-gutters> -->
+          <v-row
+            :justify="chat.uno == gcuno ? 'end' : 'start'"
+            no-gutters
+            style="font-size: 1rem; letter-spacing: -1px; margin: 0;"
+          >
+            {{ chat.uname }}
+          </v-row>
+          <v-row
+            :justify="chat.uno == gcuno ? 'end' : 'start'"
+            no-gutters
+            style="font-size: 1.3rem; letter-spacing: -1px; margin: 0;"
+          >
+            {{ chat.gccontent }}
+          </v-row>
+          <v-row
+            :justify="chat.uno == gcuno ? 'end' : 'start'"
+            no-gutters
+            style="font-size: 0.8rem; letter-spacing: -1px; margin: 0;"
+            >{{ chat.parsedDate }}</v-row
+          >
+          <!-- </v-row> -->
+        </v-col>
+      </v-row>
       <hr />
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -33,6 +64,7 @@ export default {
       gcno: '',
       gcuno: '',
       gcdate: '',
+      parsedDate: '',
       gccontent: '',
       uname: '',
       chats: [],
@@ -46,7 +78,6 @@ export default {
         if (response.data['is-success']) {
           this.gcuno = response.data['user-number'];
           this.uname = response.data['user-name'];
-          // console.log('★★★★★★★★★★★★★★★★★:', this.gcuno, this.uname);
         } else {
           alert('너 누구야');
         }
@@ -69,6 +100,8 @@ export default {
             uname: unameList[i],
             gccontent: chatList[i].gccontent,
             gcdate: chatList[i].gcdate,
+            parsedDate: chatList[i].gcdate.substring(11, 16),
+            style: chatList[i].gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
           };
 
           this.chats.push(chat);
@@ -111,6 +144,7 @@ export default {
         const chat = {
           gcgno: this.gcgno,
           gcuno: this.gcuno,
+          gcuname: this.uname,
           gccontent: this.gccontent,
         };
         this.stompClient.send('/pub/chat', JSON.stringify(chat), {});
@@ -142,12 +176,14 @@ export default {
             // this.chats.push(JSON.parse(response.body));
 
             let parseTmp = JSON.parse(response.body);
-            console.log('★★★★★★★★★★★★★', parseTmp.gccontent, parseTmp.gcdate);
+            console.log('★★★★★★★★★★★★★', parseTmp);
             tmp = {
-              uno: this.gcuno,
-              uname: this.uname,
+              uno: parseTmp.gcuno,
+              uname: parseTmp.gcuname,
               gccontent: parseTmp.gccontent,
               gcdate: parseTmp.gcdate,
+              parsedDate: parseTmp.gcdate.substring(11, 16),
+              style: parseTmp.gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
             };
 
             this.chats.push(tmp);
@@ -192,4 +228,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.myStyle {
+  color: rgb(252, 29, 29);
+}
+.yourStyle {
+  color: gray;
+}
+</style>
