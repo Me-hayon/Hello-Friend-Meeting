@@ -135,21 +135,6 @@ public class ScheduleController {
 		return resultMap;
 	}
 	
-	@PostMapping("/getScheduleDetail")
-	public Object getScheduleDetail(@RequestParam int sno) {
-		Map<String,Object> resultMap=new HashMap<>();
-		
-		Optional<Schedule> schedule=scheduleRepository.findById(sno);
-		if(schedule.isPresent()) {
-			resultMap.put("isPresent",true);
-			resultMap.put("schedule",schedule.get());
-		}
-		else
-			resultMap.put("isPresent",false);
-		
-		return resultMap;
-	}
-	
 	@PostMapping("/getScheduleParticipants")
 	public Object getScheduleParticipants(@RequestParam int sno) {
 		Map<String,Object> resultMap=new HashMap<>();

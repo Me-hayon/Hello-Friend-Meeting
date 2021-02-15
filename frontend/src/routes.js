@@ -13,8 +13,14 @@ import Message from '@/views/message/Message.vue';
 import ErrorPage from '@/views/Error.vue';
 import PageNotFound from '@/views/PageNotFound.vue';
 import FriendTest from '@/views/FriendTest.vue';
+import Naegi from '@/components/group/NaegiTab.vue'
 
 export default [
+  {
+    path: '/naegi',
+    name: 'naegi',
+    component:Naegi
+  },
   {
     path: '/ft/:uno',
     name: 'ft',
