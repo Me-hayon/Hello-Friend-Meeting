@@ -1,27 +1,24 @@
 <template>
-  <v-container>
-    <v-row>
-      <input
-        type="text"
-        v-model="gccontent"
-        placeholder="보낼 메세지"
-        @keyup.enter="sendMessage"
-      />
-      <v-btn @click="sendMessage">SEND</v-btn>
-    </v-row>
+  <v-container style="margin-bottom:40px;" id="scrollBody">
     <hr />
 
     <div v-for="(chat, idx) in chats" :key="idx">
+      <br />
       <v-row
         id="wow"
         :class="chat.style"
         :justify="chat.uno == gcuno ? 'end' : 'start'"
         no-gutters
-      >
+        ><div class="hr-date" v-show="chat.IsDateChange">
+          {{ chat.gcdate.substring(0, 4) }}년
+          {{ chat.gcdate.substring(5, 7) }}월
+          {{ chat.gcdate.substring(8, 10) }}일
+        </div>
         <v-col cols="8">
           <!-- <v-row :justify="chat.uno == gcuno ? 'end' : 'start'" no-gutters> -->
           <div style="float:right" v-if="chat.style == 'myStyle'">
             <!-- <h5>{{ chat.uname }}</h5> -->
+
             <span
               style="
               font-size:13px; 
@@ -54,6 +51,7 @@
               {{ chat.parsedDate }}
             </span>
           </div>
+
           <!-- <h5>{{ chat.uname }}</h5>
 
           <div
@@ -93,8 +91,17 @@
           <!-- </v-row> -->
         </v-col>
       </v-row>
-      <hr />
     </div>
+    <v-row style="position:fixed;width:100%; bottom:68px">
+      <input
+        style="border:1px solid #d5d1d6; background-color:#d5d1d6; width:80%"
+        type="text"
+        v-model="gccontent"
+        placeholder="보낼 메세지"
+        @keyup.enter="sendMessage"
+      />
+      <v-btn style="width:20%" @click="sendMessage">SEND</v-btn>
+    </v-row>
   </v-container>
 </template>
 
@@ -118,16 +125,27 @@ export default {
       uname: "",
       chats: [],
       stompClient: null,
-      LorR: true,
+      IsDateChange: false,
+      isLoadingUser: true,
+      isLoadingChatList: true,
     };
   },
+  updated() {
+    this.$nextTick(function() {
+      document.documentElement.scrollTop = document.body.scrollHeight;
+    });
+  },
+
   created() {
+    console.log("처음화면높이" + document.body.scrollHeight);
+
     axios
       .post("/findUserByEmail", { email: storage.getItem("user-email") })
       .then((response) => {
         if (response.data["is-success"]) {
           this.gcuno = response.data["user-number"];
           this.uname = response.data["user-name"];
+          this.isLoadingUser = false;
         } else {
           alert("너 누구야");
         }
@@ -153,11 +171,16 @@ export default {
             parsedDate: chatList[i].gcdate.substring(11, 16),
             style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
           };
-          if (chatList[i].gcuno == this.gcuno) {
-            this.LorR = true;
+
+          if (this.gcdate != chatList[i].gcdate.substring(5, 10)) {
+            this.gcdate = chatList[i].gcdate.substring(5, 10);
+            chat.IsDateChange = true;
+          } else {
+            chat.IsDateChange = false;
           }
 
           this.chats.push(chat);
+          this.isLoadingChatList = false;
         }
 
         // for (let i = 0; i < response.data.length; i++) {
@@ -186,13 +209,16 @@ export default {
     sendMessage(e) {
       if (this.gccontent !== "") {
         this.send();
-
         this.gccontent = "";
       }
+      this.$nextTick(function() {
+        document.documentElement.scrollTop = document.body.scrollHeight + 100;
+      });
     },
     send() {
       console.log("Send message:" + this.gccontent);
       console.log("group ID: " + this.gcgno);
+
       if (this.stompClient && this.stompClient.connected) {
         const chat = {
           gcgno: this.gcgno,
@@ -277,6 +303,30 @@ export default {
     vuexMemberStatus(val) {
       this.memberStatus = val;
     },
+    isLoadingUser(isLoadingUser) {
+      console.log("watch에서 바뀌는지" + isLoadingUser);
+      console.log("watch에서 바뀌는지" + this.isLoadingChatList);
+      console.log(document.body.scrollHeight);
+      if (!isLoadingUser && !this.isLoadingChatList) {
+        this.$nextTick(function() {
+          document.body.scrollTop = document.body.scrollHeight;
+          console.log(document.body.scrollHeight);
+        });
+      }
+    },
+    isLoadingChatList(isLoadingChatList) {
+      console.log("watch에서 바뀌는지" + isLoadingChatList);
+      console.log("watch에서 바뀌는지" + this.isLoadingUser);
+      console.log("전" + document.getElementById("scrollBody").scrollHeight);
+      if (!isLoadingChatList && !this.isLoadingUser) {
+        this.$nextTick(function() {
+          document.documentElement.scrollTop = document.body.scrollHeight;
+          console.log(
+            "후" + document.getElementById("scrollBody").scrollHeight
+          );
+        });
+      }
+    },
   },
 };
 </script>
@@ -335,5 +385,24 @@ export default {
   border-top: 0;
   margin-top: -13.5px;
   margin-right: -15px;
+}
+.hr-date {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.35);
+  font-family: Helvetica;
+  font-size: 15px;
+  margin: 8px 0px;
+}
+.hr-date::before,
+.hr-date::after {
+  content: "";
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.35);
+  height: 1px;
+  font-size: 0px;
+  line-height: 0px;
+  margin: 0px 16px;
 }
 </style>
