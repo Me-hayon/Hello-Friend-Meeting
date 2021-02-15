@@ -15,7 +15,9 @@
 
       <v-list-item :key="group.gno">
         <v-list-item-avatar>
-          <v-img src="@/assets/images/group-img/group_default.png"></v-img>
+          <v-img
+            :src="require(`@/assets/images/group-img/${group.gimg}.png`)"
+          ></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>

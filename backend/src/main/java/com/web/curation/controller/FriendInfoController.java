@@ -62,46 +62,57 @@ public class FriendInfoController {
 	}
 
 	@PostMapping("/addFriendByTel")
-	public Object addFriend(@RequestParam(required = true) final String myEmail,
-			@RequestParam(required = true) final String targetTel) {
-		UserInfo friendUserInfo=null;
-		if(userInfoRepository.findByTel(targetTel).isPresent())
-			friendUserInfo = userInfoRepository.findByTel(targetTel).get();
-		UserInfo myInfo=userInfoRepository.findByEmail(myEmail);
-		int friendId =friendUserInfo.getUno();
-		int myId = myInfo.getUno();
-		Optional<FriendInfo> friendInfoOpt = friendInfoRepository.findFriendInfoByMyIdAndFriendId(myId, friendId);
+	public Object addFriend(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		int myId = Integer.parseInt(map.get("myUno"));
+		int friendId = Integer.parseInt(map.get("friendUno"));
+		
+		Optional<FriendInfo> optFriendInfoMe = friendInfoRepository.findFriendInfoByMyIdAndFriendId(myId, friendId);
+		Optional<FriendInfo> optFriendInfoFriend = friendInfoRepository.findFriendInfoByMyIdAndFriendId(friendId, myId);
 
-		final BasicResponse result = new BasicResponse();
-		if (friendInfoOpt.isPresent()) {
-			result.status = true;
-			result.data = "이미 친구로 추가된 사용자입니다";
-		} else {
-			result.status = true;
-			result.data = "친구 요청을 보냈습니다!";
-			FriendInfo fi = new FriendInfo();
-			fi.setMyId(myId);
-			fi.setFriendId(friendId);
-			friendInfoRepository.save(fi);
-			Alarm alarm = new Alarm();
-
-			StringBuilder sb = new StringBuilder();
-
-			sb.append(myInfo.getUname());
-			sb.append("님이 친구 요청을 보냈습니다.");
-			alarm.setAsummary(sb.toString());
-
-			alarm.setAtype(0);
-			alarm.setAurl("FriendInfo");
-			alarm.setAuser(friendId);
-			alarm.setCreateUser(myInfo.getUno());
-			alarm.setAurlNo(myInfo.getUno());
-			System.out.println(alarm);
-			alarmRepository.save(alarm);
+		if (optFriendInfoMe.isPresent() && optFriendInfoFriend.isPresent()) {
+			resultMap.put("is-success", 3);
+//			result.status = true;
+//			result.data = "이미 친구로 추가된 사용자입니다";
+		} 
+		else if(optFriendInfoMe.isPresent()) {
+			resultMap.put("is-success", 1);
 		}
-		ResponseEntity response = null;
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-		return response;
+		else if(optFriendInfoFriend.isPresent()) {
+			resultMap.put("is-success", 2);
+		}
+		else {
+//			result.status = true;
+//			result.data = "친구 요청을 보냈습니다!";
+			Optional<UserInfo> optMyInfo = userInfoRepository.findById(myId);
+			
+			if(optMyInfo.isPresent()) {
+				UserInfo myInfo = optMyInfo.get();
+				FriendInfo friendInfo = new FriendInfo();
+				friendInfo.setMyId(myId);
+				friendInfo.setFriendId(friendId);
+				
+				friendInfoRepository.save(friendInfo);
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(myInfo.getUname());
+				sb.append("님이 친구 요청을 보냈습니다.");
+				
+				Alarm alarm = new Alarm();
+				alarm.setAsummary(sb.toString());
+				alarm.setAtype(0);
+				alarm.setAurl("FriendInfo");
+				alarm.setAuser(friendId);
+				alarm.setCreateUser(myInfo.getUno());
+				alarm.setAurlNo(myInfo.getUno());
+				
+				alarmRepository.save(alarm);
+				resultMap.put("is-success", 0);
+			}
+		}
+		
+		return resultMap;
 	}
 
 	@PostMapping("/acceptFriend")

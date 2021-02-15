@@ -56,7 +56,9 @@
 
           <v-tab-item :value="'tab-2'">
             <v-row
-              v-if="isLoadingUno || isLoadingFriends == -1"
+              v-if="
+                isLoadingUno || isLoadingFriends == -1 || isLoadingCategories
+              "
               class="ma-0"
               style="height: 639px;"
               align="center"
@@ -69,10 +71,13 @@
             </v-row>
 
             <friend-list
-              v-if="!isLoadingUno && isLoadingFriends != -1"
+              v-if="
+                !isLoadingUno && isLoadingFriends != -1 && !isLoadingCategories
+              "
               :uno="uno"
               :friendList="friends"
               :favoriteFriendList="favoriteFriends"
+              :categoryList="categories"
             />
           </v-tab-item>
         </v-tabs-items>

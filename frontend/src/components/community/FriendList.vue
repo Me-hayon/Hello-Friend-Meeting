@@ -1,6 +1,5 @@
 <template>
   <v-row
-    v-if="friends.length != 0"
     id="friendList"
     class="ma-0 overflow-y-auto"
     style="height: 639px;"
@@ -19,7 +18,14 @@
           <v-row no-gutters>
             <v-col cols="2">
               <!-- 친구 추가 버튼 -->
-              <v-btn color="success" fab dark depressed small>
+              <v-btn
+                color="success"
+                fab
+                dark
+                depressed
+                small
+                @click="addFriendModal = true"
+              >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-col>
@@ -221,7 +227,6 @@
     <v-dialog
       v-if="friendInfo != null"
       v-model="friendProfileModal"
-      max-width="400"
       persistent
       scrollable
     >
@@ -240,29 +245,100 @@
           <friend-profile
             :uno="uno"
             :info="friendInfo"
+            :categoryList="categoryList"
             @deleteFriend="deleteFriend"
           />
         </v-card-text>
-        <v-card-actions style="padding-top: 0;">
-          <v-row class="ma-0" justify="end">
-            <v-btn></v-btn>
-            <!-- <v-btn
-              color="warning" 
-              class="font-weight-black"
-              :disabled="!valid"
-              @click="deleteAlertModal = !deleteAlertModal"
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 친구 추가 모달 -->
+    <v-dialog v-model="addFriendModal" persistent>
+      <v-card>
+        <v-card-title>
+          <span>친구 추가</span>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="addFriendModal = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pb-0">
+          <v-row no-gutters>
+            <v-text-field
+              v-model="friendTel"
+              placeholder="핸드폰 번호를 입력해주세요."
+              hint="- 제외하고 입력"
+              clearable
+              required
+            ></v-text-field>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-row justify="end" no-gutters>
+            <v-btn
+              color="success"
+              :disabled="!addFriendValid"
+              @click="addFriendSearchModal = true"
+              >검색하기</v-btn
             >
-              탈퇴하기
-            </v-btn> -->
           </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-row>
 
-  <!-- 친구가 존재하지 않을 경우 -->
-  <v-row v-else class="ma-0" style="height: 639px;" justify="center">
-    <v-icon color="red" size="100">mdi-close-circle</v-icon>
+    <!-- 친구 추가 검색 결과 모달 -->
+    <v-dialog v-model="addFriendSearchModal" width="270" persistent>
+      <v-card>
+        <v-card-title>
+          <span>친구 검색 결과</span>
+        </v-card-title>
+        <v-card-text class="pb-0">
+          <v-row v-if="addFriendInfo != null" no-gutters>
+            <v-col>
+              <v-list-item class="px-0">
+                <v-list-item-avatar>
+                  <v-img
+                    :src="
+                      require(`@/assets/images/avatars/${addFriendInfo.uprofileImg}.png`)
+                    "
+                  ></v-img>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title
+                    v-text="addFriendInfo.uname"
+                  ></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-col>
+          </v-row>
+
+          <v-row v-else justify="center" no-gutters>
+            <v-progress-circular
+              indeterminate
+              color="purple"
+            ></v-progress-circular>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-row justify="end" no-gutters>
+            <v-btn
+              color="error"
+              class="font-weight-black"
+              style="margin-right: 10px;"
+              :disabled="!addFriendValid"
+              @click="addFriend"
+            >
+              확인
+            </v-btn>
+            <v-btn color="warning" @click="addFriendSearchModal = false">
+              취소
+            </v-btn>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
@@ -274,7 +350,7 @@ const storage = window.sessionStorage;
 
 export default {
   components: { FriendProfile },
-  props: ['uno', 'friendList', 'favoriteFriendList'],
+  props: ['uno', 'friendList', 'favoriteFriendList', 'categoryList'],
   data() {
     return {
       friends: this.friendList,
@@ -288,6 +364,11 @@ export default {
       allIcon: 'mdi-chevron-down',
       friendProfileModal: false,
       friendInfo: null,
+      addFriendModal: false,
+      friendTel: '',
+      addFriendValid: false,
+      addFriendSearchModal: false,
+      addFriendInfo: null,
     };
   },
   mounted() {
@@ -518,6 +599,28 @@ export default {
 
       this.friendProfileModal = false;
     },
+    addFriend() {
+      axios
+        .post('addFriendByTel', {
+          myUno: this.uno,
+          friendUno: this.addFriendInfo.uno,
+        })
+        .then((response) => {
+          let isSuccess = response.data['is-success'];
+
+          if (isSuccess == 0) {
+            alert(this.addFriendInfo.uname + '님께 친구 요청을 보냈습니다.');
+            this.addFriendSearchModal = false;
+            this.addFriendModal = false;
+          } else if (isSuccess == 1) alert('이미 친구 요청을 보냈습니다.');
+          else if (isSuccess == 2) {
+            alert('상대방이 이미 친구 요청을 보냈습니다. 알림을 확인해주세요.');
+          } else if (isSuccess == 3) alert('이미 친구로 추가된 사용자입니다.');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   watch: {
     favoriteIcon(favoriteIcon) {
@@ -547,6 +650,30 @@ export default {
     },
     friendProfileModal(friendProfileModal) {
       if (!friendProfileModal) this.friendInfo = null;
+    },
+    addFriendModal(addFriendModal) {
+      if (!addFriendModal) this.friendTel = '';
+    },
+    friendTel(friendTel) {
+      if (friendTel != null && friendTel.length > 0) this.addFriendValid = true;
+      else this.addFriendValid = false;
+    },
+    addFriendSearchModal(addFriendSearchModal) {
+      if (addFriendSearchModal) {
+        axios
+          .post('findUserByTel', { tel: this.friendTel })
+          .then((response) => {
+            if (response.data['is-success'])
+              this.addFriendInfo = response.data.user;
+            else {
+              alert('친구를 발견하지 못하였습니다.');
+              this.addFriendSearchModal = false;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else this.addFriendInfo = null;
     },
   },
 };
