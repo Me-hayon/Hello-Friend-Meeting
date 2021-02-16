@@ -1,15 +1,30 @@
 <template>
   <v-row>
     <v-col v-if="friendStatus != -1">
-      <v-btn v-if="friendStatus == 0" color="primary" block>
+      <v-btn
+        v-if="friendStatus == 0"
+        color="primary"
+        @click="applyFriend"
+        block
+      >
         친구 요청
       </v-btn>
 
-      <v-btn v-else-if="friendStatus == 1" color="warning" block>
+      <v-btn
+        v-else-if="friendStatus == 1"
+        color="warning"
+        @click="cancelRequest"
+        block
+      >
         친구 요청 취소
       </v-btn>
 
-      <v-btn v-else-if="friendStatus == 2" color="success" block>
+      <v-btn
+        v-else-if="friendStatus == 2"
+        color="success"
+        @click="acceptFriend"
+        block
+      >
         친구 요청 수락
       </v-btn>
 
@@ -23,7 +38,7 @@
       </v-btn>
     </v-col>
     <v-col v-if="friendStatus == 2">
-      <v-btn color="warning" block>
+      <v-btn color="warning" @click="denyFriend" block>
         친구 요청 거절
       </v-btn>
     </v-col>
@@ -76,6 +91,58 @@ export default {
       });
   },
   methods: {
+    applyFriend() {
+      axios
+        .post('applyFriend', { myUno: this.uno, friendUno: this.info.uno })
+        .then((response) => {
+          if (response.data['is-success']) {
+            this.friendStatus = 1;
+            alert(this.info.uname + '님께 친구 요청을 보냈습니다.');
+          } else alert('친구 요청을 하는데 오류가 발생하였습니다.');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    cancelRequest() {
+      axios
+        .post('cancelRequest', { myUno: this.uno, friendUno: this.info.uno })
+        .then((response) => {
+          if (response.data['is-success']) {
+            this.friendStatus = 0;
+            alert('친구 요청을 취소하였습니다.');
+          } else alert('친구 요청을 취소하는데 오류가 발생하였습니다.');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    acceptFriend() {
+      axios
+        .post('acceptFriend', { myUno: this.uno, friendUno: this.info.uno })
+        .then((response) => {
+          if (response.data['is-success']) {
+            this.friendStatus = 3;
+            alert(this.info.uname + '님과 친구가 되었습니다.');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    denyFriend() {
+      axios
+        .post('denyFriend', { myUno: this.uno, friendUno: this.info.uno })
+        .then((response) => {
+          if (response.data['is-success']) {
+            this.friendStatus = 0;
+            alert('친구 요청을 거절하였습니다.');
+          } else alert('친구 요청을 거절하는데 오류가 발생하였습니다.');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteFriend() {
       axios
         .post('deleteFriend', { myUno: this.uno, friendUno: this.info.uno })
@@ -84,6 +151,7 @@ export default {
             this.$emit('deleteFriend', this.info.uno);
             this.friendStatus = 0;
             this.deleteModal = false;
+            alert('친구를 삭제하였습니다.');
           } else alert('친구를 삭제하는데 오류가 발생하였습니다.');
         })
         .catch((error) => {

@@ -1,6 +1,6 @@
 <template>
   <!-- 그룹이 존재할 경우 -->
-  <v-list
+  <!-- <v-list
     v-if="groups.length != 0"
     height="639"
     style="overflow-y: auto;"
@@ -34,11 +34,14 @@
 
       <v-divider :key="'dividerDown' + index"></v-divider>
     </template>
-  </v-list>
+  </v-list> -->
 
   <!-- 그룹이 존재하지 않을 경우 -->
-  <v-row v-else class="ma-0" style="height: 639px;" justify="center">
+  <!-- <v-row v-else class="ma-0" style="height: 639px;" justify="center">
     <v-icon color="red" size="100">mdi-close-circle</v-icon>
+  </v-row> -->
+  <v-row class="ma-0 overflow-y-auto" style="height: 639px;">
+    <v-window v-model="groupListWindow"> </v-window>
   </v-row>
 </template>
 

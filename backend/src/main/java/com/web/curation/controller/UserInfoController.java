@@ -196,6 +196,21 @@ public class UserInfoController {
 		
 	}
 	
+	@PostMapping("/findUserByUno")
+	public Object findUserByUno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<UserInfo> optUser = userInfoRepository.findById(Integer.parseInt(map.get("uno")));
+		
+		if(optUser.isPresent()) {
+			resultMap.put("user", optUser.get());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
+	}
+	
 	@PostMapping("/findUserByTel")
 	public Object findUserByTel(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
