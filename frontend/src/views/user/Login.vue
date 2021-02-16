@@ -56,6 +56,7 @@
             :type="passwordShow ? 'text' : 'password'"
             :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="passwordShow = !passwordShow"
+            @keyup.enter="validate"
           ></v-text-field>
           <v-btn
             :disabled="!valid"

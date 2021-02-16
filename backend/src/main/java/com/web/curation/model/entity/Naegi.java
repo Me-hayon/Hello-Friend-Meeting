@@ -6,8 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -19,18 +17,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GroupChatting {
+public class Naegi {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int gcno;
+	private int nno;
 	
-	private int gcgno;
-	private int gcuno;
-	private String gccontent;
-	private String gcuname;
-	
-	@Column(insertable=false,updatable=false)
-	private String gcdate;
-	
+	private String ntitle;
+	private int ngno;
+	private int nmaster;
+	private String ncontent;
+	private String nreward;
+	private String nenddate;
+	@Column(insertable=false)
+	private int nresult;//0:아직결과안나옴,1:성공,2:실패,3:무승부(취소)
+
 }

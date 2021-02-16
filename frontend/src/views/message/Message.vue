@@ -1,19 +1,30 @@
 <template>
   <div>
+    <v-icon>mdi-magnify</v-icon>
+    <input
+      type="text"
+      v-model="search"
+      placeholder="보낸사람 검색"
+      @input="handleSearchInput"
+      @keydown.tab="KeydownTab"
+    />
+
     <v-simple-table>
       <template v-slot:default>
-        <thead>
+        <thead style="background-color: #f9f5fe;">
           <tr>
             <th class="text-left">
               보낸사람
             </th>
-            <th class="text-center">
+            <th class="text-center ">
               내용
             </th>
           </tr>
         </thead>
         <tbody>
           <tr
+            v-for="message in searchList"
+            :key="message.name"
             @click="
               modalShowMethod(
                 message.mtitle,
@@ -22,24 +33,33 @@
                 message.mno
               )
             "
-            v-for="message in messages"
-            :key="message.name"
           >
-            <td>{{ message.mtitle }}</td>
-            <td>
+            <td :search="search">{{ message.msenderName }}</td>
+            <td class="text-truncate" style="max-width: 150px;">
               {{ message.mcontent }}
               <div style="float:right"></div>
             </td>
           </tr>
         </tbody>
         <b-modal id="reply" centered title="쪽지쓰기" @ok="replyMessage()">
-          제목 : <input type="text" v-model="newMtitle"/>
+          제목
+          <v-text-field
+            full-width
+            value="Re: Vacation Request"
+            label="Subject"
+            single-line
+            v-model="newMtitle"
+          ></v-text-field>
+
           <hr />
-          <b-form-textarea
+          <v-textarea
             id="textarea-rows"
+            full-width
+            single-line
             rows="8"
+            label="Message"
             v-model="newMcontent"
-          ></b-form-textarea
+          ></v-textarea
         ></b-modal>
         <b-modal
           id="delete"
@@ -48,16 +68,18 @@
           @ok="delMessage(mno)"
         ></b-modal>
         <b-modal v-model="modalShow" centered hide-footer :title="mtitle">
-          <p>보낸사람 : {{ msender }}</p>
+          <p><span style="font-weight: bold;">보낸사람</span> {{ msender }}</p>
           <hr />
-          <p>내용 : {{ mcontent }}</p>
-          <b-button style="margin-right:15px" v-b-modal.reply>
-            답장
-          </b-button>
+          <p>{{ mcontent }}</p>
+          <div style="float:right">
+            <button class="btn-message" v-b-modal.reply>
+              답장
+            </button>
 
-          <b-button v-b-modal.delete>
-            삭제
-          </b-button>
+            <button class="btn-message" v-b-modal.delete>
+              삭제
+            </button>
+          </div>
         </b-modal>
       </template>
     </v-simple-table>
@@ -79,12 +101,33 @@ export default {
       mno: "",
       newMtitle: "",
       newMcontent: "",
+      search: "",
+      searchList: Array,
     };
   },
   created() {
     this.getMessages();
   },
   methods: {
+    handleSearchInput(e) {
+      this.search = e.target.value;
+      if (this.search.length !== 0) {
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => {
+          const filteredList = this.messages.filter((item) =>
+            item.msenderName.includes(this.search)
+          );
+          this.searchList = filteredList;
+          console.log("키키키", this.searchList);
+        }, 100);
+      } else {
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => {
+          this.searchList = this.messages;
+        }, 100);
+      }
+    },
+
     modalShowMethod(title, content, sender, mno) {
       this.modalShow = !this.modalShow;
       if (this.modalShow) {
@@ -165,7 +208,13 @@ export default {
       axios
         .post("getMessages", params)
         .then((response) => {
-          this.messages = response.data;
+          this.messages = response.data.messagesList;
+          this.searchList = response.data.messagesList;
+
+          var nameList = response.data.namesList;
+          for (var i = 0; i < this.messages.length; i++) {
+            this.messages[i].msenderName = nameList[i];
+          }
           console.log(response);
         })
         .catch((error) => {
@@ -176,4 +225,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.btn-message {
+  color: purple;
+  border-radius: 20%;
+  width: 80px;
+  height: 40px;
+  font-size: 18px;
+  margin-right: 15px;
+}
+.btn-message:hover {
+  background-color: #f9f5fe;
+}
+</style>

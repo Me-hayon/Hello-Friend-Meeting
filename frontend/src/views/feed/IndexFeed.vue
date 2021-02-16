@@ -134,7 +134,7 @@ export default {
           profileImg: '',
         },
       ],
-      myName: 'Hana',
+      myName: '',
     };
   },
   created() {
@@ -145,6 +145,11 @@ export default {
     params.append('email', storage.getItem('user-email'));
     // params.append('email', 'test@gmail.com');
     console.log(params);
+
+    axios.post('profile', params).then((resp) => {
+      this.myName = resp.data['user-name'];
+    });
+
     axios
       .post('getFeeds', params)
       .then((response) => {

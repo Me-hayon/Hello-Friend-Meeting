@@ -1,6 +1,8 @@
 package com.web.curation.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +24,10 @@ import com.web.curation.model.entity.FriendInfo;
 import com.web.curation.model.entity.GroupApply;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
+import com.web.curation.model.entity.Naegi;
+import com.web.curation.model.entity.NaegiParticipant;
+import com.web.curation.model.entity.Schedule;
+import com.web.curation.model.entity.ScheduleParticipant;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
@@ -29,6 +35,10 @@ import com.web.curation.model.repository.FriendInfoRepository;
 import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
 import com.web.curation.model.repository.GroupParticipantRepository;
+import com.web.curation.model.repository.NaegiParticipantRepository;
+import com.web.curation.model.repository.NaegiRepository;
+import com.web.curation.model.repository.ScheduleParticipantRepository;
+import com.web.curation.model.repository.ScheduleRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -55,6 +65,18 @@ public class GroupController {
 	
 	@Autowired
 	CategoryRepository categoryRepository;
+	
+	@Autowired
+	NaegiRepository naegiRepository;
+	
+	@Autowired
+	NaegiParticipantRepository naegiParticipantRepository;
+	
+	@Autowired
+	ScheduleRepository scheduleRepository;
+	
+	@Autowired
+	ScheduleParticipantRepository scheduleParticipantRepository;
 	
 	@PostMapping("/isGroupMember")//0:미가입, 1:가입신청상태, 2:초대미수락상태, 3:그룹원, 4:그룹장
 	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
@@ -358,6 +380,28 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
+		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
+		if(schedules.isPresent()) {
+			for(Schedule s:schedules.get()) {
+				ScheduleParticipant sp=new ScheduleParticipant();
+				sp.setSno(s.getSno());
+				sp.setUno(myInfo.getUno());
+				scheduleParticipantRepository.save(sp);
+			}
+		}
+		
+		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		String nenddate=format.format(new Date());
+		Optional<List<Naegi>> naegis=naegiRepository.findAllByNgnoAndNenddateGreaterThanEqualOrderByNenddateAsc(gno, nenddate);
+		if(naegis.isPresent()) {
+			for(Naegi n:naegis.get()) {
+				NaegiParticipant np=new NaegiParticipant();
+				np.setNno(n.getNno());
+				np.setUno(myInfo.getUno());
+				naegiParticipantRepository.save(np);
+			}
+		}
+		
 		List<GroupParticipant> list = groupParticipantRepository.findAllByGno(gno);
 		StringBuilder sb = new StringBuilder();
 		for (GroupParticipant gp : list) {
@@ -491,6 +535,29 @@ public class GroupController {
 		groupParticipant.setGno(gno);
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
+		
+		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
+		if(schedules.isPresent()) {
+			for(Schedule s:schedules.get()) {
+				ScheduleParticipant sp=new ScheduleParticipant();
+				sp.setSno(s.getSno());
+				sp.setUno(uno);
+				scheduleParticipantRepository.save(sp);
+			}
+		}
+		
+		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		String nenddate=format.format(new Date());
+		Optional<List<Naegi>> naegis=naegiRepository.findAllByNgnoAndNenddateGreaterThanEqualOrderByNenddateAsc(gno, nenddate);
+		if(naegis.isPresent()) {
+			for(Naegi n:naegis.get()) {
+				NaegiParticipant np=new NaegiParticipant();
+				np.setNno(n.getNno());
+				np.setUno(uno);
+				naegiParticipantRepository.save(np);
+			}
+		}
+		
 
 		List<GroupParticipant> gpList = groupParticipantRepository.findAllByGno(gno);
 

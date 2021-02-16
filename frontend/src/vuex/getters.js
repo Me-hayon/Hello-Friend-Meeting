@@ -19,5 +19,11 @@ export default {
   },
   getIsWriter: function (state) {
     return state.isWriter;
-  }
+  },
+  getEvents: function (state) {
+    return state.events
+  },
+  getCalendar:function(state){
+    return state.calendar;
+  },
 };

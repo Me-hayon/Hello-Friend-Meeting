@@ -1,5 +1,6 @@
 package com.web.curation.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,14 +17,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SchedulePaticipant {
+public class NaegiParticipant {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int spno;
+	private int npno;
 	
-	private int sno;
+	private int nno;
 	private int uno;
-	private int attendance;
+	@Column(insertable=false)
+	private int nattendance;//0:미정, 1:참가, 2:불참
 
 }

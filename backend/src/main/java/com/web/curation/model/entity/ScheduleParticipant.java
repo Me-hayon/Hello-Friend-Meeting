@@ -1,12 +1,9 @@
 package com.web.curation.model.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -19,18 +16,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GroupChatting {
+public class ScheduleParticipant {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int gcno;
+	private int spno;
 	
-	private int gcgno;
-	private int gcuno;
-	private String gccontent;
-	private String gcuname;
-	
-	@Column(insertable=false,updatable=false)
-	private String gcdate;
-	
+	private int sno;
+	private int uno;
+	private int attendance;//0:미정, 1:참가, 2:불참
+
 }

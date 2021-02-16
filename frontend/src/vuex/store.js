@@ -16,17 +16,18 @@ const state = {
   vuexUno: { type: Number },
   vuexMemberStatus: { type: Number },
   vuexBno: { type: Number },
-  isWriter:{type:Boolean}
+  isWriter: { type: Boolean },
 };
 function initEvent() {
   return {
-    startDate: "",
-    startTime: "",
-    endDate: "",
-    endTime: "",
-    hasTime: "",
-    content: "",
-    title: "",
+    sno: { type: Number },
+    sgno: { type: Number },
+    smaster: { type: Number },
+    senddate: "",
+    sstartdate: "",
+    stitle: "",
+    sspace: "",
+    scontent: "",
   };
 }
 export default new Vuex.Store({
