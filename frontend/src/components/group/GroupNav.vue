@@ -1,6 +1,11 @@
 <template>
-  <v-card>
-    <v-tabs v-model="tab" background-color="transparent" grow>
+  <v-card :height="height">
+    <v-tabs
+      class="fixed-tabs-bar"
+      v-model="tab"
+      background-color="transparent"
+      grow
+    >
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
       <v-tab>채팅</v-tab>
@@ -29,6 +34,9 @@ import GroupSchedule from '@/components/group/GroupSchedule.vue';
 import GroupChat from '@/components/group/GroupChat.vue';
 import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
+  created() {
+    this.height = window.screen.height - 112;
+  },
   computed: {
     vuexGno() {
       return this.$store.getters.getGno;
@@ -71,6 +79,7 @@ export default {
       uno: this.$store.getters.getUno,
       bno: this.$store.getters.getBno,
       tab: null,
+      height: 0,
     };
   },
   methods: {
@@ -81,4 +90,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.fixed-tabs-bar .v-tabs__bar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 4rem;
+  z-index: 2;
+}
+</style>

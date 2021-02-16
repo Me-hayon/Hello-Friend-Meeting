@@ -11,7 +11,6 @@
       <v-btn @click="sendMessage">SEND</v-btn>
     </v-row>
     <hr />
-
     <div v-for="(chat, idx) in chats" :key="idx">
       <v-row
         id="wow"
