@@ -84,7 +84,7 @@
               color="primary"
               class="font-weight-black"
               :disabled="!formCheck"
-              @click="deleteAlertModal = !deleteAlertModal"
+              @click="modify"
             >
               변경
             </v-btn>
@@ -232,13 +232,45 @@ export default {
     changeView() {
       this.passwordShow = !this.passwordShow;
     },
+    modify() {
+      let params = new URLSearchParams();
+      params.append('email', storage.getItem('user-email'));
+      params.append('oldPassword', this.password);
+      params.append('newPassword', this.newPassword);
+
+      axios
+        .create({
+          headers: {
+            'auth-token': storage.getItem('auth-token'),
+          },
+        })
+        .post('modify', params)
+        .then(
+          (response) => {
+            if (response.data['is-success']) {
+              this.isSubmit = true;
+              storage.removeItem('auth-token');
+              storage.removeItem('user-email');
+              alert('비밀번호 변경이 완료되었습니다. 다시 로그인 해주세요.');
+              this.$router.push('/');
+            } else {
+              alert('비밀번호가 틀린것같아요 ㅠ.ㅠ');
+              this.closeDialog();
+            }
+          },
+          (error) => {
+            this.isSubmit = true;
+            alert('비밀번호 변경 도중 오류가 발생하였습니다.');
+            this.$router.push('/error');
+          }
+        );
+    },
   },
   watch: {
     deleteModal(deleteModal) {
       if (!deleteModal) this.password = '';
     },
     password(password) {
-      console.log(password);
       if (password == null || password.length == 0)
         this.deleteUserValid = false;
       else this.deleteUserValid = true;
