@@ -196,6 +196,21 @@ public class UserInfoController {
 		
 	}
 	
+	@PostMapping("/findUserByTel")
+	public Object findUserByTel(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<UserInfo> optUser = userInfoRepository.findByTel(map.get("tel"));
+		
+		if(optUser.isPresent()) {
+			resultMap.put("user", optUser.get());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+
+		return resultMap;
+	}
+	
 	@PostMapping("/findEmailByUno")
 	public Object findEmailByUno(@RequestParam int uno) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -251,6 +266,21 @@ public class UserInfoController {
 		resultMap.put("data",user.getUname());
 		return resultMap;
 		
+	}
+	
+	@PostMapping("/findUno")
+	public Object findUno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(user!=null) {
+			resultMap.put("uno", user.getUno());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
 	}
 	
 	/////////////////////////////////// 비밀번호 변경

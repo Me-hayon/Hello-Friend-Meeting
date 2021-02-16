@@ -3,10 +3,7 @@ import Join from '@/views/user/Join.vue';
 import PasswordModify from '@/views/user/PasswordModify.vue';
 import FeedMain from '@/views/feed/IndexFeed.vue';
 import Community from '@/views/Community.vue';
-import GroupList from '@/components/community/GroupList.vue';
-import FriendList from '@/components/community/FriendList.vue';
 import Profile from '@/views/user/Profile.vue';
-import FriendInfo from '@/views/user/FriendInfo.vue';
 import GroupMainPage from '@/components/group/GroupMainPage.vue';
 import GroupBoardDetail from '@/components/group/GroupBoardDetail.vue';
 import Message from '@/views/message/Message.vue';
@@ -42,11 +39,6 @@ export default [
     component: Profile,
   },
   {
-    path: '/user/friend-info',
-    name: 'FriendInfo',
-    component: FriendInfo,
-  },
-  {
     path: '/user/modify',
     name: 'PasswordModify',
     component: PasswordModify,
@@ -60,20 +52,6 @@ export default [
     path: '/community',
     name: 'Community',
     component: Community,
-    children: [
-      {
-        path: '',
-        component: GroupList,
-      },
-      {
-        path: 'group',
-        component: GroupList,
-      },
-      {
-        path: 'friend',
-        component: FriendList,
-      },
-    ],
   },
   {
     path: '/message',

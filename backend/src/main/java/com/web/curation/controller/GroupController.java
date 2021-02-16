@@ -11,7 +11,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -123,12 +126,12 @@ public class GroupController {
 		return resultMap;
 	}
 	
-	@PostMapping("/getCategory")
+	@GetMapping("/getCategory")
 	public Object getCategory() {
-		Map<String,Object> resultMap=new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 		
-		List<Category> list= categoryRepository.findAll();
-		resultMap.put("list",list);
+		List<Category> categories = categoryRepository.findAll();
+		resultMap.put("categories", categories);
 		
 		return resultMap;
 	}
@@ -150,20 +153,65 @@ public class GroupController {
 	}
 
 	@PostMapping("/getGroupList")
-	public Object getGroupList(@RequestParam String email) {
+	public Object getGroupList(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
-
-		UserInfo userInfo = userInfoRepository.findByEmail(email);
-		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(userInfo.getUno());
-
-		List<Integer> gnoList = new ArrayList<>();
-
-		for (GroupParticipant gp : list)
-			gnoList.add(gp.getGno());
-
-		List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
-		resultMap.put("groupList", groupList);
 		
+		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(userInfo!=null) {
+			List<GroupParticipant> list = groupParticipantRepository.findAllByUno(userInfo.getUno());
+			List<Integer> gnoList = new ArrayList<>();
+			
+			if(list.size()!=0) {
+				for (GroupParticipant gp : list)
+					gnoList.add(gp.getGno());
+				
+				List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
+				
+				if(groupList.size()!=0) {
+					resultMap.put("groupList", groupList);
+					resultMap.put("is-success", true);
+				}
+				else {
+					resultMap.put("is-success", false);
+				}
+			}
+			else {
+				resultMap.put("is-success", false);
+			}
+		}
+		else {
+			resultMap.put("is-success", false);
+		}
+		
+		return resultMap;
+	}
+	
+	@GetMapping("/getGroupList/{friendUno}")
+	public Object getGroupList(@PathVariable int friendUno) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(friendUno);
+		List<Integer> gnoList = new ArrayList<>();
+		
+		if(list.size()!=0) {
+			for (GroupParticipant gp : list)
+				gnoList.add(gp.getGno());
+			
+			List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
+			
+			if(groupList.size()!=0) {
+				resultMap.put("groupList", groupList);
+				resultMap.put("is-success", true);
+			}
+			else {
+				resultMap.put("is-success", false);
+			}
+		}
+		else {
+			resultMap.put("is-success", false);
+		}
+	
 		return resultMap;
 	}
 
@@ -413,45 +461,50 @@ public class GroupController {
 	}
 
 	@PostMapping("/applyGroup")
-	public Object applyGroup(@RequestParam String email, @RequestParam int gno) {
+	public Object applyGroup(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
-
-		UserInfo myInfo = userInfoRepository.findByEmail(email);
-
-		if(groupApplyRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
-			resultMap.put("data","이미 신청한 그룹입니다.");
+		
+		int uno = Integer.parseInt(map.get("uno"));
+		int gno = Integer.parseInt(map.get("gno"));
+		
+		if(groupApplyRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			resultMap.put("is-success", 2);
 			return resultMap;
 		}
-		else if(groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
-			resultMap.put("data","이미 가입된 그룹입니다.");
+		else if(groupParticipantRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			resultMap.put("is-success", 3);
 			return resultMap;
 		}
 		
 		GroupApply groupApply = new GroupApply();
 		groupApply.setAisApply(true);
 		groupApply.setGno(gno);
-		groupApply.setUno(myInfo.getUno());
+		groupApply.setUno(uno);
 		
 		groupApplyRepository.save(groupApply);
 
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
-
-		Alarm alarm = new Alarm();
-		alarm.setAtype(0);
-		alarm.setAurl("GroupMainPage");
-		alarm.setAuser(groupInfo.getGmaster());
-		alarm.setCreateUser(myInfo.getUno());
-		alarm.setAurlNo(gno);
-		StringBuilder sb = new StringBuilder();
-		sb.append(myInfo.getUname());
-		sb.append("님이 ");
-		sb.append(groupInfo.getGname());
-		sb.append("그룹에 가입을 신청했습니다.");
-		alarm.setAsummary(sb.toString());
+		Optional<UserInfo> user = userInfoRepository.findById(uno);
 		
-		alarmRepository.save(alarm);
-
-		resultMap.put("data", "그룹에 가입 신청을 보냈습니다.");
+		if(user.isPresent()) {
+			Alarm alarm = new Alarm();
+			alarm.setAtype(0);
+			alarm.setAurl("GroupMainPage");
+			alarm.setAuser(groupInfo.getGmaster());
+			alarm.setCreateUser(uno);
+			alarm.setAurlNo(gno);
+			StringBuilder sb = new StringBuilder();
+			sb.append(user.get().getUname());
+			sb.append("님이 ");
+			sb.append(groupInfo.getGname());
+			sb.append("그룹에 가입을 신청했습니다.");
+			alarm.setAsummary(sb.toString());
+			
+			alarmRepository.save(alarm);
+			
+			resultMap.put("is-success", 1);
+		}
+		else resultMap.put("is-success", 0);
 
 		return resultMap;
 	}
