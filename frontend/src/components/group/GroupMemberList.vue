@@ -1,13 +1,9 @@
 <template>
   <div>
-    그룹 멤버
     <ul style="margin:0; padding:0;" v-if="memberStatus === 4">
       <h5 style="margin:30px;">가입신청자</h5>
       <ol
-        style="height:70px; position:relative; 
-        
-        margin:0; 
-        "
+        style="height:70px; position:relative; margin:0;"
         v-for="applier in applierList"
         :key="applier.uno"
       >
@@ -37,12 +33,12 @@
         </div>
       </ol>
     </ul>
-    <hr />
 
     <ul
       style="margin:0; padding:0;"
       v-if="memberStatus === 3 || memberStatus === 4"
     >
+      <h5 style="margin:30px;">그룹 멤버</h5>
       <ol
         style="margin: 0; padding:0; "
         v-for="member in memberList"
@@ -52,7 +48,7 @@
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               style="color:black; height:60px; width:100%;"
-              color="blue"
+              color="white"
               dark
               v-bind="attrs"
               v-on="on"
@@ -73,8 +69,17 @@
               >
                 {{ member.uname }}
               </h6>
-              <h6 v-if="email == member.email">나ㅋ</h6>
-              <v-icon v-if="member.memberStatus == 4">mdi-arrow-right</v-icon>
+              <v-icon
+                style="color:yellow; position:absolute; left:35%;"
+                v-if="member.uno === unoOfGmaster"
+                >mdi-crown</v-icon
+              >
+              <h6
+                style="position:absolute; right:15%;"
+                v-if="email == member.email"
+              >
+                나ㅋ
+              </h6>
             </v-btn>
           </template>
           <v-card>
@@ -145,21 +150,24 @@ export default {
       gno: this.$store.getters.getGno,
       uno: this.$store.getters.getUno,
       memberList: [],
+      sortedMemberList: [],
       applierList: [],
-      email: window.sessionStorage.getItem('user-email'),
+      email: window.sessionStorage.getItem("user-email"),
+      unoOfGmaster: 0,
+      dialog: false,
     };
   },
   created() {
     var params = new URLSearchParams();
-    params.append('email', this.email);
-    params.append('gno', this.gno);
+    params.append("email", this.email);
+    params.append("gno", this.gno);
     axios
-      .post('isGroupMember', params)
+      .post("isGroupMember", params)
       .then((response) => {
         var memberStatus = response.data.memberStatus;
         var gno = this.gno;
-        this.$store.commit('setGno', gno);
-        this.$store.commit('setMemberStatus', memberStatus);
+        this.$store.commit("setGno", gno);
+        this.$store.commit("setMemberStatus", memberStatus);
         console.log(this.memberStatus);
         this.getUsers();
       })
@@ -170,18 +178,46 @@ export default {
   methods: {
     getUsers() {
       var params = new URLSearchParams();
-      params.append('gno', this.gno);
+      params.append("gno", this.gno);
+      console.log(this.gno);
+      console.log(this.gno);
+      console.log(this.gno);
+      axios.post("unoOfGmaster", params).then((resp) => {
+        this.unoOfGmaster = resp.data.gmasterUno;
+        console.log("그룹장 유저넘버", this.unoOfGmaster);
+      });
       axios
-        .post('getUserListInGroup', params)
+        .post("getUserListInGroup", params)
         .then((response) => {
           this.memberList = response.data.userList;
-          console.log(this.memberList);
+          console.log("정렬하기전멤버리스트", this.memberList);
+
+          for (let i = 0; i < this.memberList.length; i++) {
+            if (this.memberList[i].uno === this.unoOfGmaster) {
+              this.sortedMemberList.push(this.memberlist[i]);
+              console.log("첫번째포문", this.memberList[i]);
+            }
+          }
+          for (let i = 0; i < this.memberList.length; i++) {
+            if (this.memberList[i].email === this.email) {
+              this.sortedMemberList.push(this.memberlist[i]);
+            }
+          }
+          for (let i = 0; i < this.memberList.length; i++) {
+            if (
+              this.memberList[i].uno !== this.unoOfGmaster &&
+              this.memberList[i].email === this.email
+            ) {
+              this.sortedMemberList.push(this.memberlist[i]);
+            }
+          }
+          console.log("정렬된 멤버리스트", this.sortedMemberList);
         })
         .catch((error) => {
           console.log(error);
         });
       axios
-        .post('getGroupApplier', params)
+        .post("getGroupApplier", params)
         .then((response) => {
           this.applierList = response.data.applierList;
           console.log(this.applierList);
@@ -192,10 +228,10 @@ export default {
     },
     acceptApplier(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('acceptApplyGroup', params)
+        .post("acceptApplyGroup", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -206,10 +242,10 @@ export default {
     },
     denyApplier(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('denyApplyGroup', params)
+        .post("denyApplyGroup", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -220,10 +256,10 @@ export default {
     },
     banishMember(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('banishMember', params)
+        .post("banishMember", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -234,16 +270,16 @@ export default {
     },
     getoutGroup() {
       if (this.memberStatus === 4) {
-        alert('다른 사람을 그룹장으로 임명하고 다시 시도해주세요.');
+        alert("다른 사람을 그룹장으로 임명하고 다시 시도해주세요.");
       } else {
         var params = new URLSearchParams();
-        params.append('email', this.email);
-        params.append('gno', this.gno);
+        params.append("email", this.email);
+        params.append("gno", this.gno);
         axios
-          .post('getoutGroup', params)
+          .post("getoutGroup", params)
           .then((response) => {
             alert(response.data.data);
-            this.$router.push('/');
+            this.$router.push("/");
           })
           .catch((error) => {
             console.log(error);
@@ -252,22 +288,23 @@ export default {
     },
     changeGmaster(uno) {
       var params = new URLSearchParams();
-      params.append('nextMaster', uno);
-      params.append('gno', this.gno);
+      params.append("nextMaster", uno);
+      params.append("gno", this.gno);
       axios
-        .post('changeGroupMaster', params)
+        .post("changeGroupMaster", params)
         .then((response) => {
+          this.unoOfGmaster = uno;
           alert(response.data.data);
           params = new URLSearchParams();
-          params.append('email', this.email);
-          params.append('gno', this.gno);
+          params.append("email", this.email);
+          params.append("gno", this.gno);
           axios
-            .post('isGroupMember', params)
+            .post("isGroupMember", params)
             .then((response) => {
               var memberStatus = response.data.memberStatus;
               var gno = this.gno;
-              this.$store.commit('setGno', gno);
-              this.$store.commit('setMemberStatus', memberStatus);
+              this.$store.commit("setGno", gno);
+              this.$store.commit("setMemberStatus", memberStatus);
             })
             .catch((error) => {
               console.log(error);
