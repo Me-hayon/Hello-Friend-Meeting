@@ -6,7 +6,7 @@
         v-if="isLoadingGroups == 1"
         v-model="panel"
         class="px-4 py-2 overflow-y-auto"
-        style="max-height: 250px;"
+        :style="panelsStyle"
         ref="panels"
       >
         <v-expansion-panel
@@ -76,15 +76,18 @@
 import axios from 'axios';
 
 export default {
-  props: ['uno', 'info', 'categoryList'],
+  props: ['uno', 'info', 'categoryList', 'panelsHeight'],
   data() {
     return {
       groups: [],
       isLoadingGroups: -1,
       panel: null,
+      panelsStyle: '',
     };
   },
   created() {
+    this.panelsStyle = 'max-height: ' + this.panelsHeight + 'px;';
+
     axios
       .get('getGroupList/' + this.info.uno)
       .then((response) => {

@@ -18,7 +18,12 @@
     <v-divider></v-divider>
 
     <!-- 그룹 가입 목록 -->
-    <friend-group-list :uno="uno" :info="info" :categoryList="categoryList" />
+    <friend-group-list
+      :uno="uno"
+      :info="info"
+      :categoryList="categoryList"
+      :panelsHeight="250"
+    />
   </v-container>
 </template>
 
