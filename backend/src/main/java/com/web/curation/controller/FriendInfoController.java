@@ -165,15 +165,15 @@ public class FriendInfoController {
 			
 		Timeline timeline=new Timeline();
 		timeline.setTcontent("친구");
-		timeline.setTcontentSecond(userInfoRepository.findById(map.get("friendUno")).get().getUname());
-		timeline.setUno(map.get("myUno"));
+		timeline.setTcontentSecond(userInfoRepository.findById(Integer.parseInt(map.get("friendUno"))).get().getUname());
+		timeline.setUno(Integer.parseInt(map.get("myUno")));
 		timelineRepository.save(timeline);
 		
 		
 		timeline=new Timeline();
 		timeline.setTcontent("친구");
-		timeline.setTcontentSecond(userInfoRepository.findById(map.get("myUno")).get().getUname());		
-		timeline.setUno(map.get("friendUno"));
+		timeline.setTcontentSecond(userInfoRepository.findById(Integer.parseInt(map.get("myUno"))).get().getUname());		
+		timeline.setUno(Integer.parseInt(map.get("friendUno")));
 		timelineRepository.save(timeline);
 
 		return resultMap;
