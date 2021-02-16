@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.FriendInfo;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @RestController
@@ -37,6 +39,9 @@ public class FriendInfoController {
 	@Autowired
 	AlarmRepository alarmRepository;
 
+	@Autowired
+	TimelineRepository timelineRepository;
+	
 	@PostMapping("/isFriend")
 	public int isFriend(@RequestBody Map<String, String> map) {
 		int myId = Integer.parseInt(map.get("myUno"));
@@ -114,8 +119,11 @@ public class FriendInfoController {
 	@PostMapping("/acceptFriend")
 	public Object acceptFriend(@RequestParam(required = true) final String myEmail,
 			@RequestParam(required = true) final String friendEmail) {
-		int myId = userInfoRepository.findByEmail(myEmail).getUno();
-		int friendId=userInfoRepository.findByEmail(friendEmail).getUno();
+		
+		UserInfo myInfo=userInfoRepository.findByEmail(myEmail);
+		UserInfo friendInfo=userInfoRepository.findByEmail(friendEmail);
+		int myId = myInfo.getUno();
+		int friendId=friendInfo.getUno();
 		final BasicResponse result = new BasicResponse();
 		result.status = true;
 
@@ -124,6 +132,25 @@ public class FriendInfoController {
 		fi.setFriendId(friendId);
 		friendInfoRepository.save(fi);
 		result.data = "친구 요청을 수락했습니다.";
+		
+		StringBuilder sbTime=new StringBuilder();
+		sbTime.append(friendInfo.getUname());
+		sbTime.append("님과 친구가 된 날이에요! 새로운 친구가 생긴걸 축하드려요!");
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent(sbTime.toString());
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
+		
+		
+		sbTime=new StringBuilder();
+		sbTime.append(myInfo.getUname());
+		sbTime.append("님과 친구가 된 날이에요! 새로운 친구가 생긴걸 축하드려요!");
+		
+		timeline=new Timeline();
+		timeline.setTcontent(sbTime.toString());
+		timeline.setUno(friendInfo.getUno());
+		timelineRepository.save(timeline);
 
 		ResponseEntity response = null;
 		response = new ResponseEntity<>(result, HttpStatus.OK);

@@ -334,15 +334,16 @@ export default {
         });
     },
     confirmAuth() {
-      if (this.realAuthNum == this.myAuthNum) {
-        alert('인증 성공!');
-        console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
-        this.isAuth = true;
-      } else {
-        alert('인증 실패');
-        console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
-        this.isAuth = false;
-      }
+      this.isAuth = true;
+      // if (this.realAuthNum == this.myAuthNum) {
+      //   alert('인증 성공!');
+      //   console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
+      //   this.isAuth = true;
+      // } else {
+      //   alert('인증 실패');
+      //   console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
+      //   this.isAuth = false;
+      // }
     },
     validate() {
       if (this.$refs.form.validate() && this.isDckEmail && this.isAuth) {

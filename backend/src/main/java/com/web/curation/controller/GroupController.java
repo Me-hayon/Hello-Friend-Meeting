@@ -28,6 +28,7 @@ import com.web.curation.model.entity.Naegi;
 import com.web.curation.model.entity.NaegiParticipant;
 import com.web.curation.model.entity.Schedule;
 import com.web.curation.model.entity.ScheduleParticipant;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
@@ -39,6 +40,7 @@ import com.web.curation.model.repository.NaegiParticipantRepository;
 import com.web.curation.model.repository.NaegiRepository;
 import com.web.curation.model.repository.ScheduleParticipantRepository;
 import com.web.curation.model.repository.ScheduleRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -77,6 +79,9 @@ public class GroupController {
 	
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
+	
+	@Autowired
+	TimelineRepository timelineRepository;
 	
 	@PostMapping("/emailOfGmaster")
 	public Object emailOfGmaster(@RequestParam int gno) {
@@ -244,7 +249,17 @@ public class GroupController {
 		groupParticipant.setGno(groupInfo.getGno());
 		groupParticipant.setUno(gmaster);
 		groupParticipantRepository.save(groupParticipant);
-
+		
+		StringBuilder sbTime=new StringBuilder();
+		sbTime.append("새 그룹을 만든 날이네요! ");
+		sbTime.append(gname);
+		sbTime.append("그룹에는 친구들이 많이 들어왔나요?");
+		String tcontent=sbTime.toString();
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent(tcontent);
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		if(gboundary!=0) {
 			List<FriendInfo> friendList=getFriendList(gmaster);
@@ -390,6 +405,15 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
+		StringBuilder sbTime=new StringBuilder();
+		sbTime.append(groupInfo.getGname());
+		sbTime.append("그룹에 가입한 날이네요. 새로운 친구들은 많이 사귀셨나요?");
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent(sbTime.toString());
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
+		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {
 			for(Schedule s:schedules.get()) {
@@ -545,6 +569,16 @@ public class GroupController {
 		groupParticipant.setGno(gno);
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
+		
+		StringBuilder sbTime=new StringBuilder();
+		sbTime.append(groupInfo.getGname());
+		sbTime.append("그룹에 가입한 날이네요. 새로운 친구들은 많이 사귀셨나요?");
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent(sbTime.toString());
+		timeline.setUno(uno);
+		timelineRepository.save(timeline);
+				
 		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {

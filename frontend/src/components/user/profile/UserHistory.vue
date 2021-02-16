@@ -2,7 +2,7 @@
   <v-row>
     <v-subheader>나의 활동</v-subheader>
     <v-timeline>
-      <v-timeline-item v-for="n in 4" :key="n" large>
+      <v-timeline-item v-for="timeline in timelines" :key="timeline.tno" large>
         <template v-slot:icon>
           <v-avatar>
             <v-img
@@ -11,16 +11,13 @@
           </v-avatar>
         </template>
         <template v-slot:opposite>
-          <span>Tus eu perfecto</span>
+          <span>{{ timeline.tdate }}</span>
         </template>
         <v-card class="elevation-2">
-          <v-card-title class="headline">Lorem ipsum</v-card-title>
-          <v-card-text
-            >Lorem ipsum dolor sit amet, no nam oblique veritus. Commune
-            scaevola imperdiet nec ut, sed euismod convenire principes at. Est
-            et nobis iisque percipit, an vim zril disputando voluptatibus, vix
-            an salutandi sententiae.</v-card-text
+          <v-card-title class="headline"
+            >이날엔 무슨일이 있었을까요?</v-card-title
           >
+          <v-card-text>{{ timeline.tcontent }}</v-card-text>
         </v-card>
       </v-timeline-item>
     </v-timeline>
@@ -29,7 +26,7 @@
 
 <script>
 export default {
-  props: ['currProfileImg'],
+  props: ['currProfileImg', 'timelines'],
   data() {
     return {
       profileImg: this.currProfileImg,

@@ -27,9 +27,11 @@ import com.web.curation.config.JwtService;
 import com.web.curation.config.SensService;
 import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Comment;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CommentRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -50,6 +52,9 @@ public class UserInfoController {
 	
 	@Autowired
 	private CommentRepository commentRepository;
+	
+	@Autowired
+	private TimelineRepository timelineRepository;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 
@@ -101,6 +106,10 @@ public class UserInfoController {
 	public UserInfo join(@RequestBody UserInfo userInfo) {
 
 		userInfoRepository.save(userInfo);
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("헬프미의 새로운 회원이 되셨어요!");
+		timeline.setUno(userInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		return userInfo;
 	}
@@ -168,6 +177,14 @@ public class UserInfoController {
 			resultMap.put("user-email", user.getEmail());
 			resultMap.put("profile-img", user.getUprofileImg());
 			resultMap.put("user-uno",user.getUno());
+			
+			Optional<List<Timeline>> timelines=timelineRepository.findAllByUno(user.getUno());
+			if(timelines.isPresent()) {
+				resultMap.put("timelineExist",true);
+				resultMap.put("timeline",timelines.get());
+			}
+			else
+				resultMap.put("timelineExist",false);
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		} else {
 			resultMap.put("user-tel", "앗! 전화번호를 불러올 수 없어요.");
