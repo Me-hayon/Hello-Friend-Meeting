@@ -270,18 +270,18 @@ public class GroupController {
 	public Object createGroup(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
 
-		Timeline timeline=new Timeline();
-		timeline.setTcontent("그룹생성");
-		timeline.setTcontentSecond(gname);
-		timeline.setUno(myInfo.getUno());
-		timelineRepository.save(timeline);
-		
 		int gmaster = Integer.parseInt(map.get("uno"));
 		int gcategory = Integer.parseInt(map.get("gcategory"));
 		int gboundary = Integer.parseInt(map.get("gboundary"));
 		String gname = map.get("gname");
 		String gdesc = map.get("gdesc");
 		Optional<UserInfo> optUserInfo = userInfoRepository.findById(gmaster);
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("그룹생성");
+		timeline.setTcontentSecond(gname);
+		timeline.setUno(gmaster);
+		timelineRepository.save(timeline);
 		
 		if(optUserInfo.isPresent()) {
 			UserInfo user = optUserInfo.get();
