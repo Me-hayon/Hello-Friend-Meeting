@@ -1,5 +1,6 @@
 <template>
   <div class="pa-5">
+    <button @click="goToNaegi">내기페이지로 이동</button>
     <v-row>
       <v-col cols="12" md="6" class="mb-4">
         <v-row>
@@ -26,52 +27,108 @@
             ref="calendar"
             v-model="start"
           ></v-calendar>
-          <v-menu
+          <!---->
+          <v-dialog
             v-model="selectedOpen"
-            :close-on-content-click="false"
-            :activator="selectedElement"
-            offset-x
+            fullscreen
+            hide-overlay
+            transition="dialog-bottom-transition"
           >
-            <v-card color="grey lighten-4" min-width="200px" flat>
-              <v-toolbar :color="selectedEvent.color" dark>
-                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+            <v-card>
+              <v-toolbar dark :color="selectedEvent.color">
+                <v-toolbar-title>{{ selectedEvent.name }}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-icon
                   v-if="selectedEvent.smasterEmail === myEmail"
                   @click="delSchedule"
                   >mdi-trash-can</v-icon
                 >
-                <v-icon @click="closeSchedule">mdi-close</v-icon></v-toolbar
-              ><v-spacer
-                >{{ selectedEvent.content }}
-                <hr />
-                <ul class="mb-0" style="float:left;width:50%">
-                  <li>참가인원</li>
-                  <li
-                    v-for="participant in selectedEvent.participants"
-                    :key="participant.uno"
-                    v-show="participant.attendance === 1"
+                <v-icon @click="closeSchedule">mdi-close</v-icon>
+              </v-toolbar>
+              <v-list three-line subheader>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>{{
+                      selectedEvent.content
+                    }}</v-list-item-title>
+                    <v-list-item-subtitle
+                      >{{ selectedEvent.start }} ~
+                      {{ selectedEvent.end }}</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+              <v-divider></v-divider>
+
+              <div>
+                <v-subheader>참가자</v-subheader>
+                <span
+                  v-for="participant in selectedEvent.participants"
+                  :key="participant.spno"
+                >
+                  <v-chip
+                    v-if="participant.attendance === 1"
+                    class="ma-2"
+                    :color="participant.color"
+                    text-color="white"
                   >
                     {{ participant.name }}
-                  </li>
-                </ul>
-                <ul class="mb-0" style="float:left;width:50%">
-                  <li>불참인원</li>
-                  <li
-                    v-for="participant in selectedEvent.participants"
-                    :key="participant.uno"
-                    v-show="participant.attendance === 2"
+                  </v-chip>
+                </span>
+                <v-subheader>미참가자</v-subheader>
+
+                <span
+                  v-for="participant in selectedEvent.participants"
+                  :key="participant.spno"
+                >
+                  <v-chip
+                    v-if="participant.attendance === 2"
+                    class="ma-2"
+                    :color="participant.color"
+                    text-color="white"
                   >
                     {{ participant.name }}
-                  </li>
-                </ul>
+                  </v-chip>
+                </span>
+                <v-subheader>미응답</v-subheader>
+                <span
+                  v-for="participant in selectedEvent.participants"
+                  :key="participant.spno"
+                >
+                  <v-chip
+                    v-if="participant.attendance === 0"
+                    class="ma-2"
+                    :color="participant.color"
+                    text-color="white"
+                  >
+                    {{ participant.name }}
+                  </v-chip>
+                </span>
+                <v-divider></v-divider>
+
                 <div>
-                  <button @click="vote(selectedEvent.sno, 1)">참가</button>
-                  <button @click="vote(selectedEvent.sno, 2)">불참</button>
+                  <h2>참가 하실건가요?</h2>
+                  <br />
+                  <v-btn
+                    depressed
+                    color="primary"
+                    style="width:50%"
+                    @click="voteAttendance(1)"
+                  >
+                    참가
+                  </v-btn>
+                  <v-btn
+                    depressed
+                    color="error"
+                    style="width:50%"
+                    @click="voteAttendance(2)"
+                  >
+                    다음에..
+                  </v-btn>
                 </div>
-              </v-spacer></v-card
-            >
-          </v-menu>
+              </div>
+            </v-card>
+          </v-dialog>
         </v-sheet>
       </v-col>
     </v-row>
@@ -106,8 +163,19 @@
 </template>
 
 <script>
-import Dialog from "@/components/group/Dialog.vue";
-import axios from "axios";
+import Dialog from '@/components/group/Dialog.vue';
+import axios from 'axios';
+
+const colors = [
+  '#B0E0E6',
+  'green',
+  'orange',
+  '#FFC0CB',
+  '#808000',
+  '#ABC88B',
+  '#DDA0DD',
+  '#00FFFF',
+];
 export default {
   components: {
     Dialog,
@@ -165,7 +233,7 @@ export default {
     const startDate = `${year}-${month}-${date}`;
     this.curYear = year;
     this.curMonth = month + 1;
-    if (this.curMonth < 10) this.curMonth = "0" + this.curMonth;
+    if (this.curMonth < 10) this.curMonth = '0' + this.curMonth;
     this.start = startDate;
     this.getSchedules();
   },
@@ -177,11 +245,11 @@ export default {
         sno: { type: Number },
         sgno: { type: Number },
         smaster: { type: Number },
-        senddate: "",
-        sstartdate: "",
-        stitle: "",
-        sspace: "",
-        scontetnt: "",
+        senddate: '',
+        sstartdate: '',
+        stitle: '',
+        sspace: '',
+        scontetnt: '',
       },
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
@@ -189,17 +257,17 @@ export default {
       uno: this.$store.getters.getUno,
       dateOpen: false,
       start: this.startDate,
-      type: "month",
+      type: 'month',
       curYear: this.year,
       curMonth: this.month + 1,
-      curYM: "",
+      curYM: '',
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-      myEmail: window.sessionStorage.getItem("user-email"),
-      moreEvents: "",
+      myEmail: window.sessionStorage.getItem('user-email'),
+      moreEvents: '',
       moreEventsDialog: false,
-      moreDate: "",
+      moreDate: '',
     };
   },
   methods: {
@@ -210,10 +278,10 @@ export default {
         this.curMonth = 12;
         this.curYear *= 1;
         this.curYear--;
-        this.curYear += "";
+        this.curYear += '';
       }
-      this.curMonth += "";
-      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
     },
     nextMonth() {
       this.curMonth *= 1;
@@ -222,29 +290,31 @@ export default {
         this.curMonth = 1;
         this.curYear *= 1;
         this.curYear++;
-        this.curYear += "";
+        this.curYear += '';
       }
-      this.curMonth += "";
-      if (this.curMonth.length === 1) this.curMonth = "0" + this.curMonth;
+      this.curMonth += '';
+      if (this.curMonth.length === 1) this.curMonth = '0' + this.curMonth;
     },
     open(date) {
       console.log(date);
-      this.$store.commit("OPEN_CALENDAR_DIALOG", date);
+      this.$store.commit('OPEN_CALENDAR_DIALOG', date);
     },
     getEventColor(event) {
       return event.color;
     },
     showEvent({ nativeEvent, event }) {
       var params = new URLSearchParams();
-      params.append("sno", event.sno);
-      axios.post("getScheduleParticipants", params).then((resp) => {
+      params.append('sno', event.sno);
+      axios.post('getScheduleParticipants', params).then((resp) => {
         var len = resp.data.list.length;
         var participantList = [];
+
         for (var i = 0; i < len; i++) {
           var participantInfo = resp.data.list[i];
           participantInfo.email = resp.data.emailList[i];
           participantInfo.name = resp.data.nameList[i];
-          participantList.push(participantInfo);
+          (participantInfo.color = colors[Math.floor(Math.random() * 8)]),
+            participantList.push(participantInfo);
         }
         const open = () => {
           this.selectedEvent = event;
@@ -260,12 +330,13 @@ export default {
         } else open();
         nativeEvent.stopPropagation();
         this.selectedEvent.participants = participantList;
+        console.log(this.selectedEvent);
       });
     },
     showEventAtMore(event) {
       var params = new URLSearchParams();
-      params.append("sno", event.sno);
-      axios.post("getScheduleParticipants", params).then((resp) => {
+      params.append('sno', event.sno);
+      axios.post('getScheduleParticipants', params).then((resp) => {
         var len = resp.data.list.length;
         var participantList = [];
         for (var i = 0; i < len; i++) {
@@ -289,15 +360,15 @@ export default {
     },
     moreEvent(date) {
       console.log(date.date);
-      this.moreDate = date.date + "의 일정은??";
+      this.moreDate = date.date + '의 일정은??';
       console.log(this.localEvents);
       this.moreEvents = [];
       var selectedDate = this.returnToNum(date.date);
       for (var i = 0; i < this.localEvents.length; i++) {
         if (
-          this.returnToNum(this.localEvents[i].start.split(" ")[0]) <=
+          this.returnToNum(this.localEvents[i].start.split(' ')[0]) <=
             selectedDate &&
-          this.returnToNum(this.localEvents[i].end.split(" ")[0]) >=
+          this.returnToNum(this.localEvents[i].end.split(' ')[0]) >=
             selectedDate
         ) {
           this.moreEvents.push(this.localEvents[i]);
@@ -308,25 +379,25 @@ export default {
     },
     getSchedules() {
       var params = new URLSearchParams();
-      params.append("gno", this.gno);
-      axios.post("getSchedulesList", params).then((resp) => {
+      params.append('gno', this.gno);
+      axios.post('getSchedulesList', params).then((resp) => {
         if (resp.data.isPresent) {
           var eventList = resp.data.list;
           var emailList = resp.data.emailList;
           for (var i = 0; i < eventList.length; i++)
             eventList[i].smasterEmail = emailList[i];
-          this.$store.commit("ADD_EVENTS", resp.data.list);
+          this.$store.commit('ADD_EVENTS', resp.data.list);
         }
       });
     },
     delSchedule() {
       console.log(this.selectedEvent);
       var params = new URLSearchParams();
-      params.append("sno", this.selectedEvent.sno);
-      axios.post("delSchedule", params).then(() => {
+      params.append('sno', this.selectedEvent.sno);
+      axios.post('delSchedule', params).then(() => {
         this.getSchedules();
         this.selectedOpen = false;
-        alert("일정을 삭제했습니다.");
+        alert('일정을 삭제했습니다.');
       });
       this.moreEventsDialog = false;
     },
@@ -334,33 +405,39 @@ export default {
       this.selectedOpen = false;
     },
     returnToNum(date) {
-      var toReturn = date.replace(/-/g, "");
+      var toReturn = date.replace(/-/g, '');
       toReturn *= 1;
       return toReturn;
     },
-    vote(sno, attendance) {
+    voteAttendance(attendance) {
       var params = new URLSearchParams();
-      params.append("sno", sno);
-      params.append("email", this.myEmail);
-      params.append("attendance", attendance);
-      axios.post("changeScheduleAttendance", params).then((resp) => {
+      params.append('sno', this.selectedEvent.sno);
+      params.append('email', this.myEmail);
+      params.append('attendance', attendance);
+      axios.post('changeScheduleAttendance', params).then((resp) => {
         if (resp.data.isPresent) {
-          axios.post("getScheduleParticipants", params).then((resp) => {
+          axios.post('getScheduleParticipants', params).then((resp) => {
             var len = resp.data.list.length;
             var participantList = [];
+
             for (var i = 0; i < len; i++) {
               var participantInfo = resp.data.list[i];
               participantInfo.email = resp.data.emailList[i];
               participantInfo.name = resp.data.nameList[i];
+              participantInfo.color = colors[Math.floor(Math.random() * 8)];
               participantList.push(participantInfo);
             }
-            alert("투표했음");
-            this.selectedOpen = false;
+            // this.selectedOpen = false;
+            var tmp = this.selectedEvent;
+            this.selectedEvent = null;
+            this.selectedEvent = tmp;
             this.selectedEvent.participants = participantList;
-            console.log(this.selectedEvent.participants);
           });
         }
       });
+    },
+    goToNaegi() {
+      this.$router.push('/naegi');
     },
   },
 };
