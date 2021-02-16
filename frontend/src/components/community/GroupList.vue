@@ -13,7 +13,7 @@
         style="margin-top: 0;"
       ></v-divider>
 
-      <v-list-item :key="group.gno">
+      <v-list-item :key="group.gno" @click="goToGroupPage(group.gno)">
         <v-list-item-avatar>
           <v-img
             :src="require(`@/assets/images/group-img/${group.gimg}.png`)"
@@ -59,7 +59,14 @@ export default {
         'mdi-food-turkey',
         'mdi-face-woman-shimmer',
       ],
+      groupListWindow: 0,
     };
+  },
+  methods: {
+    goToGroupPage(gno) {
+      this.$store.commit('setGno', gno);
+      this.$router.push('/group');
+    },
   },
 };
 </script>

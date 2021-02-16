@@ -73,8 +73,6 @@ public class FriendInfoController {
 
 		if (optFriendInfoMe.isPresent() && optFriendInfoFriend.isPresent()) {
 			resultMap.put("is-success", 3);
-//			result.status = true;
-//			result.data = "이미 친구로 추가된 사용자입니다";
 		} 
 		else if(optFriendInfoMe.isPresent()) {
 			resultMap.put("is-success", 1);
@@ -83,8 +81,6 @@ public class FriendInfoController {
 			resultMap.put("is-success", 2);
 		}
 		else {
-//			result.status = true;
-//			result.data = "친구 요청을 보냈습니다!";
 			Optional<UserInfo> optMyInfo = userInfoRepository.findById(myId);
 			
 			if(optMyInfo.isPresent()) {
