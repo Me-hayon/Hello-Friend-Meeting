@@ -1,66 +1,216 @@
 <template>
-  <div>
-    <v-simple-table>
-      <template v-slot:default>
-        <tbody>
-          <tr
-            @click="boardDetail(item.bno)"
-            style="height:100px"
-            v-for="item in tableNotice"
-            :key="item.bno"
-          >
-            <td>{{ item.btitle }}</td>
-            <td>{{ item.bdate }}<br />{{ item.writerName }}</td>
-          </tr>
-          <tr
-            @click="boardDetail(item.bno)"
-            style="height:100px"
-            v-for="item in table"
-            :key="item.bno"
-          >
-            <td>{{ item.btitle }}</td>
-            <td>{{ item.bdate }}<br />{{ item.writerName }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
-    <button v-b-modal.create-article class="create-article-btn">게시글+</button>
-    <b-modal
-      id="create-article"
-      centered
-      title="게시글작성"
-      @ok="createArticle"
-      @hide="resetDatas"
-    >
-      <b-row style="margin-bottom:10px">
-        <b-col>
-          제목 공지사항으로 설정<input
-            type="checkbox"
-            v-model="newIsNotice"
-            :disabled="memberStatus != 4"
-          />
-        </b-col>
-        <b-col><b-form-input v-model="newTitle"></b-form-input></b-col>
-      </b-row>
-      <b-form-textarea
-        rows="8"
-        style="margin-bottom:10px"
-        v-model="newContent"
-      ></b-form-textarea>
-    </b-modal>
-  </div>
+  <v-container
+    id="scroll-target"
+    class="pa-0 overflow-y-auto"
+    style="height: 663px;"
+    v-scroll:#scroll-target="onScroll"
+  >
+    <v-row class="atchBg" :style="{ height: scrollHeight }" no-gutters>
+      <v-col align="center" align-self="center" style="padding: 0;">
+        <p
+          style="color: white; letter-spacing: 2px; margin-bottom: 0; font-size: 3rem; font-weight: bold;"
+          :style="{ marginTop: scrollMargin }"
+        >
+          {{ groupTitle }}
+        </p>
+        <p
+          style="color: white; letter-spacing: -1px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
+        >
+          {{ groupDesc }}
+        </p>
+      </v-col>
+    </v-row>
+
+    <!-- 공지사항 -->
+    <v-row style="margin: 0px; margin-top: 0;">
+      <v-col class="pa-0">
+        <v-list style="padding: 0;">
+          <v-list-group no-action v-model="active" active-class="noticeBar">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title
+                  style="font-size: 1.5rem; margin: 0; margin-left: 3px;"
+                  ><v-icon>mdi-clipboard-check-multiple-outline</v-icon>
+                  <span style="margin-left: 5px; letter-spacing: -2px;"
+                    >Notice</span
+                  ></v-list-item-title
+                >
+              </v-list-item-content>
+            </template>
+            <v-list-item
+              v-for="item in tableNotice"
+              :key="item.bno"
+              @click="boardDetail(item.bno)"
+              style="padding-left: 30px; padding-right: 20px;  height: 40px;"
+            >
+              <v-list-item-content style="padding: 0">
+                <v-list-item-title>
+                  <v-row no-gutters>
+                    <v-col cols="1">
+                      <v-icon>mdi-check-underline</v-icon>
+                    </v-col>
+                    <v-col
+                      cols="8"
+                      align-self="center"
+                      style="font-size: 1rem; margin: 0; padding: 0; letter-spacing: -1px; color: red;"
+                      >{{ item.btitle }}</v-col
+                    >
+                    <v-col
+                      align="right"
+                      align-self="center"
+                      style="font-size: 0.7rem; color: gray; margin: 0; letter-spacing: -1px; padding-right: 20px;"
+                      >{{ item.parsedDate }}</v-col
+                    >
+                  </v-row>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </v-list>
+      </v-col>
+    </v-row>
+
+    <!-- 게시글 목록 -->
+    <v-row style="margin: 0px;">
+      <v-col>
+        <v-row style="font-size: 1.5rem; margin: 0; padding-left: 4px; ">
+          <v-icon>mdi-clipboard-multiple-outline</v-icon>
+          <span style="margin-left: 5px; letter-spacing: -2px;">Board</span>
+        </v-row>
+        <v-row no-gutters justify="end" style="margin-top: -15px;">
+          <v-col cols="3" align="center">
+            <v-btn icon @click="writeModal = true">
+              <!-- <v-icon>mdi-clipboard-edit</v-icon> -->
+              <span
+                style="margin-left: 5px; margin-top: -10px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #4682B4"
+                >글 작성</span
+              >
+            </v-btn>
+          </v-col>
+          <v-dialog v-model="writeModal" persistent max-width="300">
+            <v-card>
+              <v-card-title>
+                <span style="letter-spacing: -1px;">새로운 글 쓰기</span>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="writeModal = false">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-card-title>
+              <v-card-text>
+                <v-text-field
+                  v-model="newTitle"
+                  label="글 제목"
+                  outlined
+                  clearable
+                  required
+                ></v-text-field>
+                <v-textarea
+                  rows="8"
+                  style="margin-bottom:10px"
+                  v-model="newContent"
+                  outlined
+                  required
+                  label="글 내용"
+                >
+                </v-textarea>
+                <v-row>
+                  <input
+                    type="checkbox"
+                    v-model="newIsNotice"
+                    :disabled="memberStatus != 4"
+                  />공지사항으로 설정
+                </v-row>
+              </v-card-text>
+              <v-card-actions style="padding-top: 0;">
+                <v-row class="ma-0" justify="end">
+                  <v-btn
+                    color="primary"
+                    class="font-weight-black"
+                    @click="createArticle"
+                  >
+                    글 등록
+                  </v-btn>
+                </v-row>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
+        <!-- for 돌리기 : getBoardList -->
+        <v-row style="margin: 0;">
+          <v-col style="padding: 0;">
+            <v-simple-table>
+              <template v-slot:default>
+                <tbody>
+                  <tr
+                    @click="boardDetail(item.bno)"
+                    style="min-height: 55px;"
+                    v-for="item in table"
+                    :key="item.bno"
+                  >
+                    <td class="text-left">
+                      <p
+                        style="font-size: 1rem; margin: 0; letter-spacing: -1px;"
+                      >
+                        {{ item.btitle }}
+                      </p>
+                    </td>
+                    <td class="text-right" width="120">
+                      <p
+                        style="font-size: 0.9rem; margin: 0; letter-spacing: -1px; color: #778899; font-weight: bold;"
+                      >
+                        {{ item.writerName }}
+                      </p>
+
+                      <p
+                        style="font-size: 0.7rem; color: #B0C4DE; margin: 0; letter-spacing: -1px;"
+                      >
+                        {{ item.parsedDate }}
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
+        <v-row style="margin-top: 56px;"></v-row>
+      </v-col>
+    </v-row>
+    <!-- <v-pagination
+      v-model="page"
+      :circle="circle"
+      :disabled="disabled"
+      :length="length"
+      :page="page"
+    ></v-pagination> -->
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios';
 export default {
   computed: {
+    scrollHeight() {
+      let tmp = 663 - this.nowScroll;
+      return tmp + 'px';
+    },
+    scrollMargin() {
+      let tmp = this.nowScroll;
+      // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', tmp);
+      return tmp + 'px';
+    },
     vuexGno() {
       return this.$store.getters.getGno;
     },
     vuexMemberStatus() {
       return this.$store.getters.getMemberStatus;
     },
+    // computedPages() {
+    //   return this.table.slice(
+    //     (this.page - 1) * this.perPage,
+    //     this.page * this.perPage
+    //   );
+    // },
   },
   watch: {
     vuexGno(val) {
@@ -91,17 +241,32 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
+      groupTitle: '',
+      groupDesc: '',
       table: [],
       tableNotice: [],
       newTitle: '',
       newContent: '',
       newIsNotice: false,
+      circle: true,
+      disabled: false,
+      // length: 3,
+      // page: 1,
+      // perPage: 5,
+      writeModal: false,
+      active: true,
+      nowScroll: 0,
     };
   },
   created() {
+    this.getGroupInfo();
     this.getBoardList();
   },
   methods: {
+    onScroll(e) {
+      this.nowScroll = e.target.scrollTop;
+      // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', this.nowScroll);
+    },
     boardDetail(bno) {
       this.$store.commit('setBno', bno);
       this.$router.push('/board/detail');
@@ -117,13 +282,14 @@ export default {
       axios.post('writeBoard', params).then((resp) => {
         alert(resp.data.data);
         this.getBoardList();
+        this.writeModal = false;
       });
     },
-    resetDatas() {
-      this.newContent = '';
-      this.newTitle = '';
-      this.newIsNotice = false;
-    },
+    // resetDatas() {
+    //   this.newContent = '';
+    //   this.newTitle = '';
+    //   this.newIsNotice = false;
+    // },
     getBoardList() {
       var params = new URLSearchParams();
       params.append('bgno', this.gno);
@@ -132,33 +298,47 @@ export default {
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
+          // console.log('☆☆☆☆☆☆☆☆☆☆', response.data);
           for (var i = 0; i < this.table.length; i++) {
             this.table[i].writerName = response.data.notNoticeWriter[i];
+            this.table[i].parsedDate = response.data.notNotice[
+              i
+            ].bdate.substring(2, 16);
           }
           for (i = 0; i < this.tableNotice.length; i++) {
             this.tableNotice[i].writerName = response.data.noticeWriter[i];
+            this.tableNotice[i].parsedDate = response.data.notice[
+              i
+            ].bdate.substring(2, 16);
           }
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    getGroupInfo() {
+      var params = new URLSearchParams();
+      params.append('gno', this.gno);
+      axios.post('getGroupInfo', params).then((response) => {
+        console.log('※※※※※※※※※※※※※※※', response);
+        this.groupTitle = response.data.groupInfo.gname.toUpperCase();
+        this.groupDesc = response.data.groupInfo.gdesc;
+      });
+    },
   },
 };
 </script>
 
 <style>
-.create-article-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-color: blue;
-  font-size: 15px;
-  color: white;
-  text-align: center;
-
-  position: fixed;
-  right: 5%;
-  bottom: 10%;
+.noticeBar {
+  /* border-left-color: #4682b4; */
+  /* border-left-style: solid; */
+  color: #4682b4 !important;
+}
+.atchBg {
+  background: url('~@/assets/images/home.gif') center center;
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+  background-size: cover;
 }
 </style>

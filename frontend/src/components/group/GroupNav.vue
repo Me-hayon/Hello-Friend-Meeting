@@ -29,6 +29,9 @@ import GroupSchedule from '@/components/group/GroupSchedule.vue';
 import GroupChat from '@/components/group/GroupChat.vue';
 import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
+  created() {
+    this.height = window.screen.height - 112;
+  },
   computed: {
     vuexGno() {
       return this.$store.getters.getGno;
@@ -71,6 +74,7 @@ export default {
       uno: this.$store.getters.getUno,
       bno: this.$store.getters.getBno,
       tab: null,
+      height: 0,
     };
   },
   methods: {

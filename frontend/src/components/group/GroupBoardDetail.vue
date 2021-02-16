@@ -1,65 +1,225 @@
 <template>
   <div>
-    <button @click="returnToGroup">그룹으로 돌아가기</button>
-    <br /><br />
-    제목 : {{ article.btitle }} <br />
-    글쓴이 : {{ writer }} <br />
-    내용 : {{ article.bcontent }}<br />
-    <b-button v-b-modal.modal-modify v-if="localIsWriter">글 수정</b-button>
-    <b-modal
-      id="modal-modify"
-      title="글 수정"
-      @ok="modifyBoard"
-      @hide="resetDatas"
+    <v-parallax
+      height="300"
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      gradient="to top right, rgba(0,0,0,.33), rgba(25,32,72,.7)"
+    >
+      <v-row no-gutters>
+        <v-btn icon x-large @click="returnToGroup" color="white">
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+      </v-row>
+      <v-row class="for-title" style="margin-top: 80px;">
+        <v-col>
+          <v-row
+            style="margin-top: 0; margin-right: 10px;"
+            no-gutters
+            justify="end"
+          >
+            <span style="color: white; letter-spacing: -1px; font-size: 1rem;">
+              {{ parsedDateforArticle }}
+            </span>
+          </v-row>
+          <!-- <v-row style="margin-top: -10px; margin-left: 10px;" no-gutters>
+            <span
+              style="color: white; letter-spacing: -2px; font-size: 3rem; font-weight: bold;"
+            >
+              {{ article.btitle }}
+            </span>
+          </v-row> -->
+          <v-row
+            no-gutters
+            style="margin-top: -10px; margin-right: 10px;"
+            justify="end"
+          >
+            <span
+              style="color: white; letter-spacing: -1px; font-size: 1.5rem; font-style: italic;"
+            >
+              {{ writer }}
+            </span>
+            <span
+              style="color: white; margin-top: 8px; margin-left: 5px; letter-spacing: -1px; font-size: 1.1rem;"
+            >
+              님이 작성한 글입니다.
+            </span>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-parallax>
+
+    <!-- 글 영역 -->
+    <v-card-title
+      style="padding-top: 20px; letter-spacing: -2px; font-size: 1.8rem; font-weight: bold; "
+    >
+      {{ article.btitle }}
+    </v-card-title>
+    <v-card-subtitle
+      style="letter-spacing: -1px; font-size: 1rem; margin-top: -20px; margin-bottom: 10px; padding: 20px; "
+    >
+      {{ article.bcontent }}
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn text disabled="localIsWriter" @click="modifyBoard">EDIT</v-btn>
+      <v-btn
+        color="purple"
+        text
+        v-if="localIsWriter || memberStatus === 4"
+        @click="delBoard"
+      >
+        DELETE
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <v-btn icon @click="show = !show">
+        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+      </v-btn>
+    </v-card-actions>
+    <!-- <b-modal id="modal-modify" title="글 수정" @ok="modifyBoard"
       >제목 : <input type="text" v-model="newTitle" />
       <b-form-textarea
         id="textarea-rows"
         rows="8"
         v-model="newContent"
       ></b-form-textarea>
-    </b-modal>
-    <button @click="delBoard" v-if="localIsWriter || memberStatus === 4">
-      글 삭제
-    </button>
+    </b-modal> -->
 
-    <hr />
-    <b-button v-b-modal.modal-1>댓글작성</b-button>
-    <b-modal
-      id="modal-1"
-      title="댓글쓰기"
-      @ok="writeComment"
-      @hide="resetDatas"
+    <!-- 확장 부분 -->
+    <v-expand-transition>
+      <div v-show="show">
+        <!-- <v-divider class="ma-0"></v-divider> -->
+
+        <v-card-text
+          style="letter-spacing: -1px; font-size: 0.8rem; margin-bottom: -20px; "
+        >
+          이 부분에.... 뭐가 들어가야... 간지일까요....??? 뭔가 약관이나
+          규칙같은 걸 써둘까.....??? 나 속상해.... 이거 너무 쓰고 싶어.... 포기
+          못해..........</v-card-text
+        >
+      </div>
+    </v-expand-transition>
+
+    <!-- 댓글 작성 -->
+    <v-row
+      style="font-size: 1.5rem; margin: 0; padding-left: 10px; margin-top: 20px;"
     >
-      <b-form-textarea
-        id="textarea-rows"
-        rows="8"
-        v-model="newCommentContent"
-      ></b-form-textarea>
-    </b-modal>
-    <p v-for="comment in comments" :key="comment.cno">
-      {{ comment.ccontent }}
-
-      <b-button v-b-modal.modal-2 v-if="comment.isWriter">댓글수정</b-button>
-      <b-modal
-        id="modal-2"
-        title="댓글수정"
-        @ok="modifyComment(comment.cno)"
-        @hide="resetDatas"
-      >
-        <b-form-textarea
-          id="textarea-rows"
-          rows="8"
+      <v-icon>mdi-comment-multiple-outline</v-icon>
+      <span style="margin-left: 5px; letter-spacing: -1px;">Comments</span>
+    </v-row>
+    <v-row no-gutters justify="center">
+      <v-col style="margin-left: 15px;" align="center">
+        <v-text-field
+          :dense="true"
           v-model="newCommentContent"
-        ></b-form-textarea>
-      </b-modal>
+          outlined
+          required
+          label="올바른 문화를 만드는..뿌앵.."
+          @keyup.enter="writeComment"
+        >
+        </v-text-field>
+      </v-col>
+      <v-col cols="3" align="center">
+        <v-btn @click="writeComment">등 록</v-btn>
+      </v-col>
+    </v-row>
 
-      <button
-        v-if="comment.isWriter || memberStatus === 4"
-        @click="delComment(comment.cno)"
-      >
-        삭제
-      </button>
-    </p>
+    <!-- 댓글 리스트 -->
+
+    <v-row style="margin: 0; margin-top: -15px;">
+      <v-col style="padding: 0;">
+        <v-simple-table>
+          <template v-slot:default>
+            <tbody>
+              <tr
+                style="height: 50px;"
+                v-for="comment in comments"
+                :key="comment.cno"
+              >
+                <td
+                  class="text-left"
+                  style="padding: 0; padding-left: 10px; width: 80px;"
+                >
+                  <p style="font-size: 1rem; margin: 0; letter-spacing: -1px;">
+                    {{ comment.writerName }}
+                  </p>
+                  <p
+                    style="font-size: 0.7rem; color: #B0C4DE; margin: 0; letter-spacing: -1px;"
+                  >
+                    {{ comment.parsedDate }}
+                  </p>
+                </td>
+                <td class="text-left">
+                  <v-row no-gutters style="margin-top: 5px;">
+                    <p
+                      style="font-size: 1rem; margin: 0; letter-spacing: -1px;"
+                    >
+                      {{ comment.ccontent }}
+                    </p>
+                  </v-row>
+                  <v-row
+                    no-gutters
+                    style="margin-top: -10px;"
+                    justify="end"
+                    v-if="comment.isWriter"
+                  >
+                    <v-col cols="3">
+                      <v-btn
+                        icon
+                        @click="editModal = true"
+                        v-if="comment.isWriter"
+                        >수정</v-btn
+                      >
+                      <v-dialog v-model="editModal" persistent max-width="300">
+                        <v-card>
+                          <v-card-title>
+                            <span style="letter-spacing: -1px;">댓글수정</span>
+                            <v-spacer></v-spacer>
+                            <v-btn icon @click="editModal = false">
+                              <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-textarea
+                              rows="3"
+                              style="margin-bottom:10px"
+                              v-model="newCommentContent"
+                              outlined
+                              required
+                              label="댓글 수정"
+                              :value="comment.ccontent"
+                            >
+                            </v-textarea>
+                          </v-card-text>
+                          <v-card-actions style="padding-top: 0;">
+                            <v-row class="ma-0" justify="end">
+                              <v-btn
+                                color="primary"
+                                class="font-weight-black"
+                                @click="modifyComment(comment.cno)"
+                              >
+                                댓글 수정
+                              </v-btn>
+                            </v-row>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+                      <v-btn
+                        icon
+                        @click="delComment(comment.cno)"
+                        v-if="comment.isWriter || memberStatus === 4"
+                        >삭제</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -128,10 +288,13 @@ export default {
       localIsWriter: this.$store.getters.getIsWriter,
       article: {},
       writer: '',
+      parsedDateforArticle: '',
       comments: [],
       newCommentContent: '',
       newTitle: '',
       newContent: '',
+      show: false,
+      editModal: false,
     };
   },
   created() {
@@ -150,7 +313,12 @@ export default {
             this.$router.push('/');
             return;
           }
+          console.log('★★★★★★★★★★★', response);
           this.article = response.data.curBoard;
+          this.parsedDateforArticle = this.parsingDate(
+            response.data.curBoard.bdate
+          );
+          response.data.curBoard.bdate.substring(2, 3);
           this.writer = response.data.writer.uname;
           this.localIsWriter = response.data.isWriter;
           this.newTitle = this.article.btitle;
@@ -161,11 +329,35 @@ export default {
           error;
         });
     },
+    parsingDate(beforeDate) {
+      let afterDate = '';
+      let month = '';
+      let day = '';
+
+      afterDate = beforeDate.substring(2, 4) + '년 ';
+
+      if (beforeDate.charAt(5) == '0') {
+        month = beforeDate.charAt(6);
+      } else {
+        month = beforeDate.substring(5, 7);
+      }
+
+      if (beforeDate.charAt(8) == '0') {
+        day = beforeDate.charAt(9);
+      } else {
+        day = beforeDate.substring(8, 10);
+      }
+
+      afterDate = afterDate + month + '월 ' + day + '일';
+
+      return afterDate;
+    },
     getComments() {
       var params = new URLSearchParams();
       params.append('bno', this.bno);
       params.append('email', window.sessionStorage.getItem('user-email'));
       axios.post('getCommentList', params).then((resp) => {
+        // console.log('★★★★★★★★★★★', resp);
         this.comments = resp.data.comments;
         var writerList = resp.data.writerList;
         var isWriterList = resp.data.isWriterList;
@@ -173,6 +365,10 @@ export default {
         for (var i = 0; i < this.comments.length; i++) {
           this.comments[i].writerName = writerList[i];
           this.comments[i].isWriter = isWriterList[i];
+          this.comments[i].parsedDate = resp.data.comments[i].cdate.substring(
+            2,
+            16
+          );
         }
       });
     },
@@ -180,37 +376,41 @@ export default {
       var gno = this.article.bgno;
       this.$router.push({ name: 'GroupMainPage', params: { gno } });
     },
-    resetDatas() {
-      this.newCommentContent = '';
-      this.newTitle = this.article.btitle;
-      this.newContent = this.article.bcontent;
-    },
+    // resetDatas() {
+    //   this.newCommentContent = '';
+    //   this.newTitle = this.article.btitle;
+    //   this.newContent = this.article.bcontent;
+    // },
     writeComment() {
-      var params = new URLSearchParams();
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      params.append('ccontent', this.newCommentContent);
-      params.append('bno', this.bno);
+      if (this.newCommentContent != '') {
+        var params = new URLSearchParams();
+        params.append('email', window.sessionStorage.getItem('user-email'));
+        params.append('ccontent', this.newCommentContent);
+        params.append('bno', this.bno);
 
-      axios.post('writeComment', params).then((response) => {
-        alert(response.data.data);
-        this.getComments();
-        this.resetDatas();
-      });
+        axios.post('writeComment', params).then((response) => {
+          // alert(response.data.data);
+          this.getComments();
+          this.resetDatas();
+        });
+        this.newCommentContent = '';
+      }
     },
     modifyComment(cno) {
       var params = new URLSearchParams();
       params.append('cno', cno);
       params.append('ccontent', this.newCommentContent);
       axios.post('modifyComment', params).then((resp) => {
-        alert(resp.data.data);
+        // alert(resp.data.data);
         this.getComments();
+        this.editModal = false;
       });
     },
     delComment(cno) {
       var params = new URLSearchParams();
       params.append('cno', cno);
       axios.post('delComment', params).then((resp) => {
-        alert(resp.data.data);
+        // alert(resp.data.data);
         this.getComments();
       });
     },

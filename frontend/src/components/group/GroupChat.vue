@@ -1,7 +1,6 @@
 <template>
   <v-container style="margin-bottom:40px;" id="scrollBody">
     <hr />
-
     <div v-for="(chat, idx) in chats" :key="idx">
       <br />
       <v-row

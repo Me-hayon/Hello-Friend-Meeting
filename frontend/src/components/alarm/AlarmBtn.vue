@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-menu v-model="menu" :close-on-content-click="false" offset-x>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn v-bind="attrs" v-on="on">
+        <v-btn icon v-bind="attrs" v-on="on" color="white">
           <v-badge
             :value="alarmLen != 0"
             color="deep-purple accent-4"
