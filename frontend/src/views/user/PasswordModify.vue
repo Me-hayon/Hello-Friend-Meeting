@@ -1,6 +1,9 @@
 <template>
   <div class="wrapC">
-    <h4 style="font-size: 1.5rem; margin-bottom: 100px">비밀번호 변경</h4>
+    <router-link to="/user/profile">
+      <v-icon>mdi-arrow-left</v-icon>
+    </router-link>
+    <h4 style="text-align:right">더 안전한 비밀번호로 바꿔봐요!</h4>
     <div class="input-with-label" style="margin-bottom: 30px">
       <input
         v-model="password"
@@ -46,9 +49,6 @@
       </div>
     </div>
     <div style="text-align: right">
-      <router-link to="/user/info">
-        <b-button style="height: auto" variant="warning">돌아가기</b-button>
-      </router-link>
       <b-button
         style="height: auto; margin-left: 10px"
         variant="success"
@@ -64,9 +64,10 @@ import PV from 'password-validator';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
-
+let tmp;
 export default {
   created() {
+    tmp = this;
     this.passwordSchema
       .is()
       .min(8)
@@ -93,6 +94,19 @@ export default {
         passwordConfirm: false,
       },
       isSubmit: false,
+      passwordRules: [
+        (v) => !!v || '비밀번호를 입력해주세요.',
+        (v) => (v && v.length >= 8) || '너무 짧으면 위험하지 않을까요? ㅠ.ㅠ',
+        (v) => /(?=.*[A-Za-z])/.test(v) || '문자도 포함해볼까요?',
+        (v) => /(?=.*\d)/.test(v) || '숫자를 꼭 포함해야 해요!',
+        (v) =>
+          /([!@$%])/.test(v) ||
+          '특수문자를 통해 더 안전한 비밀번호를 만들어요! [!@#$%]',
+      ],
+      passwordConfirmRules: [
+        (v) => !!v || '비밀번호를 입력해주세요.',
+        (v) => v == tmp.password || '비밀번호와 일치해야해요.',
+      ],
     };
   },
   watch: {
@@ -155,11 +169,18 @@ export default {
           .post('modify', params)
           .then(
             (response) => {
-              this.isSubmit = true;
-              storage.removeItem('auth-token');
-              storage.removeItem('user-email');
-              alert('비밀번호 변경이 완료되었습니다. 다시 로그인 해주세요.');
-              this.$router.push('/');
+              if (response.data['is-success']) {
+                this.isSubmit = true;
+                storage.removeItem('auth-token');
+                storage.removeItem('user-email');
+                alert('비밀번호 변경이 완료되었습니다. 다시 로그인 해주세요.');
+                this.$router.push('/');
+              } else {
+                this.password = '';
+                this.newPassword = '';
+                this.passwordConfirm = '';
+                alert('비밀번호가 틀린것같아요 ㅠ.ㅠ');
+              }
             },
             (error) => {
               this.isSubmit = true;

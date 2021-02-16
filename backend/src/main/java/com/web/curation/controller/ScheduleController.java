@@ -74,7 +74,7 @@ public class ScheduleController {
 				continue;
 			Alarm alarm=new Alarm();
 			alarm.setAtype(1);
-			alarm.setAurl("isGroupMember");
+			alarm.setAurl("GroupMainPage");
 			alarm.setAurlNo(schedule.getSgno());
 			alarm.setAuser(Integer.parseInt(s));
 			alarm.setCreateUser(schedule.getSmaster());
