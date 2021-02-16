@@ -47,6 +47,12 @@ export default {
   },
   setIsWriter: function (state, payload) {
     state.isWriter=payload
+  },
+  setFeedCreatedTime: function (state) {
+    state.feedCreatedTime++;
+  },
+  resetFeedCreatedTime: function (state) {
+    state.feedCreatedTime = 0;
   }
 };
 

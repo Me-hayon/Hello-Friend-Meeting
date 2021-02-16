@@ -20,7 +20,11 @@
     <v-divider></v-divider>
 
     <!-- 사용자 활동 기록 -->
-    <user-history v-if="!isLoadingProfileImg" :currProfileImg="profileImg" />
+    <user-history
+      v-if="!isLoadingProfileImg"
+      :currProfileImg="profileImg"
+      :timelines="timelines"
+    />
   </v-container>
 </template>
 
@@ -49,6 +53,7 @@ export default {
       profileImg: '',
       pImages: [],
       isLoadingProfileImg: true,
+      timelines: [],
     };
   },
   created() {
@@ -78,6 +83,8 @@ export default {
           this.pImages[i] = this.pImages[i].split('.')[0];
           if (this.pImages[i] == this.profileImg) this.pImages.splice(i--, 1);
         }
+        if (response.data.timelineExist)
+          this.timelines = response.data.timeline;
 
         this.isLoadingProfileImg = false;
       })

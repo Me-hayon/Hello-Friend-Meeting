@@ -28,6 +28,7 @@ import com.web.curation.model.entity.Naegi;
 import com.web.curation.model.entity.NaegiParticipant;
 import com.web.curation.model.entity.Schedule;
 import com.web.curation.model.entity.ScheduleParticipant;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
@@ -39,6 +40,7 @@ import com.web.curation.model.repository.NaegiParticipantRepository;
 import com.web.curation.model.repository.NaegiRepository;
 import com.web.curation.model.repository.ScheduleParticipantRepository;
 import com.web.curation.model.repository.ScheduleRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -77,6 +79,10 @@ public class GroupController {
 	
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
+	
+
+	@Autowired
+	TimelineRepository timelineRepository;
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {
@@ -244,7 +250,14 @@ public class GroupController {
 		groupParticipant.setGno(groupInfo.getGno());
 		groupParticipant.setUno(gmaster);
 		groupParticipantRepository.save(groupParticipant);
+		
+		
 
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("그룹생성");
+		timeline.setTcontentSecond(gname);
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		if(gboundary!=0) {
 			List<FriendInfo> friendList=getFriendList(gmaster);
@@ -390,6 +403,13 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
+		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {
 			for(Schedule s:schedules.get()) {
@@ -545,6 +565,14 @@ public class GroupController {
 		groupParticipant.setGno(gno);
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
+		
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(uno);
+		timelineRepository.save(timeline);
+				
 		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {

@@ -248,10 +248,12 @@ export default {
     ],
     passwordRules: [
       (v) => !!v || '비밀번호를 입력해주세요.',
-      (v) => (v && v.length >= 5) || 'Password must have 5+ characters',
-      // (v) => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character',
-      (v) => /(?=.*\d)/.test(v) || 'Must have one number',
-      (v) => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]',
+      (v) => (v && v.length >= 8) || '너무 짧으면 위험하지 않을까요? ㅠ.ㅠ',
+      (v) => /(?=.*[A-Za-z])/.test(v) || '문자도 포함해볼까요?',
+      (v) => /(?=.*\d)/.test(v) || '숫자를 꼭 포함해야 해요!',
+      (v) =>
+        /([!@$%])/.test(v) ||
+        '특수문자를 통해 더 안전한 비밀번호를 만들어요! [!@#$%]',
     ],
     passwordConfirmRules: [
       (v) => !!v || '비밀번호를 입력해주세요.',

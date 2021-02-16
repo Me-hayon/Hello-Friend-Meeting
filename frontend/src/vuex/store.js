@@ -17,6 +17,7 @@ const state = {
   vuexMemberStatus: { type: Number },
   vuexBno: { type: Number },
   isWriter: { type: Boolean },
+  feedCreatedTime:0
 };
 function initEvent() {
   return {
