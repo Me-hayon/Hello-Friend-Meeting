@@ -465,9 +465,9 @@ public class GroupController {
 	}
 	
 	@PostMapping("/denyInviteGroup")
-	public Object denyInviteGroup(@RequestParam int uno, @RequestParam int gno) {
+	public Object denyInviteGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
-		
+		int uno=userInfoRepository.findByEmail(email).getUno();
 		Optional<GroupApply> groupApply=groupApplyRepository.findByUnoAndGno(uno, gno);
 		if(groupApply.isPresent()) 
 			groupApplyRepository.delete(groupApply.get());
