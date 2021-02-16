@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <div>
     <v-subheader>나의 활동</v-subheader>
     <v-timeline>
       <v-timeline-item v-for="timeline in timelines" :key="timeline.tno" large>
@@ -11,17 +11,17 @@
           </v-avatar>
         </template>
         <template v-slot:opposite>
-          <span>{{ timeline.tdate }}</span>
+          <span>{{ parsingDate(timeline.tdate) }}</span>
         </template>
         <v-card class="elevation-2">
-          <v-card-title class="headline"
-            >이날엔 무슨일이 있었을까요?</v-card-title
+          <v-card-text style="text-align:center">
+            {{ timeline.tcontent }}
+            <strong> {{ timeline.tcontentSecond }}</strong></v-card-text
           >
-          <v-card-text>{{ timeline.tcontent }}</v-card-text>
         </v-card>
       </v-timeline-item>
     </v-timeline>
-  </v-row>
+  </div>
 </template>
 
 <script>
@@ -31,6 +31,20 @@ export default {
     return {
       profileImg: this.currProfileImg,
     };
+  },
+  methods: {
+    parsingDate(beforeDate) {
+      let afterDate = '';
+      let month = '';
+      let day = '';
+
+      afterDate = beforeDate.substring(0, 4) + '년 ';
+      month = beforeDate.substring(5, 7);
+      day = beforeDate.substring(8, 10);
+      afterDate = afterDate + month + '월 ' + day + '일';
+
+      return afterDate;
+    },
   },
 };
 </script>

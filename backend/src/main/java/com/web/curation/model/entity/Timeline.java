@@ -27,5 +27,6 @@ public class Timeline {
 	@Column(insertable=false,updatable=false)
 	private String tdate;
 	private String tcontent;
-
+	private String tcontentSecond;
+	
 }

@@ -133,22 +133,17 @@ public class FriendInfoController {
 		friendInfoRepository.save(fi);
 		result.data = "친구 요청을 수락했습니다.";
 		
-		StringBuilder sbTime=new StringBuilder();
-		sbTime.append(friendInfo.getUname());
-		sbTime.append("님과 친구가 된 날이에요! 새로운 친구가 생긴걸 축하드려요!");
 		
 		Timeline timeline=new Timeline();
-		timeline.setTcontent(sbTime.toString());
+		timeline.setTcontent("친구");
+		timeline.setTcontentSecond(friendInfo.getUname());
 		timeline.setUno(myInfo.getUno());
 		timelineRepository.save(timeline);
 		
 		
-		sbTime=new StringBuilder();
-		sbTime.append(myInfo.getUname());
-		sbTime.append("님과 친구가 된 날이에요! 새로운 친구가 생긴걸 축하드려요!");
-		
 		timeline=new Timeline();
-		timeline.setTcontent(sbTime.toString());
+		timeline.setTcontent("친구");
+		timeline.setTcontentSecond(myInfo.getUname());		
 		timeline.setUno(friendInfo.getUno());
 		timelineRepository.save(timeline);
 

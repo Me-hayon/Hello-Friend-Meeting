@@ -107,7 +107,8 @@ public class UserInfoController {
 
 		userInfoRepository.save(userInfo);
 		Timeline timeline=new Timeline();
-		timeline.setTcontent("헬프미의 새로운 회원이 되셨어요!");
+		timeline.setTcontent("");
+		timeline.setTcontentSecond("회원가입");
 		timeline.setUno(userInfo.getUno());
 		timelineRepository.save(timeline);
 		

@@ -250,14 +250,11 @@ public class GroupController {
 		groupParticipant.setUno(gmaster);
 		groupParticipantRepository.save(groupParticipant);
 		
-		StringBuilder sbTime=new StringBuilder();
-		sbTime.append("새 그룹을 만든 날이네요! ");
-		sbTime.append(gname);
-		sbTime.append("그룹에는 친구들이 많이 들어왔나요?");
-		String tcontent=sbTime.toString();
 		
+
 		Timeline timeline=new Timeline();
-		timeline.setTcontent(tcontent);
+		timeline.setTcontent("그룹생성");
+		timeline.setTcontentSecond(gname);
 		timeline.setUno(myInfo.getUno());
 		timelineRepository.save(timeline);
 		
@@ -405,12 +402,10 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
-		StringBuilder sbTime=new StringBuilder();
-		sbTime.append(groupInfo.getGname());
-		sbTime.append("그룹에 가입한 날이네요. 새로운 친구들은 많이 사귀셨나요?");
 		
 		Timeline timeline=new Timeline();
-		timeline.setTcontent(sbTime.toString());
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
 		timeline.setUno(myInfo.getUno());
 		timelineRepository.save(timeline);
 		
@@ -570,12 +565,10 @@ public class GroupController {
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
 		
-		StringBuilder sbTime=new StringBuilder();
-		sbTime.append(groupInfo.getGname());
-		sbTime.append("그룹에 가입한 날이네요. 새로운 친구들은 많이 사귀셨나요?");
 		
 		Timeline timeline=new Timeline();
-		timeline.setTcontent(sbTime.toString());
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
 		timeline.setUno(uno);
 		timelineRepository.save(timeline);
 				
