@@ -69,6 +69,7 @@ export default [
     path: '/group',
     name: 'GroupMainPage',
     component: GroupMainPage,
+    props: true,
   },
 
   {

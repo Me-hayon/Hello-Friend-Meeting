@@ -8,9 +8,9 @@
     <!-- 상단 바 -->
     <v-toolbar
       width="100%"
+      elevation="0"
       :height="toolbarHeight"
       :absolute="true"
-      elevation="0"
       dense
     >
       <v-row no-gutters>
