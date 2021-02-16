@@ -25,7 +25,7 @@
 
           <div
             style="position:absolute; top:50%; right:3%;
-                transform: translate(0%, -50%);"
+                transform: translate(0%, -50%); "
           >
             <v-btn @click="acceptApplier(applier.uno)">수락</v-btn>
             <v-btn @click="denyApplier(applier.uno)">거절</v-btn>
@@ -41,10 +41,10 @@
       <h5 style="margin:30px;">그룹 멤버</h5>
       <ol
         style="margin: 0; padding:0; "
-        v-for="member in memberList"
+        v-for="member in sortedMemberList"
         :key="member.uno"
       >
-        <v-dialog v-model="dialog" width="300">
+        <v-dialog v-model="dialog" width="350">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               style="color:black; height:60px; width:100%;"
@@ -83,25 +83,29 @@
             </v-btn>
           </template>
           <v-card>
-            <v-card-title class="headline grey lighten-2"> 관리 </v-card-title>
-            <div
-              style="height:100px; display:flex; justify-content: center; align-items:center"
-            >
-              <v-btn
-                @click="banishMember(member.uno)"
-                v-if="memberStatus === 4 && email != member.email"
-              >
-                추방
-              </v-btn>
-              <v-btn
-                @click="changeGmaster(member.uno)"
-                v-if="memberStatus === 4 && email != member.email"
-              >
-                새 그룹장으로 임명
-              </v-btn>
-              <v-btn v-if="email === member.email" @click="getoutGroup()">
-                탈퇴
-              </v-btn>
+            <v-card-title class="headline" style="background-color:#ebccf3">
+              {{ member.uname }}
+            </v-card-title>
+            <div style="height:100px; ">
+              <h6><v-icon>mdi-email</v-icon>{{ member.email }}</h6>
+              <h6><v-icon>mdi-cellphone</v-icon>{{ member.tel }}</h6>
+              <div style="display:flex; justify-content: space-around">
+                <v-btn
+                  @click="banishMember(member.uno)"
+                  v-if="memberStatus === 4 && email != member.email"
+                >
+                  추방
+                </v-btn>
+                <v-btn
+                  @click="changeGmaster(member.uno)"
+                  v-if="memberStatus === 4 && email != member.email"
+                >
+                  새 그룹장으로 임명
+                </v-btn>
+                <v-btn v-if="email === member.email" @click="getoutGroup()">
+                  탈퇴
+                </v-btn>
+              </div>
             </div></v-card
           >
         </v-dialog>
@@ -154,7 +158,7 @@ export default {
       applierList: [],
       email: window.sessionStorage.getItem("user-email"),
       unoOfGmaster: 0,
-      dialog: false,
+      // dialog: false,
     };
   },
   created() {
@@ -185,37 +189,41 @@ export default {
       axios.post("unoOfGmaster", params).then((resp) => {
         this.unoOfGmaster = resp.data.gmasterUno;
         console.log("그룹장 유저넘버", this.unoOfGmaster);
-      });
-      axios
-        .post("getUserListInGroup", params)
-        .then((response) => {
-          this.memberList = response.data.userList;
-          console.log("정렬하기전멤버리스트", this.memberList);
+        axios
+          .post("getUserListInGroup", params)
+          .then((response) => {
+            this.memberList = response.data.userList;
+            console.log("정렬하기전멤버리스트", this.memberList);
+            this.sortedMemberList = [];
 
-          for (let i = 0; i < this.memberList.length; i++) {
-            if (this.memberList[i].uno === this.unoOfGmaster) {
-              this.sortedMemberList.push(this.memberlist[i]);
-              console.log("첫번째포문", this.memberList[i]);
+            for (let i = 0; i < this.memberList.length; i++) {
+              if (this.memberList[i].uno === this.unoOfGmaster) {
+                this.sortedMemberList.push(this.memberList[i]);
+                console.log("첫번째포문", this.memberList[i]);
+              }
             }
-          }
-          for (let i = 0; i < this.memberList.length; i++) {
-            if (this.memberList[i].email === this.email) {
-              this.sortedMemberList.push(this.memberlist[i]);
+            for (let i = 0; i < this.memberList.length; i++) {
+              if (
+                this.memberList[i].email === this.email &&
+                this.memberList[i].uno != this.unoOfGmaster
+              ) {
+                this.sortedMemberList.push(this.memberList[i]);
+              }
             }
-          }
-          for (let i = 0; i < this.memberList.length; i++) {
-            if (
-              this.memberList[i].uno !== this.unoOfGmaster &&
-              this.memberList[i].email === this.email
-            ) {
-              this.sortedMemberList.push(this.memberlist[i]);
+            for (let i = 0; i < this.memberList.length; i++) {
+              if (
+                this.memberList[i].uno != this.unoOfGmaster &&
+                this.memberList[i].email != this.email
+              ) {
+                this.sortedMemberList.push(this.memberList[i]);
+              }
             }
-          }
-          console.log("정렬된 멤버리스트", this.sortedMemberList);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+            console.log("정렬된 멤버리스트", this.sortedMemberList);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
       axios
         .post("getGroupApplier", params)
         .then((response) => {
