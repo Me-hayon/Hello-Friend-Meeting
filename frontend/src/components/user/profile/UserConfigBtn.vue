@@ -31,7 +31,7 @@
     </v-speed-dial>
 
     <!-- 회원탈퇴 모달 -->
-    <v-dialog v-model="deleteModal" persistent max-width="300">
+    <v-dialog v-model="deleteModal" persistent>
       <v-card>
         <v-card-title>
           <span>회원탈퇴</span>
@@ -56,7 +56,7 @@
             <v-btn
               color="warning"
               class="font-weight-black"
-              :disabled="!valid"
+              :disabled="!deleteUserValid"
               @click="deleteAlertModal = !deleteAlertModal"
             >
               탈퇴하기
@@ -67,7 +67,7 @@
     </v-dialog>
 
     <!-- 회원탈퇴 경고 모달 -->
-    <v-dialog v-model="deleteAlertModal" persistent max-width="270px">
+    <v-dialog v-model="deleteAlertModal" width="270" persistent>
       <v-card>
         <v-card-title>
           <span>정말 탈퇴하시겠습니까?</span>
@@ -78,7 +78,7 @@
               color="error"
               class="font-weight-black"
               style="margin-right: 10px;"
-              :disabled="!valid"
+              :disabled="!deleteUserValid"
               @click="deleteUser"
             >
               확인
@@ -105,7 +105,7 @@ export default {
       deleteAlertModal: false,
       password: '',
       passwordShow: false,
-      valid: false,
+      deleteUserValid: false,
     };
   },
   methods: {
@@ -143,8 +143,9 @@ export default {
     },
     password(password) {
       console.log(password);
-      if (password == null || password.length == 0) this.valid = false;
-      else this.valid = true;
+      if (password == null || password.length == 0)
+        this.deleteUserValid = false;
+      else this.deleteUserValid = true;
     },
   },
 };

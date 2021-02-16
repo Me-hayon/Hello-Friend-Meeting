@@ -25,5 +25,5 @@ export default {
   },
   getCalendar:function(state){
     return state.calendar;
-  }
+  },
 };

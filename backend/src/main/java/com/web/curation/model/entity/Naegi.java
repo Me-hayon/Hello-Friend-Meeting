@@ -17,23 +17,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GroupInfo {
+public class Naegi {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int gno;
+	private int nno;
 	
-	private int gmaster;
-	private String gname;
-	private int gcategory;
-	private String guserList;
-	
-	@Column(insertable=false,updatable=false)
-	private String gdate;
-	
-	private int gboundary;//0:비공개(초대만), 1:친구까지 공개, 2:친구의친구까지 공개
-	private String gdesc;
-	
+	private String ntitle;
+	private int ngno;
+	private int nmaster;
+	private String ncontent;
+	private String nreward;
+	private String nenddate;
 	@Column(insertable=false)
-	private String gimg;
+	private int nresult;//0:아직결과안나옴,1:성공,2:실패,3:무승부(취소)
+
 }

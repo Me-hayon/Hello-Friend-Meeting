@@ -186,7 +186,6 @@ export default {
         .then((response) => {
           this.alarms = response.data.alarms;
           this.alarmLen = response.data.notReadAlarm;
-          console.log(this.alarms);
         })
         .catch((error) => {
           console.log(error);
