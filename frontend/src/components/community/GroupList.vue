@@ -1,167 +1,127 @@
-<template
-  ><div>
-    <v-simple-table style="margin-top:50px; margin-bottom:70px">
-      <template v-slot:default>
-        <tbody>
-          <tr
-            style="height:100px"
-            v-for="item in groups"
-            :key="item.gname"
-            @click="goToGroupPage(item.gno)"
-          >
-            <td>{{ item.gname }}</td>
-            <td>
-              <i style="margin-right:10px" class="material-icons"
-                ><font-awesome-icon :icon="['far', 'user']"/></i
-              >{{ item.members }}
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
-    <button v-b-modal.modal-center class="add-group-btn">그룹+</button>
-    <b-modal id="modal-center" centered title="그룹생성" @ok="makeGroup">
-      <b-row style="margin-bottom:25px">
-        <b-col style="margin-top:10px">그룹명</b-col>
-        <b-col
-          ><b-form-input v-model="gname" type="text" class="groupName"
-        /></b-col>
-      </b-row>
-      <b-row style="margin-bottom:25px">
-        <b-col>카테고리</b-col>
-        <b-col>
-          <b-form-select v-model="selectedCategory">
-            <option
-              :value="item.cno"
-              v-for="item in category"
-              :key="item.cno"
-              >{{ item.cname }}</option
-            >
-          </b-form-select>
-        </b-col>
-      </b-row>
-      <b-row style="margin-bottom:25px">
-        <b-col>노출범위</b-col>
-        <b-form-radio-group>
-          <b-col>
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="1"
-                  >친구만</b-form-radio
-                >
-              </b-col>
-            </b-row>
+<template>
+  <v-row class="ma-0 overflow-y-auto" style="height: 639px;" no-gutters>
+    <v-col>
+      <!-- 상단 바 -->
+      <v-toolbar elevation="0" dense>
+        <v-btn icon x-large>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
 
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="2"
-                  >친구의친구까지</b-form-radio
-                >
-              </b-col>
-            </b-row>
+        <v-spacer></v-spacer>
 
-            <b-row>
-              <b-col>
-                <b-form-radio v-model="boundary" name="drone" value="0"
-                  >비공개</b-form-radio
-                >
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-form-radio-group>
-      </b-row>
-    </b-modal>
-  </div>
+        <v-btn icon>
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <!-- 그룹 목록 -->
+      <v-row class="pa-4 overflow-y-auto" style="height: 591px;" no-gutters>
+        <v-col>
+          <v-row v-for="row in groupListRow" :key="'row-' + row" no-gutters>
+            <template v-if="row != groupListRow">
+              <v-col
+                v-for="col in 4"
+                :key="'col-' + 4 * (row - 1) + (col - 1)"
+                cols="3"
+              >
+                <v-row justify="center" no-gutters>
+                  <v-col align="center">
+                    <v-btn
+                      @click="moveGroup(4 * (row - 1) + (col - 1))"
+                      depressed
+                      fab
+                    >
+                      <v-img
+                        width="50"
+                        :src="
+                          require(`@/assets/images/group-img/${
+                            groups[4 * (row - 1) + (col - 1)].gimg
+                          }.png`)
+                        "
+                      ></v-img>
+                    </v-btn>
+                    <p>
+                      {{ groups[4 * (row - 1) + (col - 1)].gname }}
+                    </p>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </template>
+            <template v-else>
+              <v-col
+                v-for="col in groups.length % 4"
+                :key="'col-' + 4 * (row - 1) + (col - 1)"
+                cols="3"
+              >
+                <v-row justify="center" no-gutters>
+                  <v-col align="center">
+                    <v-btn
+                      @click="moveGroup(4 * (row - 1) + (col - 1))"
+                      depressed
+                      fab
+                    >
+                      <v-img
+                        width="50"
+                        :src="
+                          require(`@/assets/images/group-img/${
+                            groups[4 * (row - 1) + (col - 1)].gimg
+                          }.png`)
+                        "
+                      ></v-img>
+                    </v-btn>
+                    <p>
+                      {{ groups[4 * (row - 1) + (col - 1)].gname }}
+                    </p>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </template>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-row>
+
+  <!-- 그룹이 존재하지 않을 경우 -->
+  <!-- <v-row v-else class="ma-0" style="height: 639px;" justify="center">
+    <v-icon color="red" size="100">mdi-close-circle</v-icon>
+  </v-row> -->
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
-  created() {
-    this.getGroupList();
-    axios
-      .post("getCategory")
-      .then((response) => {
-        this.category = response.data.list;
-
-        console.log("this is category");
-        console.log(this.category);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
+  props: ['groupList', 'categoryList', 'friendList'],
   data() {
     return {
-      groupMembers: [],
-      groups: [],
-      category: [],
-      boundary: "",
-      selectedCategory: "",
-      gname: "",
+      groups: this.groupList,
+      categories: this.categoryList,
+      friends: this.friendList,
+      groupListRow: 0,
+      groupListcol: 4,
+      icons: [
+        'mdi-controller-classic',
+        'mdi-book-open-page-variant',
+        'mdi-soccer',
+        'mdi-music-note',
+        'mdi-hand-shake',
+        'mdi-food-turkey',
+        'mdi-face-woman-shimmer',
+      ],
     };
   },
+  created() {
+    this.groupListRow =
+      this.groups.length % 4 == 0
+        ? parseInt(this.groups.length / 4)
+        : parseInt(this.groups.length / 4) + 1;
+  },
   methods: {
-    getGroupList() {
-      var storage = window.sessionStorage;
-      var params = new URLSearchParams();
-
-      params.append("email", storage.getItem("user-email"));
-      axios
-        .post("getGroupList", params)
-        .then((response) => {
-          this.groups = response.data.groupList;
-          for (var i = 0; i < this.groups.length; i++) {
-            this.groups[i].members =
-              this.groups[i].guserList.split(" ").length - 1;
-          }
-
-          console.log("this is groups");
-          console.log(this.groups);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    goToGroupPage(gno) {
-      this.$store.commit("setGno", gno);
-      this.$router.push("/group");
-    },
-    makeGroup() {
-      var storage = window.sessionStorage;
-      var params = new URLSearchParams();
-      params.append("email", storage.getItem("user-email"));
-      params.append("gname", this.gname);
-      params.append("gcategory", this.selectedCategory);
-      params.append("gboundary", this.boundary);
-
-      axios
-        .post("makeGroup", params)
-        .then((response) => {
-          alert(response.data.data);
-          this.getGroupList();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    moveGroup(index) {
+      this.$store.commit('setGno', this.groups[index].gno);
+      this.$router.push('/group');
     },
   },
 };
 </script>
 
-<style>
-.add-group-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-color: blue;
-  font-size: 20px;
-  color: white;
-  text-align: center;
-
-  position: fixed;
-  right: 5%;
-  bottom: 10%;
-}
-</style>
+<style></style>

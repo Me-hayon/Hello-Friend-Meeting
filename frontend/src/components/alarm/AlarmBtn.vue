@@ -24,14 +24,7 @@
 
             <v-list-item-content>
               <v-list-item-title>{{ userInfo.uname }}</v-list-item-title>
-              <v-list-item-subtitle>{{ userInfo.utel }}</v-list-item-subtitle>
             </v-list-item-content>
-
-            <!-- <v-list-item-action>
-            <v-btn :class="fav ? 'red--text' : ''" icon @click="fav = !fav">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-          </v-list-item-action> -->
           </v-list-item>
         </v-list>
 
@@ -60,10 +53,7 @@
             style="margin: 0;"
           >
             <v-col cols="9" style="padding: 0;">
-              <v-list-item
-                @click="goRouting(alarm.aurl, alarm.aurlNo, alarm.ano)"
-                style="padding-right: 0;"
-              >
+              <v-list-item @click="goRouting(alarm)" style="padding-right: 0;">
                 <v-list-item-title style="letter-spacing: -1px;">
                   {{ alarm.asummary }}
                 </v-list-item-title>
@@ -98,6 +88,10 @@ export default {
       imgPath: '',
       alarmLen: '',
       offset: true,
+      categoryList: [],
+      isLoadingUser: true,
+      isLoadingAlarms: true,
+      isloadingCategoryList: true,
     };
   },
 
@@ -114,8 +108,19 @@ export default {
         this.userInfo.uname = response.data['user-name'];
         this.userInfo.utel = response.data['user-tel'];
         this.userInfo.uprofileImg = response.data['profile-img'];
-        console.log(this.userInfo.uprofileImg);
+        this.userInfo.uno = response.data['user-uno'];
         this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
+        this.isLoadingUser = false;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get('getCategory')
+      .then((response) => {
+        this.categories = response.data.categories;
+        this.isloadingCategoryList = false;
       })
       .catch((error) => {
         console.log(error);
@@ -131,15 +136,22 @@ export default {
   },
 
   methods: {
-    goRouting(aurl, myParam, ano) {
-      this.readAlarm(ano);
+    goRouting(alarm) {
+      this.readAlarm(alarm);
 
       var params = new URLSearchParams();
-      if (aurl === 'FriendInfo') {
-        this.$store.commit('setUno', myParam);
-        this.$router.push('/user/friend-info').catch(() => {});
-      } else if (aurl === 'GroupMainPage') {
-        var gno = myParam;
+      if (alarm.aurl === 'FriendInfo') {
+        this.menu = false;
+        this.$router.push({
+          name: 'FriendProfile',
+          params: {
+            myUno: this.userInfo.uno,
+            friendUno: alarm.aurlNo,
+            categoryList: this.categoryList,
+          },
+        });
+      } else if (alarm.aurl === 'GroupMainPage') {
+        var gno = alarm.aurlNo;
         params.append('email', window.sessionStorage.getItem('user-email'));
         params.append('gno', gno);
         axios
@@ -152,8 +164,8 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-      } else if (aurl === 'BoardDetail') {
-        var bno = myParam;
+      } else if (alarm.aurl === 'BoardDetail') {
+        var bno = alarm.aurlNo;
         params.append('bno', bno);
         params.append('email', window.sessionStorage.getItem('user-email'));
         axios.post('boardDetail', params).then((resp) => {
@@ -186,26 +198,11 @@ export default {
         .then((response) => {
           this.alarms = response.data.alarms;
           this.alarmLen = response.data.notReadAlarm;
-          console.log(this.alarms);
+          this.isLoadingAlarms = false;
         })
         .catch((error) => {
           console.log(error);
         });
-
-      if (this.userInfo.uprofileImg === 'not') {
-        axios
-          .post('profile', params)
-          .then((response) => {
-            this.userInfo.uname = response.data['user-name'];
-            this.userInfo.utel = response.data['user-tel'];
-            this.userInfo.uprofileImg = response.data['profile-img'];
-            console.log(this.userInfo.uprofileImg);
-            this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
     },
     delAlarm(ano) {
       var params = new URLSearchParams();
@@ -216,47 +213,32 @@ export default {
         .then((response) => {
           console.log(ano);
           this.getAlarmsList();
-          // this.reloadAlarm();
-          // alert('삭제됨');
         })
         .catch((error) => {
           alert('에러');
           console.log(ano);
         });
     },
-    readAlarm(ano) {
+    readAlarm(alarm) {
       var params = new URLSearchParams();
-      params.append('ano', ano);
-      axios.post('readAlarm', params).then((resp) => {
-        params = new URLSearchParams();
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        axios
-          .post('getAlarms', params)
-          .then((response) => {
-            this.alarms = response.data.alarms;
-            this.alarmLen = response.data.notReadAlarm;
-            // console.log(this.alarms);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      });
-    },
-    // reloadAlarm() {
-    //   var storage = window.sessionStorage;
-    //   var params = new URLSearchParams();
-    //   params.append('email', storage.getItem('user-email'));
+      params.append('ano', alarm.ano);
 
-    //   axios
-    //     .post('getAlarms', params)
-    //     .then((response) => {
-    //       this.alarms = response.data;
-    //       this.alarmLen = response.data.alarms.length;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
+      if (!alarm.aisRead) {
+        axios.post('readAlarm', params).then((resp) => {
+          params = new URLSearchParams();
+          params.append('email', window.sessionStorage.getItem('user-email'));
+          axios
+            .post('getAlarms', params)
+            .then((response) => {
+              this.alarms = response.data.alarms;
+              this.alarmLen = response.data.notReadAlarm;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+      }
+    },
   },
 };
 </script>

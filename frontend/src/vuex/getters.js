@@ -22,5 +22,11 @@ export default {
   },
   getEvents: function (state) {
     return state.events
+  },
+  getCalendar:function(state){
+    return state.calendar;
+  },
+  getFeedCreatedTime: function (state) {
+    return state.feedCreatedTime
   }
 };

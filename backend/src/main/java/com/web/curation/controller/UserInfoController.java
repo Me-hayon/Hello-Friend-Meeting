@@ -27,9 +27,11 @@ import com.web.curation.config.JwtService;
 import com.web.curation.config.SensService;
 import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Comment;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CommentRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -50,6 +52,9 @@ public class UserInfoController {
 	
 	@Autowired
 	private CommentRepository commentRepository;
+	
+	@Autowired
+	private TimelineRepository timelineRepository;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 
@@ -101,6 +106,11 @@ public class UserInfoController {
 	public UserInfo join(@RequestBody UserInfo userInfo) {
 
 		userInfoRepository.save(userInfo);
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("");
+		timeline.setTcontentSecond("회원가입");
+		timeline.setUno(userInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		return userInfo;
 	}
@@ -168,6 +178,14 @@ public class UserInfoController {
 			resultMap.put("user-email", user.getEmail());
 			resultMap.put("profile-img", user.getUprofileImg());
 			resultMap.put("user-uno",user.getUno());
+			
+			Optional<List<Timeline>> timelines=timelineRepository.findAllByUno(user.getUno());
+			if(timelines.isPresent()) {
+				resultMap.put("timelineExist",true);
+				resultMap.put("timeline",timelines.get());
+			}
+			else
+				resultMap.put("timelineExist",false);
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 		} else {
 			resultMap.put("user-tel", "앗! 전화번호를 불러올 수 없어요.");
@@ -194,6 +212,36 @@ public class UserInfoController {
 		resultMap.put("data",user);
 		return resultMap;
 		
+	}
+	
+	@PostMapping("/findUserByUno")
+	public Object findUserByUno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<UserInfo> optUser = userInfoRepository.findById(Integer.parseInt(map.get("uno")));
+		
+		if(optUser.isPresent()) {
+			resultMap.put("user", optUser.get());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
+	}
+	
+	@PostMapping("/findUserByTel")
+	public Object findUserByTel(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<UserInfo> optUser = userInfoRepository.findByTel(map.get("tel"));
+		
+		if(optUser.isPresent()) {
+			resultMap.put("user", optUser.get());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+
+		return resultMap;
 	}
 	
 	@PostMapping("/findEmailByUno")
@@ -251,6 +299,21 @@ public class UserInfoController {
 		resultMap.put("data",user.getUname());
 		return resultMap;
 		
+	}
+	
+	@PostMapping("/findUno")
+	public Object findUno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		UserInfo user = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(user!=null) {
+			resultMap.put("uno", user.getUno());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
 	}
 	
 	/////////////////////////////////// 비밀번호 변경

@@ -17,23 +17,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GroupInfo {
+public class Timeline {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int gno;
-	
-	private int gmaster;
-	private String gname;
-	private int gcategory;
-	private String guserList;
-	
+	private int tno;
+
+	private int uno;
 	@Column(insertable=false,updatable=false)
-	private String gdate;
+	private String tdate;
+	private String tcontent;
+	private String tcontentSecond;
 	
-	private int gboundary;//0:비공개(초대만), 1:친구까지 공개, 2:친구의친구까지 공개
-	private String gdesc;
-	
-	@Column(insertable=false)
-	private String gimg;
 }

@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
@@ -122,12 +122,12 @@ export default {
       localCalendar: {
         sno: 1,
         sgno: { type: Number },
-        smaster: '',
-        senddate: '',
-        sstartdate: '',
-        stitle: '',
-        sspace: '',
-        scontent: '',
+        smaster: "",
+        senddate: "",
+        sstartdate: "",
+        stitle: "",
+        sspace: "",
+        scontent: "",
       },
     };
   },
@@ -136,16 +136,16 @@ export default {
       return this.$store.state.dialog;
     },
     calendar() {
-      return this.$store.state.calendar;
+      return this.$store.getters.getCalendar;
     },
   },
   methods: {
     setFormat() {
       this.localCalendar.sgno = this.$store.getters.getGno;
       this.localCalendar.senddate =
-        this.calendar.endDate + ' ' + this.calendar.endTime + ':00';
+        this.calendar.endDate + " " + this.calendar.endTime + ":00";
       this.localCalendar.sstartdate =
-        this.calendar.startDate + ' ' + this.calendar.startTime + ':00';
+        this.calendar.startDate + " " + this.calendar.startTime + ":00";
       this.localCalendar.stitle = this.calendar.title;
       this.localCalendar.scontent = this.calendar.content;
     },
@@ -154,29 +154,30 @@ export default {
         this.setFormat();
 
         var params = new URLSearchParams();
-        params.append('startDate', this.localCalendar.sstartdate);
-        params.append('endDate', this.localCalendar.senddate);
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        params.append('gno', this.$store.getters.getGno);
-        params.append('title', this.localCalendar.stitle);
-        params.append('content', this.localCalendar.scontent);
+        params.append("startDate", this.localCalendar.sstartdate);
+        params.append("endDate", this.localCalendar.senddate);
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        params.append("gno", this.$store.getters.getGno);
+        params.append("title", this.localCalendar.stitle);
+        params.append("content", this.localCalendar.scontent);
 
-        axios.post('addSchedule', params).then((resp) => {
-          this.$store.commit('ADD_EVENT', resp.data.createdSchedule);
+        axios.post("addSchedule", params).then((resp) => {
+          this.$store.commit("ADD_EVENT", resp.data.createdSchedule);
+          this.close();
         });
       }
     },
     close() {
-      this.$store.commit('CLOSE_CALENDAR_DIALOG');
+      this.$store.commit("CLOSE_CALENDAR_DIALOG");
     },
     selectTime() {
       this.endTimer = false;
       this.startTimer = false;
     },
     allowedDates(val) {
-      let endDate = val.split('-').reduce((a, b) => a + b);
+      let endDate = val.split("-").reduce((a, b) => a + b);
       let startDate = this.calendar.startDate
-        .split('-')
+        .split("-")
         .reduce((a, b) => a + b);
       return endDate >= startDate;
     },

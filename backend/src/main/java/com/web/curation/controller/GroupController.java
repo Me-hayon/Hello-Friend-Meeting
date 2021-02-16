@@ -1,6 +1,8 @@
 package com.web.curation.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +11,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +24,11 @@ import com.web.curation.model.entity.FriendInfo;
 import com.web.curation.model.entity.GroupApply;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
+import com.web.curation.model.entity.Naegi;
+import com.web.curation.model.entity.NaegiParticipant;
+import com.web.curation.model.entity.Schedule;
+import com.web.curation.model.entity.ScheduleParticipant;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
@@ -26,6 +36,11 @@ import com.web.curation.model.repository.FriendInfoRepository;
 import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
 import com.web.curation.model.repository.GroupParticipantRepository;
+import com.web.curation.model.repository.NaegiParticipantRepository;
+import com.web.curation.model.repository.NaegiRepository;
+import com.web.curation.model.repository.ScheduleParticipantRepository;
+import com.web.curation.model.repository.ScheduleRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -52,6 +67,32 @@ public class GroupController {
 	
 	@Autowired
 	CategoryRepository categoryRepository;
+	
+	@Autowired
+	NaegiRepository naegiRepository;
+	
+	@Autowired
+	NaegiParticipantRepository naegiParticipantRepository;
+	
+	@Autowired
+	ScheduleRepository scheduleRepository;
+	
+	@Autowired
+	ScheduleParticipantRepository scheduleParticipantRepository;
+	
+
+	@Autowired
+	TimelineRepository timelineRepository;
+	
+	@PostMapping("/unoOfGmaster")
+	public Object unoOfGmaster(@RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		int gmaster=groupInfoRepository.findById(gno).get().getGmaster();
+		resultMap.put("gmasterUno",gmaster);
+		
+		return resultMap;
+	}
 	
 	@PostMapping("/isGroupMember")//0:미가입, 1:가입신청상태, 2:초대미수락상태, 3:그룹원, 4:그룹장
 	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
@@ -101,12 +142,12 @@ public class GroupController {
 		return resultMap;
 	}
 	
-	@PostMapping("/getCategory")
+	@GetMapping("/getCategory")
 	public Object getCategory() {
-		Map<String,Object> resultMap=new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 		
-		List<Category> list= categoryRepository.findAll();
-		resultMap.put("list",list);
+		List<Category> categories = categoryRepository.findAll();
+		resultMap.put("categories", categories);
 		
 		return resultMap;
 	}
@@ -138,20 +179,65 @@ public class GroupController {
 	}
 	
 	@PostMapping("/getGroupList")
-	public Object getGroupList(@RequestParam String email) {
+	public Object getGroupList(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
-
-		UserInfo userInfo = userInfoRepository.findByEmail(email);
-		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(userInfo.getUno());
-
-		List<Integer> gnoList = new ArrayList<>();
-
-		for (GroupParticipant gp : list)
-			gnoList.add(gp.getGno());
-
-		List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
-		resultMap.put("groupList", groupList);
 		
+		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
+		
+		if(userInfo!=null) {
+			List<GroupParticipant> list = groupParticipantRepository.findAllByUno(userInfo.getUno());
+			List<Integer> gnoList = new ArrayList<>();
+			
+			if(list.size()!=0) {
+				for (GroupParticipant gp : list)
+					gnoList.add(gp.getGno());
+				
+				List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
+				
+				if(groupList.size()!=0) {
+					resultMap.put("groupList", groupList);
+					resultMap.put("is-success", true);
+				}
+				else {
+					resultMap.put("is-success", false);
+				}
+			}
+			else {
+				resultMap.put("is-success", false);
+			}
+		}
+		else {
+			resultMap.put("is-success", false);
+		}
+		
+		return resultMap;
+	}
+	
+	@GetMapping("/getGroupList/{friendUno}")
+	public Object getGroupList(@PathVariable int friendUno) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(friendUno);
+		List<Integer> gnoList = new ArrayList<>();
+		
+		if(list.size()!=0) {
+			for (GroupParticipant gp : list)
+				gnoList.add(gp.getGno());
+			
+			List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
+			
+			if(groupList.size()!=0) {
+				resultMap.put("groupList", groupList);
+				resultMap.put("is-success", true);
+			}
+			else {
+				resultMap.put("is-success", false);
+			}
+		}
+		else {
+			resultMap.put("is-success", false);
+		}
+	
 		return resultMap;
 	}
 
@@ -174,7 +260,14 @@ public class GroupController {
 		groupParticipant.setGno(groupInfo.getGno());
 		groupParticipant.setUno(gmaster);
 		groupParticipantRepository.save(groupParticipant);
+		
+		
 
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("그룹생성");
+		timeline.setTcontentSecond(gname);
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		if(gboundary!=0) {
 			List<FriendInfo> friendList=getFriendList(gmaster);
@@ -320,6 +413,35 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
+		
+		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
+		if(schedules.isPresent()) {
+			for(Schedule s:schedules.get()) {
+				ScheduleParticipant sp=new ScheduleParticipant();
+				sp.setSno(s.getSno());
+				sp.setUno(myInfo.getUno());
+				scheduleParticipantRepository.save(sp);
+			}
+		}
+		
+		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		String nenddate=format.format(new Date());
+		Optional<List<Naegi>> naegis=naegiRepository.findAllByNgnoAndNenddateGreaterThanEqualOrderByNenddateAsc(gno, nenddate);
+		if(naegis.isPresent()) {
+			for(Naegi n:naegis.get()) {
+				NaegiParticipant np=new NaegiParticipant();
+				np.setNno(n.getNno());
+				np.setUno(myInfo.getUno());
+				naegiParticipantRepository.save(np);
+			}
+		}
+		
 		List<GroupParticipant> list = groupParticipantRepository.findAllByGno(gno);
 		StringBuilder sb = new StringBuilder();
 		for (GroupParticipant gp : list) {
@@ -353,9 +475,9 @@ public class GroupController {
 	}
 	
 	@PostMapping("/denyInviteGroup")
-	public Object denyInviteGroup(@RequestParam int uno, @RequestParam int gno) {
+	public Object denyInviteGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
-		
+		int uno=userInfoRepository.findByEmail(email).getUno();
 		Optional<GroupApply> groupApply=groupApplyRepository.findByUnoAndGno(uno, gno);
 		if(groupApply.isPresent()) 
 			groupApplyRepository.delete(groupApply.get());
@@ -379,45 +501,50 @@ public class GroupController {
 	}
 
 	@PostMapping("/applyGroup")
-	public Object applyGroup(@RequestParam String email, @RequestParam int gno) {
+	public Object applyGroup(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
-
-		UserInfo myInfo = userInfoRepository.findByEmail(email);
-
-		if(groupApplyRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
-			resultMap.put("data","이미 신청한 그룹입니다.");
+		
+		int uno = Integer.parseInt(map.get("uno"));
+		int gno = Integer.parseInt(map.get("gno"));
+		
+		if(groupApplyRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			resultMap.put("is-success", 2);
 			return resultMap;
 		}
-		else if(groupParticipantRepository.findByUnoAndGno(myInfo.getUno(), gno).isPresent()) {
-			resultMap.put("data","이미 가입된 그룹입니다.");
+		else if(groupParticipantRepository.findByUnoAndGno(uno, gno).isPresent()) {
+			resultMap.put("is-success", 3);
 			return resultMap;
 		}
 		
 		GroupApply groupApply = new GroupApply();
 		groupApply.setAisApply(true);
 		groupApply.setGno(gno);
-		groupApply.setUno(myInfo.getUno());
+		groupApply.setUno(uno);
 		
 		groupApplyRepository.save(groupApply);
 
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
-
-		Alarm alarm = new Alarm();
-		alarm.setAtype(0);
-		alarm.setAurl("GroupMainPage");
-		alarm.setAuser(groupInfo.getGmaster());
-		alarm.setCreateUser(myInfo.getUno());
-		alarm.setAurlNo(gno);
-		StringBuilder sb = new StringBuilder();
-		sb.append(myInfo.getUname());
-		sb.append("님이 ");
-		sb.append(groupInfo.getGname());
-		sb.append("그룹에 가입을 신청했습니다.");
-		alarm.setAsummary(sb.toString());
+		Optional<UserInfo> user = userInfoRepository.findById(uno);
 		
-		alarmRepository.save(alarm);
-
-		resultMap.put("data", "그룹에 가입 신청을 보냈습니다.");
+		if(user.isPresent()) {
+			Alarm alarm = new Alarm();
+			alarm.setAtype(0);
+			alarm.setAurl("GroupMainPage");
+			alarm.setAuser(groupInfo.getGmaster());
+			alarm.setCreateUser(uno);
+			alarm.setAurlNo(gno);
+			StringBuilder sb = new StringBuilder();
+			sb.append(user.get().getUname());
+			sb.append("님이 ");
+			sb.append(groupInfo.getGname());
+			sb.append("그룹에 가입을 신청했습니다.");
+			alarm.setAsummary(sb.toString());
+			
+			alarmRepository.save(alarm);
+			
+			resultMap.put("is-success", 1);
+		}
+		else resultMap.put("is-success", 0);
 
 		return resultMap;
 	}
@@ -448,6 +575,37 @@ public class GroupController {
 		groupParticipant.setGno(gno);
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
+		
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(uno);
+		timelineRepository.save(timeline);
+				
+		
+		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
+		if(schedules.isPresent()) {
+			for(Schedule s:schedules.get()) {
+				ScheduleParticipant sp=new ScheduleParticipant();
+				sp.setSno(s.getSno());
+				sp.setUno(uno);
+				scheduleParticipantRepository.save(sp);
+			}
+		}
+		
+		SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss");
+		String nenddate=format.format(new Date());
+		Optional<List<Naegi>> naegis=naegiRepository.findAllByNgnoAndNenddateGreaterThanEqualOrderByNenddateAsc(gno, nenddate);
+		if(naegis.isPresent()) {
+			for(Naegi n:naegis.get()) {
+				NaegiParticipant np=new NaegiParticipant();
+				np.setNno(n.getNno());
+				np.setUno(uno);
+				naegiParticipantRepository.save(np);
+			}
+		}
+		
 
 		List<GroupParticipant> gpList = groupParticipantRepository.findAllByGno(gno);
 

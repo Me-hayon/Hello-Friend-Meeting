@@ -1,10 +1,19 @@
 <template>
   <v-card flat tile>
     <v-row style="margin: 10px;">
-      <div style="font-size: 1.5rem;">
+      <!-- <div style="font-size: 1.5rem;">
         안녕하세요, <strong>{{ myName }}</strong
         >님!
+      </div> -->
+      <div class="text-center">
+        <v-snackbar v-model="snackbar" :timeout="timeout" rounded="pill"
+          ><div style="text-align:center">
+            안녕하세요, <strong>{{ myName }}</strong
+            >님!
+          </div>
+        </v-snackbar>
       </div>
+
       <div>친구들이 만든 그룹과 새로 등록된 일정을 볼 수 있어요.</div></v-row
     >
 
@@ -134,12 +143,17 @@ export default {
           profileImg: '',
         },
       ],
+      snackbar: false,
+      timeout: 3000,
       myName: '',
     };
   },
   created() {
     this.$store.commit('setIsHeader', true);
     this.$store.commit('setIsFooter', true);
+
+    if (this.$store.getters.getFeedCreatedTime === 0) this.snackbar = true;
+    this.$store.commit('setFeedCreatedTime');
 
     var params = new URLSearchParams();
     params.append('email', storage.getItem('user-email'));

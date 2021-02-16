@@ -1,11 +1,6 @@
 <template>
-  <v-card :height="height">
-    <v-tabs
-      class="fixed-tabs-bar"
-      v-model="tab"
-      background-color="transparent"
-      grow
-    >
+  <v-card style="padding:0">
+    <v-tabs class="group-bar" v-model="tab" background-color="white" grow>
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
       <v-tab>채팅</v-tab>
@@ -91,10 +86,10 @@ export default {
 </script>
 
 <style>
-.fixed-tabs-bar .v-tabs__bar {
-  position: -webkit-sticky;
+.group-bar {
+  position: -webkit-sticky; /* 사파리 브라우저 지원 */
   position: sticky;
-  top: 4rem;
+  top: 56px;
   z-index: 2;
 }
 </style>
