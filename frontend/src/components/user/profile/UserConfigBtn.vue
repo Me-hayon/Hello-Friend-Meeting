@@ -196,6 +196,7 @@ export default {
   },
   methods: {
     logout() {
+      this.$store.commit('resetFeedCreatedTime');
       storage.removeItem('auth-token');
       storage.removeItem('user-email');
       this.$router.push('/');
