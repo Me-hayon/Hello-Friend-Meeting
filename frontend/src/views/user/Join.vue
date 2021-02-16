@@ -321,7 +321,6 @@ export default {
         .post('authTel', params)
         .then((response) => {
           if (response.data['is-success']) {
-            this.isAuth = true;
             this.realAuthNum = response.data['realAuthNum'];
             alert('인증 번호를 전송했어요!');
           } else {
