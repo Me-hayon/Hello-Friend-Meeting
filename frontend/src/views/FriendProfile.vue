@@ -1,0 +1,67 @@
+<template>
+  <v-container v-if="friend != null" style="height: 600px;">
+    <!-- 프로필 커버 이미지 -->
+    <profile-cover />
+
+    <!-- 프로필 사진 -->
+    <v-btn style="top: 160px; left: 177px;" fab absolute disabled>
+      <v-img
+        contain
+        height="100"
+        :src="require(`@/assets/images/avatars/${friend.uprofileImg}.png`)"
+      ></v-img>
+    </v-btn>
+
+    <!-- 친구 관리 버튼 -->
+    <div style="margin-top: 45px;">
+      <friend-manage-btn :uno="myUno" :info="friend" />
+    </div>
+
+    <v-divider></v-divider>
+
+    <!-- 그룹 가입 목록 -->
+    <friend-group-list
+      :uno="myUno"
+      :info="friend"
+      :categoryList="categoryList"
+      :panelsHeight="300"
+    />
+  </v-container>
+</template>
+
+<script>
+import ProfileCover from '@/components/user/profile/ProfileCover.vue';
+import FriendManageBtn from '@/components/user/profile/FriendManageBtn.vue';
+import FriendGroupList from '@/components/user/profile/FriendGroupList.vue';
+import axios from 'axios';
+
+const storage = window.sessionStorage;
+
+export default {
+  components: {
+    ProfileCover,
+    FriendManageBtn,
+    FriendGroupList,
+  },
+  props: ['myUno', 'friendUno', 'categoryList'],
+  data() {
+    return {
+      friend: null,
+    };
+  },
+  created() {
+    axios
+      .post('findUserByUno', { uno: this.friendUno })
+      .then((response) => {
+        if (response.data['is-success']) this.friend = response.data.user;
+        else alert('친구 정보를 불러오는데 오류가 발생하였습니다.');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  methods: {},
+};
+</script>
+
+<style></style>

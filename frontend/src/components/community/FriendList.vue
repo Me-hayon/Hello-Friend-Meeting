@@ -8,9 +8,9 @@
     <!-- 상단 바 -->
     <v-toolbar
       width="100%"
+      elevation="0"
       :height="toolbarHeight"
       :absolute="true"
-      elevation="0"
       dense
     >
       <v-row no-gutters>
@@ -365,11 +365,22 @@ export default {
       friendProfileModal: false,
       friendInfo: null,
       addFriendModal: false,
+      myTel: '',
       friendTel: '',
       addFriendValid: false,
       addFriendSearchModal: false,
       addFriendInfo: null,
     };
+  },
+  created() {
+    axios
+      .post('findUserByUno', { uno: this.uno })
+      .then((response) => {
+        this.myTel = response.data.user.tel;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   mounted() {
     this.getAllHeaderTop();
@@ -660,19 +671,24 @@ export default {
     },
     addFriendSearchModal(addFriendSearchModal) {
       if (addFriendSearchModal) {
-        axios
-          .post('findUserByTel', { tel: this.friendTel })
-          .then((response) => {
-            if (response.data['is-success'])
-              this.addFriendInfo = response.data.user;
-            else {
-              alert('친구를 발견하지 못하였습니다.');
-              this.addFriendSearchModal = false;
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        if (this.myTel == this.friendTel) {
+          alert('자신의 번호를 입력하였습니다.');
+          this.addFriendSearchModal = false;
+        } else {
+          axios
+            .post('findUserByTel', { tel: this.friendTel })
+            .then((response) => {
+              if (response.data['is-success'])
+                this.addFriendInfo = response.data.user;
+              else {
+                alert('친구를 발견하지 못하였습니다.');
+                this.addFriendSearchModal = false;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
       } else this.addFriendInfo = null;
     },
   },

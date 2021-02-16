@@ -9,13 +9,14 @@ import Message from '@/views/message/Message.vue';
 import ErrorPage from '@/views/Error.vue';
 import PageNotFound from '@/views/PageNotFound.vue';
 import FriendTest from '@/views/FriendTest.vue';
-import Naegi from '@/components/group/NaegiTab.vue'
+import Naegi from '@/components/group/NaegiTab.vue';
+import FriendProfile from '@/views/FriendProfile.vue';
 
 export default [
   {
     path: '/naegi',
     name: 'naegi',
-    component:Naegi
+    component: Naegi,
   },
   {
     path: '/ft/:uno',
@@ -38,6 +39,12 @@ export default [
     component: Profile,
   },
   {
+    path: '/friendProfile',
+    name: 'FriendProfile',
+    component: FriendProfile,
+    props: true,
+  },
+  {
     path: '/feed/main',
     name: 'FeedMain',
     component: FeedMain,
@@ -56,6 +63,7 @@ export default [
     path: '/group',
     name: 'GroupMainPage',
     component: GroupMainPage,
+    props: true,
   },
 
   {
