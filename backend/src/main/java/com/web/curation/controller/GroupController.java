@@ -78,8 +78,8 @@ public class GroupController {
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
 	
-	@PostMapping("/emailOfGmaster")
-	public Object emailOfGmaster(@RequestParam int gno) {
+	@PostMapping("/unoOfGmaster")
+	public Object unoOfGmaster(@RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
 		
 		int gmaster=groupInfoRepository.findById(gno).get().getGmaster();
