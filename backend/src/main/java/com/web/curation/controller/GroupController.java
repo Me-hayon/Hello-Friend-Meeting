@@ -240,98 +240,115 @@ public class GroupController {
 		return resultMap;
 	}
 
-	@PostMapping("/makeGroup")
-	public Object makeGroup(@RequestParam String email, @RequestParam String gname, @RequestParam int gcategory,
-			@RequestParam int gboundary) {
+	@PostMapping("/createGroup")
+	public Object createGroup(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
-		UserInfo myInfo=userInfoRepository.findByEmail(email);
-		int gmaster = myInfo.getUno();
-
-		GroupInfo groupInfo = new GroupInfo();
-		groupInfo.setGboundary(gboundary);
-		groupInfo.setGcategory(gcategory);
-		groupInfo.setGmaster(gmaster);
-		groupInfo.setGname(gname);
-		groupInfo.setGuserList(Integer.toString(gmaster)+" ");
-
-		groupInfo=groupInfoRepository.save(groupInfo);
-		GroupParticipant groupParticipant=new GroupParticipant();
-		groupParticipant.setGno(groupInfo.getGno());
-		groupParticipant.setUno(gmaster);
-		groupParticipantRepository.save(groupParticipant);
-
 		
-		if(gboundary!=0) {
-			List<FriendInfo> friendList=getFriendList(gmaster);
-			StringBuilder sb=new StringBuilder();
-			sb.append("회원님의 친구 ");
-			sb.append(myInfo.getUname());
-			sb.append("님이 ");
-			sb.append(gname);
-			sb.append("그룹을 만들었습니다.");
-			for(FriendInfo fi:friendList) {
-				Alarm alarm=new Alarm();
-				alarm.setAtype(1);
-				alarm.setAurl("GroupMainPage");
-				alarm.setAuser(fi.getMyId());
-				alarm.setCreateUser(myInfo.getUno());
-				alarm.setAurlNo(groupInfo.getGno());
-				alarm.setAsummary(sb.toString());
+		int gmaster = Integer.parseInt(map.get("uno"));
+		int gcategory = Integer.parseInt(map.get("gcategory"));
+		int gboundary = Integer.parseInt(map.get("gboundary"));
+		String gname = map.get("gname");
+		String gdesc = map.get("gdesc");
+		Optional<UserInfo> optUserInfo = userInfoRepository.findById(gmaster);
+		
+		if(optUserInfo.isPresent()) {
+			UserInfo user = optUserInfo.get();
+			
+			GroupInfo groupInfo = new GroupInfo();
+			groupInfo.setGmaster(gmaster);
+			groupInfo.setGname(gname);
+			groupInfo.setGdesc(gdesc);
+			groupInfo.setGcategory(gcategory);
+			groupInfo.setGboundary(gboundary);
+			groupInfo.setGuserList(Integer.toString(gmaster)+" ");
+			groupInfo = groupInfoRepository.save(groupInfo);
+			
+			GroupParticipant groupParticipant = new GroupParticipant();
+			groupParticipant.setGno(groupInfo.getGno());
+			groupParticipant.setUno(gmaster);
+			groupParticipantRepository.save(groupParticipant);
+			
+			if(gboundary!=0) {	// 비공개가 아닐 경우
+				List<FriendInfo> friendList = getFriendList(gmaster);
+				StringBuilder sb = new StringBuilder();
+				sb.append("회원님의 친구 ");
+				sb.append(user.getUname());
+				sb.append("님이 ");
+				sb.append(gname);
+				sb.append("그룹을 만들었습니다.");
 				
-				alarmRepository.save(alarm);
-			}
-			if(gboundary==2) {
-				//임찬규 박봉현 님의 친구인 이기호님이 그룹 만들었습니다.
-				//친구의 친구를 세트에 담는다
-				//세트에서 내 친구들과 나 제외
-				//친구의친구 수만큼 반복문
-				//내 친구와 해당 친구의 친구의 공통 친구들을 찾는다
-				List<Integer> friendFriendList=new ArrayList<>();
-				List<Integer> friendIntList=new ArrayList<>();
-				friendIntList.add(gmaster);
-				for(FriendInfo fi:friendList) {
-					friendIntList.add(fi.getMyId());
-					List<FriendInfo> toFindFriendFriend=getFriendList(fi.getMyId());
-					for(FriendInfo friendFriend:toFindFriendFriend) {
-						friendFriendList.add(friendFriend.getMyId());
-					}
-				}
-				HashSet<Integer> tmp=new HashSet<>(friendFriendList);
-				friendFriendList=new ArrayList<>(tmp);
-				friendFriendList.removeAll(friendIntList);
-				
-				for(Integer ff:friendFriendList) {
-					
-					StringBuilder sb2=new StringBuilder();
-					for(Integer f:friendIntList) {
-						if(isFriendFriend(gmaster,f,ff)) {
-							sb2.append(userInfoRepository.findById(f).get().getUname());
-							sb2.append(" ");
-						}
-					}
-					if(sb2.length()==0)
-						continue;
-					sb2.append("님의 친구 ");
-					sb2.append(myInfo.getUname());
-					sb2.append("님이 ");
-					sb2.append(gname);
-					sb2.append("그룹을 만들었습니다.");
-					String asummary=sb2.toString();
-
+				for(FriendInfo friendInfo: friendList) {
 					Alarm alarm=new Alarm();
-					alarm.setAuser(ff);
-					alarm.setAurl("GroupMainPage");
-					alarm.setCreateUser(myInfo.getUno());
-					alarm.setAurlNo(groupInfo.getGno());
 					alarm.setAtype(1);
-					alarm.setAsummary(asummary);
-					
+					alarm.setAurl("GroupMainPage");
+					alarm.setAuser(friendInfo.getMyId());
+					alarm.setCreateUser(gmaster);
+					alarm.setAurlNo(groupInfo.getGno());
+					alarm.setAsummary(sb.toString());
 					alarmRepository.save(alarm);
 				}
+				
+				if(gboundary==2) {	// 친구의 친구까지일 경우
+					//임찬규 박봉현 님의 친구인 이기호님이 그룹 만들었습니다.
+					//친구의 친구를 세트에 담는다
+					//세트에서 내 친구들과 나 제외
+					//친구의친구 수만큼 반복문
+					//내 친구와 해당 친구의 친구의 공통 친구들을 찾는다
+					List<Integer> friendFriendList = new ArrayList<>();
+					List<Integer> friendIntList = new ArrayList<>();
+					
+					friendIntList.add(gmaster);
+					
+					for(FriendInfo friendInfo: friendList) {
+						List<FriendInfo> toFindFriendFriend = getFriendList(friendInfo.getMyId());
+						friendIntList.add(friendInfo.getMyId());
+						
+						for(FriendInfo friendFriend: toFindFriendFriend) {
+							friendFriendList.add(friendFriend.getMyId());
+						}
+					}
+					
+					HashSet<Integer> tmp = new HashSet<>(friendFriendList);
+					friendFriendList = new ArrayList<>(tmp);
+					friendFriendList.removeAll(friendIntList);
+					
+					for(Integer ff: friendFriendList) {
+						StringBuilder sb2 = new StringBuilder();
+						
+						for(Integer f: friendIntList) {
+							if(isFriendFriend(gmaster, f, ff)) {
+								sb2.append(userInfoRepository.findById(f).get().getUname());
+								sb2.append(" ");
+							}
+						}
+						
+						if(sb2.length()==0) continue;
+						
+						sb2.append("님의 친구 ");
+						sb2.append(gmaster);
+						sb2.append("님이 ");
+						sb2.append(gname);
+						sb2.append("그룹을 만들었습니다.");
+						String asummary = sb2.toString();
+						
+						Alarm alarm=new Alarm();
+						alarm.setAuser(ff);
+						alarm.setAurl("GroupMainPage");
+						alarm.setCreateUser(gmaster);
+						alarm.setAurlNo(groupInfo.getGno());
+						alarm.setAtype(1);
+						alarm.setAsummary(asummary);
+						
+						alarmRepository.save(alarm);
+						resultMap.put("is-success", true);
+					}
+				}
+				else resultMap.put("is-success", true);
 			}
+			else resultMap.put("is-success", true);
 		}
-
-		resultMap.put("data", "그룹 생성에 성공했습니다.");
+		else resultMap.put("is-success", false);
+		
 		return resultMap;
 	}
 
