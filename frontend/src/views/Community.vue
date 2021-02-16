@@ -26,7 +26,7 @@
             <v-row
               v-if="
                 isLoadingUno ||
-                  isLoadingGroups ||
+                  isLoadingGroups == -1 ||
                   isLoadingCategories ||
                   isLoadingFriends == -1
               "
@@ -44,10 +44,12 @@
             <group-list
               v-if="
                 !isLoadingUno &&
-                  !isLoadingGroups &&
+                  isLoadingGroups != -1 &&
                   !isLoadingCategories &&
                   isLoadingFriends != -1
               "
+              :uno="uno"
+              :email="email"
               :groupList="groups"
               :categoryList="categories"
               :friendList="friends"
@@ -98,26 +100,25 @@ export default {
   data() {
     return {
       uno: -1,
+      email: storage.getItem('user-email'),
       tab: null,
       groups: [],
       categories: [],
       friends: [],
       favoriteFriends: [],
       isLoadingUno: true,
-      isLoadingGroups: true,
+      isLoadingGroups: -1,
       isLoadingCategories: true,
       isLoadingFriends: -1,
     };
   },
   created() {
-    axios
-      .post('findUno', { email: storage.getItem('user-email') })
-      .then((response) => {
-        if (response.data['is-success']) {
-          this.uno = response.data.uno;
-          this.isLoadingUno = false;
-        } else alert('사용자 정보를 불러오는데 오류가 발생하였습니다.');
-      });
+    axios.post('findUno', { email: this.email }).then((response) => {
+      if (response.data['is-success']) {
+        this.uno = response.data.uno;
+        this.isLoadingUno = false;
+      } else alert('사용자 정보를 불러오는데 오류가 발생하였습니다.');
+    });
 
     this.getGroupList();
     this.getCategory();
@@ -128,7 +129,7 @@ export default {
   methods: {
     getGroupList() {
       axios
-        .post('getGroupList', { email: storage.getItem('user-email') })
+        .post('getGroupList', { email: this.email })
         .then((response) => {
           if (response.data['is-success']) {
             this.groups = response.data.groupList;
@@ -139,8 +140,8 @@ export default {
                 .split(' ');
             }
 
-            this.isLoadingGroups = false;
-          }
+            this.isLoadingGroups = 1;
+          } else this.isLoadingGroups = 0;
         })
         .catch((error) => {
           console.log(error);
@@ -159,7 +160,7 @@ export default {
     },
     getFriendList() {
       axios
-        .post('getFriendList', { email: storage.getItem('user-email') })
+        .post('getFriendList', { email: this.email })
         .then((response) => {
           if (response.data['is-success']) {
             // 친구가 존재할 경우
