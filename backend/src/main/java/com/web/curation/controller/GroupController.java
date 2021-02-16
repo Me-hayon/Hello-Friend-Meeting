@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -157,18 +158,42 @@ public class GroupController {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
+		int uno = userInfo.getUno();
 		
 		if(userInfo!=null) {
-			List<GroupParticipant> list = groupParticipantRepository.findAllByUno(userInfo.getUno());
+			List<GroupParticipant> list = groupParticipantRepository.findAllByUno(uno);
 			List<Integer> gnoList = new ArrayList<>();
 			
 			if(list.size()!=0) {
-				for (GroupParticipant gp : list)
+				for (GroupParticipant gp : list) {
 					gnoList.add(gp.getGno());
+				}
 				
 				List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
 				
 				if(groupList.size()!=0) {
+					List<GroupInfo> myGroupList = new ArrayList<>();
+					List<GroupInfo> otherGroupList = new ArrayList<>();
+					
+					for(GroupInfo groupInfo: groupList) {
+						if(uno==groupInfo.getGmaster()) {
+							myGroupList.add(groupInfo);
+						}
+						else {
+							otherGroupList.add(groupInfo);
+						}
+					}
+					
+					groupList.clear();
+					
+					for(GroupInfo groupInfo: myGroupList) {
+						groupList.add(groupInfo);
+					}
+					
+					for(GroupInfo groupInfo: otherGroupList) {
+						groupList.add(groupInfo);
+					}
+					
 					resultMap.put("groupList", groupList);
 					resultMap.put("is-success", true);
 				}

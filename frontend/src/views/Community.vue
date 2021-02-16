@@ -26,7 +26,7 @@
             <v-row
               v-if="
                 isLoadingUno ||
-                  isLoadingGroups ||
+                  isLoadingGroups == -1 ||
                   isLoadingCategories ||
                   isLoadingFriends == -1
               "
@@ -44,7 +44,7 @@
             <group-list
               v-if="
                 !isLoadingUno &&
-                  !isLoadingGroups &&
+                  isLoadingGroups != -1 &&
                   !isLoadingCategories &&
                   isLoadingFriends != -1
               "
@@ -104,7 +104,7 @@ export default {
       friends: [],
       favoriteFriends: [],
       isLoadingUno: true,
-      isLoadingGroups: true,
+      isLoadingGroups: -1,
       isLoadingCategories: true,
       isLoadingFriends: -1,
     };
@@ -139,8 +139,8 @@ export default {
                 .split(' ');
             }
 
-            this.isLoadingGroups = false;
-          }
+            this.isLoadingGroups = 1;
+          } else this.isLoadingGroups = 0;
         })
         .catch((error) => {
           console.log(error);
