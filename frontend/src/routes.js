@@ -1,6 +1,5 @@
 import Login from '@/views/user/Login.vue';
 import Join from '@/views/user/Join.vue';
-import PasswordModify from '@/views/user/PasswordModify.vue';
 import FeedMain from '@/views/feed/IndexFeed.vue';
 import Community from '@/views/Community.vue';
 import Profile from '@/views/user/Profile.vue';
@@ -44,11 +43,6 @@ export default [
     name: 'FriendProfile',
     component: FriendProfile,
     props: true,
-  },
-  {
-    path: '/user/modify',
-    name: 'PasswordModify',
-    component: PasswordModify,
   },
   {
     path: '/feed/main',

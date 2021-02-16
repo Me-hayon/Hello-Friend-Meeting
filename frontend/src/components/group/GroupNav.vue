@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-tabs v-model="tab" background-color="transparent" grow>
+  <v-card style="padding:0">
+    <v-tabs class="group-bar" v-model="tab" background-color="white" grow>
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
       <v-tab>채팅</v-tab>
@@ -24,11 +24,14 @@
   </v-card>
 </template>
 <script>
-import GroupBoard from "@/components/group/GroupBoard.vue";
-import GroupSchedule from "@/components/group/GroupSchedule.vue";
-import GroupChat from "@/components/group/GroupChat.vue";
-import GroupMemberList from "@/components/group/GroupMemberList.vue";
+import GroupBoard from '@/components/group/GroupBoard.vue';
+import GroupSchedule from '@/components/group/GroupSchedule.vue';
+import GroupChat from '@/components/group/GroupChat.vue';
+import GroupMemberList from '@/components/group/GroupMemberList.vue';
 export default {
+  created() {
+    this.height = window.screen.height - 112;
+  },
   computed: {
     vuexGno() {
       return this.$store.getters.getGno;
@@ -71,6 +74,7 @@ export default {
       uno: this.$store.getters.getUno,
       bno: this.$store.getters.getBno,
       tab: null,
+      height: 0,
     };
   },
   methods: {
@@ -81,4 +85,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.group-bar {
+  position: -webkit-sticky; /* 사파리 브라우저 지원 */
+  position: sticky;
+  top: 56px;
+  z-index: 2;
+}
+</style>

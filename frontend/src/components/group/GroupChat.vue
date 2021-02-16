@@ -1,7 +1,6 @@
 <template>
   <v-container style="margin-bottom:40px;" id="scrollBody">
     <hr />
-
     <div v-for="(chat, idx) in chats" :key="idx">
       <br />
       <v-row
@@ -106,9 +105,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import Stomp from "webstomp-client";
-import SockJS from "sockjs-client";
+import axios from 'axios';
+import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client';
 
 const storage = window.sessionStorage;
 
@@ -117,12 +116,12 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gcgno: this.$store.getters.getGno,
-      gcno: "",
-      gcuno: "",
-      gcdate: "",
-      parsedDate: "",
-      gccontent: "",
-      uname: "",
+      gcno: '',
+      gcuno: '',
+      gcdate: '',
+      parsedDate: '',
+      gccontent: '',
+      uname: '',
       chats: [],
       stompClient: null,
       IsDateChange: false,
@@ -137,30 +136,30 @@ export default {
   },
 
   created() {
-    console.log("처음화면높이" + document.body.scrollHeight);
+    console.log('처음화면높이' + document.body.scrollHeight);
 
     axios
-      .post("/findUserByEmail", { email: storage.getItem("user-email") })
+      .post('/findUserByEmail', { email: storage.getItem('user-email') })
       .then((response) => {
-        if (response.data["is-success"]) {
-          this.gcuno = response.data["user-number"];
-          this.uname = response.data["user-name"];
+        if (response.data['is-success']) {
+          this.gcuno = response.data['user-number'];
+          this.uname = response.data['user-name'];
           this.isLoadingUser = false;
         } else {
-          alert("너 누구야");
+          alert('너 누구야');
         }
       });
 
     axios({
-      method: "get",
-      url: "/getChat/" + this.gcgno,
-      baseURL: "http://localhost:8080/",
+      method: 'get',
+      url: '/getChat/' + this.gcgno,
+      baseURL: 'http://localhost:8080/',
     }).then(
       (response) => {
         this.chats = [];
         console.log(response);
-        let chatList = response.data["chat-list"];
-        let unameList = response.data["uname-list"];
+        let chatList = response.data['chat-list'];
+        let unameList = response.data['uname-list'];
 
         for (let i = 0; i < chatList.length; i++) {
           let chat = {
@@ -169,7 +168,7 @@ export default {
             gccontent: chatList[i].gccontent,
             gcdate: chatList[i].gcdate,
             parsedDate: chatList[i].gcdate.substring(11, 16),
-            style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
+            style: chatList[i].gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
           };
 
           if (this.gcdate != chatList[i].gcdate.substring(5, 10)) {
@@ -196,7 +195,7 @@ export default {
       },
       (err) => {
         console.log(err);
-        alert("error : 새로고침하세요");
+        alert('error : 새로고침하세요');
       }
     );
 
@@ -204,20 +203,20 @@ export default {
   },
   methods: {
     aa() {
-      alert(this.memberStatus + " " + this.gno);
+      alert(this.memberStatus + ' ' + this.gno);
     },
     sendMessage(e) {
-      if (this.gccontent !== "") {
+      if (this.gccontent !== '') {
         this.send();
-        this.gccontent = "";
+        this.gccontent = '';
       }
       this.$nextTick(function() {
         document.documentElement.scrollTop = document.body.scrollHeight + 100;
       });
     },
     send() {
-      console.log("Send message:" + this.gccontent);
-      console.log("group ID: " + this.gcgno);
+      console.log('Send message:' + this.gccontent);
+      console.log('group ID: ' + this.gcgno);
 
       if (this.stompClient && this.stompClient.connected) {
         const chat = {
@@ -226,11 +225,11 @@ export default {
           gcuname: this.uname,
           gccontent: this.gccontent,
         };
-        this.stompClient.send("/pub/chat", JSON.stringify(chat), {});
+        this.stompClient.send('/pub/chat', JSON.stringify(chat), {});
       }
     },
     connect() {
-      const serverURL = "http://localhost:8080/ws";
+      const serverURL = 'http://localhost:8080/ws';
       let socket = new SockJS(serverURL);
       let tmp = {};
 
@@ -240,9 +239,9 @@ export default {
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("소켓 연결 성공", frame);
-          this.stompClient.subscribe("/sub/" + this.gcgno, (response) => {
-            console.log("구독으로 받은 메시지 입니다???.", response.body);
+          console.log('소켓 연결 성공', frame);
+          this.stompClient.subscribe('/sub/' + this.gcgno, (response) => {
+            console.log('구독으로 받은 메시지 입니다???.', response.body);
             //   let jsonBody = JSON.parse(res.body)
             //    let m={
             //   'senderNickname':jsonBody.senderNickname,
@@ -255,14 +254,14 @@ export default {
             // this.chats.push(JSON.parse(response.body));
 
             let parseTmp = JSON.parse(response.body);
-            console.log("★★★★★★★★★★★★★", parseTmp);
+            console.log('★★★★★★★★★★★★★', parseTmp);
             tmp = {
               uno: parseTmp.gcuno,
               uname: parseTmp.gcuname,
               gccontent: parseTmp.gccontent,
               gcdate: parseTmp.gcdate,
               parsedDate: parseTmp.gcdate.substring(11, 16),
-              style: parseTmp.gcuno == this.gcuno ? "myStyle" : "yourStyle",
+              style: parseTmp.gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
             };
 
             this.chats.push(tmp);
@@ -270,7 +269,7 @@ export default {
         },
         (error) => {
           // 소켓 연결 실패
-          console.log("소켓 연결 실패", error);
+          console.log('소켓 연결 실패', error);
           this.connected = false;
         }
       );
@@ -304,8 +303,8 @@ export default {
       this.memberStatus = val;
     },
     isLoadingUser(isLoadingUser) {
-      console.log("watch에서 바뀌는지" + isLoadingUser);
-      console.log("watch에서 바뀌는지" + this.isLoadingChatList);
+      console.log('watch에서 바뀌는지' + isLoadingUser);
+      console.log('watch에서 바뀌는지' + this.isLoadingChatList);
       console.log(document.body.scrollHeight);
       if (!isLoadingUser && !this.isLoadingChatList) {
         this.$nextTick(function() {
@@ -315,14 +314,14 @@ export default {
       }
     },
     isLoadingChatList(isLoadingChatList) {
-      console.log("watch에서 바뀌는지" + isLoadingChatList);
-      console.log("watch에서 바뀌는지" + this.isLoadingUser);
-      console.log("전" + document.getElementById("scrollBody").scrollHeight);
+      console.log('watch에서 바뀌는지' + isLoadingChatList);
+      console.log('watch에서 바뀌는지' + this.isLoadingUser);
+      console.log('전' + document.getElementById('scrollBody').scrollHeight);
       if (!isLoadingChatList && !this.isLoadingUser) {
         this.$nextTick(function() {
           document.documentElement.scrollTop = document.body.scrollHeight;
           console.log(
-            "후" + document.getElementById("scrollBody").scrollHeight
+            '후' + document.getElementById('scrollBody').scrollHeight
           );
         });
       }
@@ -349,7 +348,7 @@ export default {
 }
 
 .speech-bubble-left:after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 50%;
@@ -373,7 +372,7 @@ export default {
 }
 
 .speech-bubble-right:after {
-  content: "";
+  content: '';
   position: absolute;
   right: 0;
   top: 50%;
@@ -397,7 +396,7 @@ export default {
 }
 .hr-date::before,
 .hr-date::after {
-  content: "";
+  content: '';
   flex-grow: 1;
   background: rgba(0, 0, 0, 0.35);
   height: 1px;

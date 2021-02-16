@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.FriendInfo;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @RestController
@@ -37,6 +39,9 @@ public class FriendInfoController {
 	@Autowired
 	AlarmRepository alarmRepository;
 
+	@Autowired
+	TimelineRepository timelineRepository;
+	
 	@PostMapping("/isFriend")
 	public int isFriend(@RequestBody Map<String, String> map) {
 		int myId = Integer.parseInt(map.get("myUno"));
@@ -157,6 +162,19 @@ public class FriendInfoController {
 		friendInfo.setFriendId(Integer.parseInt(map.get("friendUno")));
 		friendInfoRepository.save(friendInfo);
 		resultMap.put("is-success", true);
+			
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("친구");
+		timeline.setTcontentSecond(userInfoRepository.findById(Integer.parseInt(map.get("friendUno"))).get().getUname());
+		timeline.setUno(Integer.parseInt(map.get("myUno")));
+		timelineRepository.save(timeline);
+		
+		
+		timeline=new Timeline();
+		timeline.setTcontent("친구");
+		timeline.setTcontentSecond(userInfoRepository.findById(Integer.parseInt(map.get("myUno"))).get().getUname());		
+		timeline.setUno(Integer.parseInt(map.get("friendUno")));
+		timelineRepository.save(timeline);
 
 		return resultMap;
 	}

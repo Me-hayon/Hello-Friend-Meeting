@@ -29,6 +29,7 @@ import com.web.curation.model.entity.Naegi;
 import com.web.curation.model.entity.NaegiParticipant;
 import com.web.curation.model.entity.Schedule;
 import com.web.curation.model.entity.ScheduleParticipant;
+import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
@@ -40,6 +41,7 @@ import com.web.curation.model.repository.NaegiParticipantRepository;
 import com.web.curation.model.repository.NaegiRepository;
 import com.web.curation.model.repository.ScheduleParticipantRepository;
 import com.web.curation.model.repository.ScheduleRepository;
+import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -78,6 +80,20 @@ public class GroupController {
 	
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
+	
+
+	@Autowired
+	TimelineRepository timelineRepository;
+	
+	@PostMapping("/unoOfGmaster")
+	public Object unoOfGmaster(@RequestParam int gno) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		int gmaster=groupInfoRepository.findById(gno).get().getGmaster();
+		resultMap.put("gmasterUno",gmaster);
+		
+		return resultMap;
+	}
 	
 	@PostMapping("/isGroupMember")//0:미가입, 1:가입신청상태, 2:초대미수락상태, 3:그룹원, 4:그룹장
 	public Object isGroupMember(@RequestParam String email,@RequestParam int gno) {
@@ -153,6 +169,16 @@ public class GroupController {
 		return resultMap;
 	}
 
+	@PostMapping("/getGroupInfo")
+	public Object getGroupInfo(@RequestParam int gno) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
+		resultMap.put("groupInfo", groupInfo);
+		
+		return resultMap;
+	}
+	
 	@PostMapping("/getGroupList")
 	public Object getGroupList(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -243,6 +269,12 @@ public class GroupController {
 	@PostMapping("/createGroup")
 	public Object createGroup(@RequestBody Map<String, String> map) {
 		Map<String, Object> resultMap = new HashMap<>();
+
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("그룹생성");
+		timeline.setTcontentSecond(gname);
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
 		
 		int gmaster = Integer.parseInt(map.get("uno"));
 		int gcategory = Integer.parseInt(map.get("gcategory"));
@@ -422,6 +454,13 @@ public class GroupController {
 		groupParticipant.setUno(myInfo.getUno());
 		groupParticipantRepository.save(groupParticipant);
 
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(myInfo.getUno());
+		timelineRepository.save(timeline);
+		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {
 			for(Schedule s:schedules.get()) {
@@ -477,9 +516,9 @@ public class GroupController {
 	}
 	
 	@PostMapping("/denyInviteGroup")
-	public Object denyInviteGroup(@RequestParam int uno, @RequestParam int gno) {
+	public Object denyInviteGroup(@RequestParam String email, @RequestParam int gno) {
 		Map<String,Object> resultMap=new HashMap<>();
-		
+		int uno=userInfoRepository.findByEmail(email).getUno();
 		Optional<GroupApply> groupApply=groupApplyRepository.findByUnoAndGno(uno, gno);
 		if(groupApply.isPresent()) 
 			groupApplyRepository.delete(groupApply.get());
@@ -577,6 +616,14 @@ public class GroupController {
 		groupParticipant.setGno(gno);
 		groupParticipant.setUno(uno);
 		groupParticipantRepository.save(groupParticipant);
+		
+		
+		Timeline timeline=new Timeline();
+		timeline.setTcontent("가입");
+		timeline.setTcontentSecond(groupInfo.getGname());
+		timeline.setUno(uno);
+		timelineRepository.save(timeline);
+				
 		
 		Optional<List<Schedule>> schedules=scheduleRepository.findAllBySgno(gno);
 		if(schedules.isPresent()) {
