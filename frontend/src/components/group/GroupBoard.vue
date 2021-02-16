@@ -1,57 +1,25 @@
 <template>
-  <v-container class="pa-0">
-    <v-row
-      class="atchBg"
-      style="height: 400px;"
-      align="center"
-      justify="center"
-    >
-      <v-col>
-        <v-row style="color: white; margin-top: 0;" no-gutters>
-          <v-row>
-            <v-col align="center">
-              <p
-                style="color: white; letter-spacing: -2px; margin-bottom: 0; font-size: 2rem; font-weight: bold;"
-              >
-                그룹이름이 들어갈 자리
-              </p>
-              <p
-                style="color: white; letter-spacing: -1px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
-              >
-                이곳은 그룹 설명이 들어갈 자리입니다.
-              </p>
-            </v-col>
-          </v-row>
-        </v-row>
+  <v-container
+    id="scroll-target"
+    class="pa-0 overflow-y-auto"
+    style="height: 663px;"
+    v-scroll:#scroll-target="onScroll"
+  >
+    <v-row class="atchBg" :style="{ height: scrollHeight }" no-gutters>
+      <v-col align="center" align-self="center" style="padding: 0;">
+        <p
+          style="color: white; letter-spacing: 2px; margin-bottom: 0; font-size: 3rem; font-weight: bold;"
+          :style="{ marginTop: scrollMargin }"
+        >
+          {{ groupTitle }}
+        </p>
+        <p
+          style="color: white; letter-spacing: -1px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
+        >
+          {{ groupDesc }}
+        </p>
       </v-col>
     </v-row>
-    <!-- <v-parallax
-      height="100%"
-      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-      gradient="to top right, rgba(0,0,0,.33), rgba(25,32,72,.7)"
-    >
-      <v-row
-        style="color: white; margin-top: 0;"
-        align="center"
-        justify="center"
-        no-gutters
-      >
-        <v-row>
-          <v-col align="center">
-            <p
-              style="color: white; letter-spacing: -2px; margin-bottom: 0; font-size: 2rem; font-weight: bold;"
-            >
-              그룹이름이 들어갈 자리
-            </p>
-            <p
-              style="color: white; letter-spacing: -1px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
-            >
-              이곳은 그룹 설명이 들어갈 자리입니다.
-            </p>
-          </v-col>
-        </v-row>
-      </v-row>
-    </v-parallax> -->
 
     <!-- 공지사항 -->
     <v-row style="margin: 0px; margin-top: 0;">
@@ -222,6 +190,15 @@
 import axios from 'axios';
 export default {
   computed: {
+    scrollHeight() {
+      let tmp = 663 - this.nowScroll;
+      return tmp + 'px';
+    },
+    scrollMargin() {
+      let tmp = this.nowScroll;
+      // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', tmp);
+      return tmp + 'px';
+    },
     vuexGno() {
       return this.$store.getters.getGno;
     },
@@ -264,6 +241,8 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
+      groupTitle: '',
+      groupDesc: '',
       table: [],
       tableNotice: [],
       newTitle: '',
@@ -276,12 +255,18 @@ export default {
       // perPage: 5,
       writeModal: false,
       active: true,
+      nowScroll: 0,
     };
   },
   created() {
+    this.getGroupInfo();
     this.getBoardList();
   },
   methods: {
+    onScroll(e) {
+      this.nowScroll = e.target.scrollTop;
+      // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', this.nowScroll);
+    },
     boardDetail(bno) {
       this.$store.commit('setBno', bno);
       this.$router.push('/board/detail');
@@ -313,7 +298,7 @@ export default {
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
-          console.log('☆☆☆☆☆☆☆☆☆☆', response.data);
+          // console.log('☆☆☆☆☆☆☆☆☆☆', response.data);
           for (var i = 0; i < this.table.length; i++) {
             this.table[i].writerName = response.data.notNoticeWriter[i];
             this.table[i].parsedDate = response.data.notNotice[
@@ -331,6 +316,15 @@ export default {
           console.log(error);
         });
     },
+    getGroupInfo() {
+      var params = new URLSearchParams();
+      params.append('gno', this.gno);
+      axios.post('getGroupInfo', params).then((response) => {
+        console.log('※※※※※※※※※※※※※※※', response);
+        this.groupTitle = response.data.groupInfo.gname.toUpperCase();
+        this.groupDesc = response.data.groupInfo.gdesc;
+      });
+    },
   },
 };
 </script>
@@ -342,9 +336,9 @@ export default {
   color: #4682b4 !important;
 }
 .atchBg {
-  background-image: url('~@/assets/images/night.gif');
+  background: url('~@/assets/images/home.gif') center center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* background-attachment: fixed; */
   background-size: cover;
 }
 </style>

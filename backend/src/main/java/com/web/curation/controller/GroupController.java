@@ -127,6 +127,16 @@ public class GroupController {
 		return resultMap;
 	}
 
+	@PostMapping("/getGroupInfo")
+	public Object getGroupInfo(@RequestParam int gno) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
+		resultMap.put("groupInfo", groupInfo);
+		
+		return resultMap;
+	}
+	
 	@PostMapping("/getGroupList")
 	public Object getGroupList(@RequestParam String email) {
 		Map<String, Object> resultMap = new HashMap<>();
