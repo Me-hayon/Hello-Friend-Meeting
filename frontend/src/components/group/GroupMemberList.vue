@@ -78,7 +78,15 @@
                 style="position:absolute; right:15%;"
                 v-if="email == member.email"
               >
-                나ㅋ
+                <v-avatar color="orange" size="48">
+                  <span
+                    style="position:absolute;
+                top:50%; left:50%;
+                transform: translate(-50%, -50%);"
+                    class="white--text headline"
+                    >나</span
+                  >
+                </v-avatar>
               </h6>
             </v-btn>
           </template>
