@@ -1,39 +1,113 @@
 <template>
   <div>
-    그룹멤버리스트
-    <ul v-if="memberStatus === 4">
-      <li v-for="applier in applierList" :key="applier.uno">
-        {{ applier.uname }}
-        <button @click="acceptApplier(applier.uno)">가입신청수락</button>
-        <button @click="denyApplier(applier.uno)">가입신청거절</button>
-      </li>
+    그룹 멤버
+    <ul style="margin:0; padding:0;" v-if="memberStatus === 4">
+      <h5 style="margin:30px;">가입신청자</h5>
+      <ol
+        style="height:70px; position:relative; 
+        
+        margin:0; 
+        "
+        v-for="applier in applierList"
+        :key="applier.uno"
+      >
+        <div>
+          <img
+            style="position:absolute;
+                top:50%; left:9%;
+                transform: translate(-50%, -50%);"
+            width="50px;"
+            :src="require(`@/assets/images/avatars/${applier.uprofileImg}.png`)"
+          />
+          <h6
+            style="position:absolute;
+          top:50%; left:20%;
+          transform: translate(0%, -50%);"
+          >
+            {{ applier.uname }}
+          </h6>
+
+          <div
+            style="position:absolute; top:50%; right:3%;
+                transform: translate(0%, -50%);"
+          >
+            <v-btn @click="acceptApplier(applier.uno)">수락</v-btn>
+            <v-btn @click="denyApplier(applier.uno)">거절</v-btn>
+          </div>
+        </div>
+      </ol>
     </ul>
     <hr />
-    <ul v-if="memberStatus === 3 || memberStatus === 4">
-      <li v-for="member in memberList" :key="member.uno">
-        {{ member.uname }}
-        <button
-          @click="banishMember(member.uno)"
-          v-if="memberStatus === 4 && email != member.email"
-        >
-          추방
-        </button>
-        <button
-          @click="changeGmaster(member.uno)"
-          v-if="memberStatus === 4 && email != member.email"
-        >
-          새 그룹장으로 임명
-        </button>
-        <button v-if="email === member.email" @click="getoutGroup()">
-          탈퇴
-        </button>
-      </li>
+
+    <ul
+      style="margin:0; padding:0;"
+      v-if="memberStatus === 3 || memberStatus === 4"
+    >
+      <ol
+        style="margin: 0; padding:0; "
+        v-for="member in memberList"
+        :key="member.uno"
+      >
+        <v-dialog v-model="dialog" width="300">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              style="color:black; height:60px; width:100%;"
+              color="blue"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              <img
+                style="position:absolute;
+                top:50%; left:5%;
+                transform: translate(-50%, -50%);"
+                width="50px;"
+                :src="
+                  require(`@/assets/images/avatars/${member.uprofileImg}.png`)
+                "
+              />
+              <h6
+                style="position:absolute;
+                top:50%; left:20%;
+                transform: translate(0%, -50%);"
+              >
+                {{ member.uname }}
+              </h6>
+              <h6 v-if="email == member.email">나ㅋ</h6>
+              <v-icon v-if="member.memberStatus == 4">mdi-arrow-right</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="headline grey lighten-2"> 관리 </v-card-title>
+            <div
+              style="height:100px; display:flex; justify-content: center; align-items:center"
+            >
+              <v-btn
+                @click="banishMember(member.uno)"
+                v-if="memberStatus === 4 && email != member.email"
+              >
+                추방
+              </v-btn>
+              <v-btn
+                @click="changeGmaster(member.uno)"
+                v-if="memberStatus === 4 && email != member.email"
+              >
+                새 그룹장으로 임명
+              </v-btn>
+              <v-btn v-if="email === member.email" @click="getoutGroup()">
+                탈퇴
+              </v-btn>
+            </div></v-card
+          >
+        </v-dialog>
+      </ol>
     </ul>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+
 export default {
   computed: {
     vuexGno() {
@@ -101,6 +175,7 @@ export default {
         .post('getUserListInGroup', params)
         .then((response) => {
           this.memberList = response.data.userList;
+          console.log(this.memberList);
         })
         .catch((error) => {
           console.log(error);
