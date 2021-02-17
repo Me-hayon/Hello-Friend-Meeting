@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="vuexMemberStatus != 3 && vuexMemberStatus != 4">
+    <div v-if="memberStatus != 3 && memberStatus != 4">
       <InviteLetter :ano="ano" />
     </div>
     <div v-else>
