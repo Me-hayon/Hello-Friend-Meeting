@@ -320,7 +320,7 @@ export default {
       var params = new URLSearchParams();
       params.append('gno', this.gno);
       axios.post('getGroupInfo', params).then((response) => {
-        console.log('※※※※※※※※※※※※※※※', response);
+        // console.log('※※※※※※※※※※※※※※※', response);
         this.groupTitle = response.data.groupInfo.gname.toUpperCase();
         this.groupDesc = response.data.groupInfo.gdesc;
       });
