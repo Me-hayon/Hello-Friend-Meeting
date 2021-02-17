@@ -142,6 +142,8 @@ export default {
 
             this.isLoadingGroups = 1;
           } else this.isLoadingGroups = 0;
+          console.log(this.groups);
+          console.log(this.isLoadingGroups);
         })
         .catch((error) => {
           console.log(error);
@@ -193,7 +195,7 @@ export default {
   watch: {
     tab(tab) {
       if (tab == 'tab-1') {
-        this.isLoadingGroups = true;
+        this.isLoadingGroups = -1;
         this.isLoadingCategories = true;
         this.isLoadingFriends = -1;
         this.groups = [];
