@@ -11,15 +11,17 @@
           :key="applier.uno"
         >
           <div>
-            <img
+            <v-avatar
               style="position:absolute;
-                top:50%; left:9%;
-                transform: translate(-50%, -50%);"
-              width="50px;"
-              :src="
-                require(`@/assets/images/avatars/${applier.uprofileImg}.png`)
-              "
-            />
+                top:50%; left:5%;
+                transform: translate(-50%, -50%);
+                width:50px;"
+              ><img
+                :src="
+                  require(`@/assets/images/avatars/${applier.uprofileImg}.png`)
+                "
+            /></v-avatar>
+
             <h6
               style="position:absolute;
           top:50%; left:20%;
@@ -81,6 +83,7 @@
                     <v-col cols="2" align-self="center">
                       <v-list-item-avatar>
                         <v-img
+                          style="width:50px;"
                           :src="
                             require(`@/assets/images/avatars/${friendList[i].uprofileImg}.png`)
                           "
@@ -124,15 +127,19 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <img
+                <v-avatar
                   style="position:absolute;
                 top:50%; left:5%;
-                transform: translate(-50%, -50%);"
-                  width="50px;"
-                  :src="
-                    require(`@/assets/images/avatars/${member.uprofileImg}.png`)
-                  "
-                />
+                transform: translate(-50%, -50%);
+                width:50px;"
+                >
+                  <img
+                    :src="
+                      require(`@/assets/images/avatars/${member.uprofileImg}.png`)
+                    "
+                  />
+                </v-avatar>
+
                 <h6
                   style="position:absolute;
                 top:50%; left:20%;
