@@ -142,8 +142,6 @@ export default {
 
             this.isLoadingGroups = 1;
           } else this.isLoadingGroups = 0;
-          console.log(this.groups);
-          console.log(this.isLoadingGroups);
         })
         .catch((error) => {
           console.log(error);
