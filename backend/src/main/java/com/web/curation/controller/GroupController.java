@@ -369,8 +369,9 @@ public class GroupController {
 						alarm.setAsummary(asummary);
 						
 						alarmRepository.save(alarm);
-						resultMap.put("is-success", true);
 					}
+					
+					resultMap.put("is-success", true);
 				}
 				else resultMap.put("is-success", true);
 			}

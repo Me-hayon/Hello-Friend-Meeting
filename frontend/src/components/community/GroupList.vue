@@ -46,19 +46,31 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <v-img
-                        width="50"
-                        :src="
-                          require(`@/assets/images/group-img/group_default.png`)
-                        "
-                      ></v-img>
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            groups[4 * (row - 1) + (col - 1)].gmaster == uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), false)"
+                        depressed
+                        fab
+                      >
+                        <v-img
+                          width="50"
+                          :src="
+                            require(`@/assets/images/group-img/group_default.png`)
+                          "
+                        ></v-img>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -73,19 +85,31 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <v-img
-                        width="50"
-                        :src="
-                          require(`@/assets/images/group-img/group_default.png`)
-                        "
-                      ></v-img>
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            groups[4 * (row - 1) + (col - 1)].gmaster == uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), false)"
+                        depressed
+                        fab
+                      >
+                        <v-img
+                          width="50"
+                          :src="
+                            require(`@/assets/images/group-img/group_default.png`)
+                          "
+                        ></v-img>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -110,19 +134,32 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <v-img
-                        width="50"
-                        :src="
-                          require(`@/assets/images/group-img/group_default.png`)
-                        "
-                      ></v-img>
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            searchGroups[4 * (row - 1) + (col - 1)].gmaster ==
+                              uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), true)"
+                        depressed
+                        fab
+                      >
+                        <v-img
+                          width="50"
+                          :src="
+                            require(`@/assets/images/group-img/group_default.png`)
+                          "
+                        ></v-img>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -137,19 +174,32 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <v-img
-                        width="50"
-                        :src="
-                          require(`@/assets/images/group-img/group_default.png`)
-                        "
-                      ></v-img>
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            searchGroups[4 * (row - 1) + (col - 1)].gmaster ==
+                              uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), true)"
+                        depressed
+                        fab
+                      >
+                        <v-img
+                          width="50"
+                          :src="
+                            require(`@/assets/images/group-img/group_default.png`)
+                          "
+                        ></v-img>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -268,14 +318,12 @@ export default {
     };
   },
   created() {
-    this.groupListRow =
-      this.groups.length % 4 == 0
-        ? parseInt(this.groups.length / 4)
-        : parseInt(this.groups.length / 4) + 1;
+    this.groupListRow = parseInt(this.groups.length / 4) + 1;
   },
   methods: {
-    moveGroup(index) {
-      this.$store.commit('setGno', this.groups[index].gno);
+    moveGroup(index, isSearch) {
+      if (isSearch) this.$store.commit('setGno', this.searchGroups[index].gno);
+      else this.$store.commit('setGno', this.groups[index].gno);
       this.$router.push('/group');
     },
     searchInput() {
