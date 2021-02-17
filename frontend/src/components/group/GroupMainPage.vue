@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="vuexMemberStatus != 3 && vuexMemberStatus != 4">
-      <InviteLetter :ano="ano" />
-    </div>
-    <div v-else>
+    <div v-if="memberStatus == 3 || memberStatus == 4">
       <GroupNav />
+    </div>
+    <div v-if="memberStatus == 2">
+      <InviteLetter :ano="ano" />
     </div>
   </div>
 </template>

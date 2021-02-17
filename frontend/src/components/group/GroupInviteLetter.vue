@@ -1,11 +1,30 @@
 <template>
-  <v-container :height="height">
-    <h1>HI!!!</h1>
-    <v-row>
-      <v-btn @click="accept">수락</v-btn>
+  <v-container class="Bg" :style="'height: ' + height + 'px'">
+    <v-img src="@/assets/images/petals.gif" style="position: absolute;"></v-img>
+    <v-img
+      src="@/assets/images/invitation.gif"
+      style="margin-top: 0; margin-left: 30px;"
+      justify="center"
+    ></v-img>
+    <v-row
+      justify="center"
+      style="font-size: 3rem; font-weight: bold; margin: 15px;"
+    >
+      {{ gname }}
     </v-row>
-    <v-row>
-      <v-btn @click="reject">거절</v-btn>
+    <v-row
+      justify="center"
+      style="font-size: 1rem; margin-left: 10px; margin-right: 10px;"
+    >
+      {{ gdesc }}
+    </v-row>
+    <v-row style="margin-top: 250px;">
+      <v-col align="center" align-self="center" style="padding: 0;">
+        <v-btn width="100" class="primary" @click="accept">수락</v-btn>
+      </v-col>
+      <v-col align="center" align-self="center" style="padding: 0;">
+        <v-btn width="100" class="warning" @click="reject">거절</v-btn>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -19,13 +38,24 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
-      uno: this.$store.getters.getUno,
-      height: 0,
+      gname: '',
+      gdesc: '',
+      height: window.screen.height - 112,
     };
   },
   props: ['ano'],
   created() {
-    this.height = window.screen.height - 112;
+    var params = new URLSearchParams();
+    params.append('gno', this.gno);
+    axios
+      .post('getGroupInfo', params)
+      .then((response) => {
+        this.gname = response.data.groupInfo.gname;
+        this.gdesc = response.data.groupInfo.gdesc;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   methods: {
     accept() {
@@ -76,4 +106,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.Bg {
+  background: url('~@/assets/images/invite.gif') center center;
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+  background-size: cover;
+}
+</style>

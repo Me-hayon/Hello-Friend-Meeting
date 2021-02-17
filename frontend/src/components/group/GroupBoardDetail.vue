@@ -3,14 +3,17 @@
     <v-parallax
       height="300"
       src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-      gradient="to top right, rgba(0,0,0,.33), rgba(25,32,72,.7)"
     >
-      <v-row no-gutters>
-        <v-btn icon x-large @click="returnToGroup" color="white">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-      </v-row>
-      <v-row class="for-title" style="margin-top: 80px;">
+      <v-btn
+        icon
+        x-large
+        @click="returnToGroup"
+        color="white"
+        style="margin-left: -15px;"
+      >
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+      <v-row class="for-title" style="margin-top: 160px;">
         <v-col>
           <v-row
             style="margin-top: 0; margin-right: 10px;"
@@ -50,7 +53,7 @@
 
     <!-- 글 영역 -->
     <v-card-title
-      style="padding-top: 20px; letter-spacing: -2px; font-size: 1.8rem; font-weight: bold; "
+      style="margin: 10px; padding-top: 20px; letter-spacing: -2px; font-size: 1.8rem; font-weight: bold; "
     >
       {{ article.btitle }}
     </v-card-title>
@@ -61,7 +64,7 @@
     </v-card-subtitle>
 
     <v-card-actions>
-      <v-btn text disabled="localIsWriter" @click="modifyBoard">EDIT</v-btn>
+      <v-btn text v-if="localIsWriter" @click="modifyBoard">EDIT</v-btn>
       <v-btn
         color="purple"
         text
@@ -115,7 +118,7 @@
           v-model="newCommentContent"
           outlined
           required
-          label="올바른 문화를 만드는..뿌앵.."
+          label="착한 댓글"
           @keyup.enter="writeComment"
         >
         </v-text-field>

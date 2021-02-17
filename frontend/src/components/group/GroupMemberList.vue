@@ -70,7 +70,7 @@
                     justify="center"
                     style="padding: 0; font-size: 1.1rem; margin: 0;"
                   >
-                    <!-- <v-icon large>mdi-human-female-dance</v-icon> -->
+                    <v-icon large>mdi-human-female-dance</v-icon>
                     <span style="margin-left: 5px; letter-spacing: -2px;">
                       내 친구 목록
                     </span>
@@ -115,7 +115,7 @@
           v-for="member in sortedMemberList"
           :key="member.uno"
         >
-          <v-dialog v-model="dialog" width="350">
+          <v-dialog width="350">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 style="color:black; height:60px; width:100%;"
@@ -240,7 +240,6 @@ export default {
       unoOfGmaster: 0,
       inviteFriend: false,
       friendList: [],
-      dialog: false,
     };
   },
   created() {
