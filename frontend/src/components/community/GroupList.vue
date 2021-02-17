@@ -52,7 +52,6 @@
                       fab
                     >
                       <v-img
-                        width="50"
                         :src="
                           require(`@/assets/images/group-img/${
                             groups[4 * (row - 1) + (col - 1)].gimg
@@ -119,14 +118,12 @@
                       depressed
                       fab
                     >
-                      <v-img
-                        width="50"
+                      <img
                         :src="
-                          require(`@/assets/images/group-img/${
+                          'data:image/png;base64,' +
                             searchGroups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
                         "
-                      ></v-img>
+                      />
                     </v-btn>
                     <p>
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
@@ -148,14 +145,12 @@
                       depressed
                       fab
                     >
-                      <v-img
-                        width="50"
+                      <img
                         :src="
-                          require(`@/assets/images/group-img/${
+                          'data:image/png;base64,' +
                             searchGroups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
                         "
-                      ></v-img>
+                      />
                     </v-btn>
                     <p>
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
@@ -322,6 +317,7 @@ export default {
                     this.groups[i].members = this.groups[i].guserList
                       .trim()
                       .split(' ');
+                    this.groups[i].gimg = response.data.fileList[i];
                   }
 
                   this.createGroupModal = false;

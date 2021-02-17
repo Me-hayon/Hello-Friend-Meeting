@@ -1,5 +1,6 @@
 package com.web.curation.controller;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +33,7 @@ import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
+import com.web.curation.model.repository.FiletestRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
 import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
@@ -81,9 +82,11 @@ public class GroupController {
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
 	
-
 	@Autowired
 	TimelineRepository timelineRepository;
+	
+	@Autowired
+	FiletestRepository filetestRepository;
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {
@@ -180,7 +183,7 @@ public class GroupController {
 	}
 	
 	@PostMapping("/getGroupList")
-	public Object getGroupList(@RequestBody Map<String, String> map) {
+	public Object getGroupList(@RequestBody Map<String, String> map) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
@@ -219,7 +222,12 @@ public class GroupController {
 					for(GroupInfo groupInfo: otherGroupList) {
 						groupList.add(groupInfo);
 					}
-					
+					List<byte[]> byteList=new ArrayList<>();
+					for(GroupInfo groupInfo:groupList) {
+						byte[] cur=groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length());
+						byteList.add(cur);
+					}
+					resultMap.put("fileList",byteList);
 					resultMap.put("groupList", groupList);
 					resultMap.put("is-success", true);
 				}
@@ -239,7 +247,7 @@ public class GroupController {
 	}
 	
 	@GetMapping("/getGroupList/{friendUno}")
-	public Object getGroupList(@PathVariable int friendUno) {
+	public Object getGroupList(@PathVariable int friendUno) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(friendUno);
@@ -252,6 +260,13 @@ public class GroupController {
 			List<GroupInfo> groupList = groupInfoRepository.findAllByGnoIn(gnoList);
 			
 			if(groupList.size()!=0) {
+				resultMap.put("groupList", groupList);
+				List<byte[]> byteList=new ArrayList<>();
+				for(GroupInfo groupInfo:groupList) {
+					byte[] cur=groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length());
+					byteList.add(cur);
+				}
+				resultMap.put("fileList",byteList);
 				resultMap.put("groupList", groupList);
 				resultMap.put("is-success", true);
 			}
@@ -294,6 +309,8 @@ public class GroupController {
 			groupInfo.setGboundary(gboundary);
 			groupInfo.setGuserList(Integer.toString(gmaster)+" ");
 			groupInfo = groupInfoRepository.save(groupInfo);
+			groupInfo.setGimg(filetestRepository.findById(11).get().getFblob());
+			groupInfoRepository.save(groupInfo);
 			
 			GroupParticipant groupParticipant = new GroupParticipant();
 			groupParticipant.setGno(groupInfo.getGno());

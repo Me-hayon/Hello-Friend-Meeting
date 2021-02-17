@@ -138,6 +138,8 @@ export default {
               this.groups[i].members = this.groups[i].guserList
                 .trim()
                 .split(' ');
+              this.groups[i].gimg = response.data.fileList[i];
+              console.log(this.groups[i].gimg);
             }
 
             this.isLoadingGroups = 1;
