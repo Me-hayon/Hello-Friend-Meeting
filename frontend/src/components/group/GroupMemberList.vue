@@ -118,21 +118,16 @@
           v-for="member in sortedMemberList"
           :key="member.uno"
         >
-          <v-dialog v-model="dialog" width="350">
+          <v-dialog width="350">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                style="color:black; height:60px; width:100%;"
+                style="justify-content:start; color:black; height:60px; width:100%;"
                 color="white"
                 dark
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-avatar
-                  style="position:absolute;
-                top:50%; left:5%;
-                transform: translate(-50%, -50%);
-                width:50px;"
-                >
+                <v-avatar style="width:50px">
                   <img
                     :src="
                       require(`@/assets/images/avatars/${member.uprofileImg}.png`)
@@ -141,31 +136,32 @@
                 </v-avatar>
 
                 <h6
-                  style="position:absolute;
-                top:50%; left:20%;
-                transform: translate(0%, -50%);"
+                  class="text-truncate"
+                  style="margin:0 3%; max-width: 150px;;
+                 "
                 >
                   {{ member.uname }}
                 </h6>
                 <v-icon
-                  style="color:yellow; position:absolute; left:35%;"
+                  style="color:yellow; display:inline-block; "
                   v-if="member.uno === unoOfGmaster"
                   >mdi-crown</v-icon
                 >
-                <h6
-                  style="position:absolute; right:15%;"
+
+                <v-avatar
+                  style="position:absolute; right:3%;"
                   v-if="email == member.email"
+                  color="orange"
+                  size="48"
                 >
-                  <v-avatar color="orange" size="48">
-                    <span
-                      style="position:absolute;
-                top:50%; left:50%;
-                transform: translate(-50%, -50%);"
-                      class="white--text headline"
-                      >나</span
-                    >
-                  </v-avatar>
-                </h6>
+                  <span
+                    style="position:absolute;
+                    top:50%; left:50%;
+                    transform: translate(-55%, -50%);"
+                    class="white--text headline"
+                    >나</span
+                  >
+                </v-avatar>
               </v-btn>
             </template>
             <v-card>
@@ -263,7 +259,6 @@ export default {
       unoOfGmaster: 0,
       inviteFriend: false,
       friendList: [],
-      dialog: false,
     };
   },
   created() {
