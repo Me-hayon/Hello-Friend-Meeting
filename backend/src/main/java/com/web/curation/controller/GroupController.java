@@ -1,5 +1,6 @@
 package com.web.curation.controller;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.Category;
+import com.web.curation.model.entity.Filetest;
 import com.web.curation.model.entity.FriendInfo;
 import com.web.curation.model.entity.GroupApply;
+import com.web.curation.model.entity.GroupDto;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
 import com.web.curation.model.entity.Naegi;
@@ -33,6 +35,7 @@ import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
 import com.web.curation.model.repository.CategoryRepository;
+import com.web.curation.model.repository.FiletestRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
 import com.web.curation.model.repository.GroupApplyRepository;
 import com.web.curation.model.repository.GroupInfoRepository;
@@ -81,9 +84,13 @@ public class GroupController {
 	@Autowired
 	ScheduleParticipantRepository scheduleParticipantRepository;
 	
-
 	@Autowired
 	TimelineRepository timelineRepository;
+	
+	@Autowired
+	FiletestRepository filetestRepository;
+	
+	
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {
@@ -170,19 +177,30 @@ public class GroupController {
 	}
 
 	@PostMapping("/getGroupInfo")
-	public Object getGroupInfo(@RequestParam int gno) {
+	public Object getGroupInfo(@RequestParam int gno) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
-		resultMap.put("groupInfo", groupInfo);
+		
+		GroupDto gd=new GroupDto();
+		gd.setGboundary(groupInfo.getGboundary());
+		gd.setGcategory(groupInfo.getGcategory());
+		gd.setGdate(groupInfo.getGdate());
+		gd.setGdesc(groupInfo.getGdesc());
+		gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+		gd.setGmaster(groupInfo.getGmaster());
+		gd.setGname(groupInfo.getGname());
+		gd.setGno(groupInfo.getGno());
+		gd.setGuserList(groupInfo.getGuserList());
+		
+		resultMap.put("groupInfo", gd);
 		
 		return resultMap;
 	}
 	
 	@PostMapping("/getGroupList")
-	public Object getGroupList(@RequestBody Map<String, String> map) {
+	public Object getGroupList(@RequestBody Map<String, String> map) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
-		
 		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
 		int uno = userInfo.getUno();
 		
@@ -220,7 +238,21 @@ public class GroupController {
 						groupList.add(groupInfo);
 					}
 					
-					resultMap.put("groupList", groupList);
+					List<GroupDto> groupDtoList=new ArrayList<>();
+					for(GroupInfo groupInfo:groupList) {
+						GroupDto gd=new GroupDto();
+						gd.setGboundary(groupInfo.getGboundary());
+						gd.setGcategory(groupInfo.getGcategory());
+						gd.setGdate(groupInfo.getGdate());
+						gd.setGdesc(groupInfo.getGdesc());
+						gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+						gd.setGmaster(groupInfo.getGmaster());
+						gd.setGname(groupInfo.getGname());
+						gd.setGno(groupInfo.getGno());
+						gd.setGuserList(groupInfo.getGuserList());
+						groupDtoList.add(gd);
+					}
+					resultMap.put("groupList", groupDtoList);
 					resultMap.put("is-success", true);
 				}
 				else {
@@ -236,7 +268,7 @@ public class GroupController {
 	}
 	
 	@GetMapping("/getGroupList/{friendUno}")
-	public Object getGroupList(@PathVariable int friendUno) {
+	public Object getGroupList(@PathVariable int friendUno) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		List<GroupParticipant> list = groupParticipantRepository.findAllByUno(friendUno);
@@ -250,6 +282,22 @@ public class GroupController {
 			
 			if(groupList.size()!=0) {
 				resultMap.put("groupList", groupList);
+				
+				List<GroupDto> groupDtoList=new ArrayList<>();
+				for(GroupInfo groupInfo:groupList) {
+					GroupDto gd=new GroupDto();
+					gd.setGboundary(groupInfo.getGboundary());
+					gd.setGcategory(groupInfo.getGcategory());
+					gd.setGdate(groupInfo.getGdate());
+					gd.setGdesc(groupInfo.getGdesc());
+					gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+					gd.setGmaster(groupInfo.getGmaster());
+					gd.setGname(groupInfo.getGname());
+					gd.setGno(groupInfo.getGno());
+					gd.setGuserList(groupInfo.getGuserList());
+					groupDtoList.add(gd);
+				}
+				resultMap.put("groupList", groupDtoList);
 				resultMap.put("is-success", true);
 			}
 			else {
@@ -290,6 +338,7 @@ public class GroupController {
 			groupInfo.setGcategory(gcategory);
 			groupInfo.setGboundary(gboundary);
 			groupInfo.setGuserList(Integer.toString(gmaster)+" ");
+			groupInfo.setGimg(filetestRepository.findById(11).get().getFblob());
 			groupInfo = groupInfoRepository.save(groupInfo);
 			
 			GroupParticipant groupParticipant = new GroupParticipant();
@@ -369,8 +418,8 @@ public class GroupController {
 						alarm.setAsummary(asummary);
 						
 						alarmRepository.save(alarm);
-						resultMap.put("is-success", true);
 					}
+					resultMap.put("is-success", true);
 				}
 				else resultMap.put("is-success", true);
 			}
