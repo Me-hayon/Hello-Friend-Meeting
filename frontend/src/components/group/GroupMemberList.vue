@@ -72,7 +72,7 @@
                     justify="center"
                     style="padding: 0; font-size: 1.1rem; margin: 0;"
                   >
-                    <!-- <v-icon large>mdi-human-female-dance</v-icon> -->
+                    <v-icon large>mdi-human-female-dance</v-icon>
                     <span style="margin-left: 5px; letter-spacing: -2px;">
                       내 친구 목록
                     </span>

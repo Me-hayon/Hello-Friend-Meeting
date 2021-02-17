@@ -409,7 +409,13 @@ export default {
   color: #4682b4 !important;
 }
 .atchBg {
-  background: url("~@/assets/images/home.gif") center center;
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.4),
+      rgba(69, 6, 99, 0.212)
+    ),
+    url('~@/assets/images/home.gif');
+  background-position: center center;
   background-repeat: no-repeat;
   /* background-attachment: fixed; */
   background-size: cover;
