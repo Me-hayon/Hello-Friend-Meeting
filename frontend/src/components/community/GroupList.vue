@@ -45,20 +45,33 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            groups[4 * (row - 1) + (col - 1)].gmaster == uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), false)"
+                        depressed
+                        fab
+                      >
+                        <v-avatar size="60">
+                          <v-img
+                            :src="
+                              'data:image/png;base64,' +
+                                groups[4 * (row - 1) + (col - 1)].gimg
+                            "
+                          ></v-img>
+                        </v-avatar>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -73,20 +86,33 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            groups[4 * (row - 1) + (col - 1)].gmaster == uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), false)"
+                        depressed
+                        fab
+                      >
+                        <v-avatar size="60">
+                          <v-img
+                            :src="
+                              'data:image/png;base64,' +
+                                groups[4 * (row - 1) + (col - 1)].gimg
+                            "
+                          ></v-img>
+                        </v-avatar>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -111,20 +137,34 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            searchGroups[4 * (row - 1) + (col - 1)].gmaster ==
+                              uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), true)"
+                        depressed
+                        fab
+                      >
+                        <v-avatar size="60">
+                          <v-img
+                            :src="
+                              'data:image/png;base64,' +
+                                searchGroups[4 * (row - 1) + (col - 1)].gimg
+                            "
+                          ></v-img>
+                        </v-avatar>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -139,20 +179,34 @@
               >
                 <v-row justify="center" no-gutters>
                   <v-col align="center">
-                    <v-btn
-                      @click="moveGroup(4 * (row - 1) + (col - 1))"
-                      depressed
-                      fab
-                    >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
-                    </v-btn>
-                    <p>
+                    <v-badge color="rgb(255, 255, 255, 0)" avatar overlap left>
+                      <template v-slot:badge>
+                        <v-avatar
+                          v-if="
+                            searchGroups[4 * (row - 1) + (col - 1)].gmaster ==
+                              uno
+                          "
+                        >
+                          <v-icon color="amber accent-4">mdi-crown</v-icon>
+                        </v-avatar>
+                      </template>
+
+                      <v-btn
+                        @click="moveGroup(4 * (row - 1) + (col - 1), true)"
+                        depressed
+                        fab
+                      >
+                        <v-avatar size="60">
+                          <v-img
+                            :src="
+                              'data:image/png;base64,' +
+                                searchGroups[4 * (row - 1) + (col - 1)].gimg
+                            "
+                          ></v-img>
+                        </v-avatar>
+                      </v-btn>
+                    </v-badge>
+                    <p class="text-truncate">
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
                     </p>
                   </v-col>
@@ -236,10 +290,10 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  props: ["uno", "email", "groupList", "categoryList", "friendList"],
+  props: ['uno', 'email', 'groupList', 'categoryList', 'friendList'],
   data() {
     return {
       groups: this.groupList,
@@ -260,29 +314,29 @@ export default {
       categorySelectValid: false,
       scopeValid: false,
       icons: [
-        "mdi-controller-classic",
-        "mdi-book-open-page-variant",
-        "mdi-soccer",
-        "mdi-music-note",
-        "mdi-hand-shake",
-        "mdi-food-turkey",
-        "mdi-face-woman-shimmer",
+        'mdi-controller-classic',
+        'mdi-book-open-page-variant',
+        'mdi-soccer',
+        'mdi-music-note',
+        'mdi-hand-shake',
+        'mdi-food-turkey',
+        'mdi-face-woman-shimmer',
       ],
     };
   },
   created() {
-    console.log(this.groups);
     this.groupListRow = parseInt(this.groups.length / 4) + 1;
   },
   methods: {
-    moveGroup(index) {
-      this.$store.commit("setGno", this.groups[index].gno);
-      this.$router.push("/group");
+    moveGroup(index, isSearch) {
+      if (isSearch) this.$store.commit('setGno', this.searchGroups[index].gno);
+      else this.$store.commit('setGno', this.groups[index].gno);
+      this.$router.push('/group');
     },
     searchInput() {
       this.searchGroups = [];
 
-      if (this.search != null && this.search != "") {
+      if (this.search != null && this.search != '') {
         for (let i = 0; i < this.groups.length; i++) {
           if (this.groups[i].gname.includes(this.search))
             this.searchGroups.push(this.groups[i]);
@@ -292,9 +346,9 @@ export default {
       }
     },
     createGroup() {
-      console.log("pressed");
+      console.log('pressed');
       axios
-        .post("createGroup", {
+        .post('createGroup', {
           uno: this.uno,
           gname: this.groupName,
           gdesc: this.groupDesc,
@@ -302,27 +356,27 @@ export default {
           gboundary: this.scope,
         })
         .then((response) => {
-          if (response.data["is-success"]) {
+          if (response.data['is-success']) {
             axios
-              .post("getGroupList", { email: this.email })
+              .post('getGroupList', { email: this.email })
               .then((response) => {
-                if (response.data["is-success"]) {
+                if (response.data['is-success']) {
                   this.groups = response.data.groupList;
 
                   for (let i = 0; i < this.groups.length; i++) {
                     this.groups[i].members = this.groups[i].guserList
                       .trim()
-                      .split(" ");
+                      .split(' ');
                   }
 
                   this.createGroupModal = false;
-                  alert(this.groupName + " 그룹이 생성되었습니다.");
+                  alert(this.groupName + ' 그룹이 생성되었습니다.');
                 }
               })
               .catch((error) => {
                 console.log(error);
               });
-          } else alert("그룹을 생성하는데 오류가 발생하였습니다.");
+          } else alert('그룹을 생성하는데 오류가 발생하였습니다.');
         })
         .catch((error) => {
           console.log(error);
@@ -343,7 +397,7 @@ export default {
       }
     },
     groupName(groupName) {
-      if (groupName != null && groupName != "") {
+      if (groupName != null && groupName != '') {
         this.groupNameValid = true;
         if (this.groupDescValid && this.categorySelectValid && this.scopeValid)
           this.createGroupValid = true;
@@ -353,7 +407,7 @@ export default {
       }
     },
     groupDesc(groupDesc) {
-      if (groupDesc != null && groupDesc != "") {
+      if (groupDesc != null && groupDesc != '') {
         this.groupDescValid = true;
         if (this.groupNameValid && this.categorySelectValid && this.scopeValid)
           this.createGroupValid = true;
@@ -363,7 +417,7 @@ export default {
       }
     },
     categorySelect(categorySelect) {
-      if (categorySelect != null && categorySelect != "") {
+      if (categorySelect != null && categorySelect != '') {
         this.categorySelectValid = true;
         if (this.groupNameValid && this.groupDescValid && this.scopeValid)
           this.createGroupValid = true;
@@ -373,7 +427,7 @@ export default {
       }
     },
     scope(scope) {
-      if (scope != null && scope != "") {
+      if (scope != null && scope != '') {
         this.scopeValid = true;
         if (
           this.groupNameValid &&

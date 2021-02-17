@@ -4,12 +4,12 @@
     <profile-cover />
 
     <!-- 프로필 사진 -->
-    <v-btn style="top: -35px; left: 115px;" fab disabled>
-      <v-img
-        contain
-        height="100"
-        :src="require(`@/assets/images/avatars/${info.uprofileImg}.png`)"
-      ></v-img>
+    <v-btn style="top: -25px; left: 115px;" fab disabled>
+      <v-avatar size="70"
+        ><v-img
+          :src="require(`@/assets/images/avatars/${info.uprofileImg}.png`)"
+        ></v-img
+      ></v-avatar>
     </v-btn>
 
     <!-- 친구 관리 버튼 -->

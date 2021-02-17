@@ -249,32 +249,7 @@ export default {
     },
     vuexBno(val) {
       this.bno = val;
-      var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      axios
-        .post('boardDetail', params)
-        .then((response) => {
-          this.article = response.data.curBoard;
-          this.writer = response.data.writer.uname;
-          this.localIsWriter = response.data.isWriter;
-          this.newTitle = this.article.btitle;
-          this.newContent = this.article.bcontent;
-
-          axios.post('getCommentList', params).then((resp) => {
-            this.comments = resp.data.comments;
-            var writerList = resp.data.writerList;
-            var isWriterList = resp.data.isWriterList;
-
-            for (var i = 0; i < this.comments.length; i++) {
-              this.comments[i].writerName = writerList[i];
-              this.comments[i].isWriter = isWriterList[i];
-            }
-          });
-        })
-        .catch((error) => {
-          error;
-        });
+      this.getBoardDetail();
     },
     vuexMemberStatus(val) {
       this.memberStatus = val;

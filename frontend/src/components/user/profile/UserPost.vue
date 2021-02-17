@@ -1,7 +1,15 @@
 <template>
   <v-col cols="6" style="padding-top: 0; padding-left: 0; padding-right: 0;">
     <v-subheader>내가 작성한 글</v-subheader>
-    <v-list two-line subheader flat height="200" style="overflow-y: auto;">
+
+    <v-list
+      v-if="posts != null"
+      two-line
+      subheader
+      flat
+      height="200"
+      style="overflow-y: auto;"
+    >
       <v-list-item-group v-model="postListSelect">
         <v-list-item v-for="(post, index) in posts" :key="index" :value="post">
           <v-list-item-avatar>
@@ -15,6 +23,16 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
+
+    <v-row
+      v-else
+      justify="center"
+      align="center"
+      style="height: 200px;"
+      no-gutters
+    >
+      <p>작성한 글이 없습니다.</p>
+    </v-row>
   </v-col>
 </template>
 

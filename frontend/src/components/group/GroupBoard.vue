@@ -9,10 +9,42 @@
       icon
       style="color: white; position: absolute; top: 20px; right: 20px;"
       v-if="memberStatus == 4 && nowScroll < 100"
-      @click="editGroupImg"
+      @click="dialog = true"
     >
       <v-icon x-large>mdi-cog-outline</v-icon>
     </v-btn>
+    <!---->
+    <v-dialog v-model="dialog" persistent>
+      <v-card>
+        <v-card-title>
+          <span>그룹 프로필 변경</span>
+          <v-spacer></v-spacer>
+
+          <v-btn icon @click="closeDialog">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-file-input
+          v-model="files"
+          accept="image/*"
+          label="이미지를 선택해주세요!"
+        ></v-file-input>
+        <v-card-actions style="padding-top: 0;">
+          <v-row class="ma-0" justify="end">
+            <v-btn
+              color="primary"
+              class="font-weight-black"
+              :disabled="files == null || files.length === 0"
+              @click="upload"
+            >
+              변경
+            </v-btn>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!---->
     <v-row
       class="atchBg"
       :style="{ height: scrollHeight }"
@@ -216,17 +248,17 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   computed: {
     scrollHeight() {
       let tmp = 663 - this.nowScroll;
-      return tmp + 'px';
+      return tmp + "px";
     },
     scrollMargin() {
       let tmp = this.nowScroll;
       // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', tmp);
-      return tmp + 'px';
+      return tmp + "px";
     },
     vuexGno() {
       return this.$store.getters.getGno;
@@ -244,23 +276,8 @@ export default {
   watch: {
     vuexGno(val) {
       this.gno = val;
-      var params = new URLSearchParams();
-      params.append('bgno', this.gno);
-      axios
-        .post('getBoardList', params)
-        .then((response) => {
-          this.table = response.data.notNotice;
-          this.tableNotice = response.data.notice;
-          for (var i = 0; i < this.table.length; i++) {
-            this.table[i].writerName = response.data.notNoticeWriter[i];
-          }
-          for (i = 0; i < this.tableNotice.length; i++) {
-            this.tableNotice[i].writerName = response.data.noticeWriter[i];
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.getGroupInfo();
+      this.getBoardList();
     },
     vuexMemberStatus(val) {
       this.memberStatus = val;
@@ -270,12 +287,12 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
-      groupTitle: '',
-      groupDesc: '',
+      groupTitle: "",
+      groupDesc: "",
       table: [],
       tableNotice: [],
-      newTitle: '',
-      newContent: '',
+      newTitle: "",
+      newContent: "",
       newIsNotice: false,
       circle: true,
       disabled: false,
@@ -285,11 +302,15 @@ export default {
       writeModal: false,
       active: true,
       nowScroll: 0,
+      dialog: false,
+      files: [],
     };
   },
   created() {
     this.getGroupInfo();
     this.getBoardList();
+    console.log(this.memberStatus);
+    console.log("scroll" + this.nowScroll);
   },
   methods: {
     onScroll(e) {
@@ -297,18 +318,18 @@ export default {
       // console.log('☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆', this.nowScroll);
     },
     boardDetail(bno) {
-      this.$store.commit('setBno', bno);
-      this.$router.push('/board/detail');
+      this.$store.commit("setBno", bno);
+      this.$router.push("/board/detail");
     },
     createArticle() {
       var params = new URLSearchParams();
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      params.append('bgno', this.gno);
-      params.append('title', this.newTitle);
-      params.append('content', this.newContent);
-      params.append('bisNotice', this.newIsNotice);
+      params.append("email", window.sessionStorage.getItem("user-email"));
+      params.append("bgno", this.gno);
+      params.append("title", this.newTitle);
+      params.append("content", this.newContent);
+      params.append("bisNotice", this.newIsNotice);
 
-      axios.post('writeBoard', params).then((resp) => {
+      axios.post("writeBoard", params).then((resp) => {
         alert(resp.data.data);
         this.getBoardList();
         this.writeModal = false;
@@ -321,9 +342,9 @@ export default {
     // },
     getBoardList() {
       var params = new URLSearchParams();
-      params.append('bgno', this.gno);
+      params.append("bgno", this.gno);
       axios
-        .post('getBoardList', params)
+        .post("getBoardList", params)
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
@@ -347,14 +368,36 @@ export default {
     },
     getGroupInfo() {
       var params = new URLSearchParams();
-      params.append('gno', this.gno);
-      axios.post('getGroupInfo', params).then((response) => {
+      params.append("gno", this.gno);
+      axios.post("getGroupInfo", params).then((response) => {
         // console.log('※※※※※※※※※※※※※※※', response);
         this.groupTitle = response.data.groupInfo.gname.toUpperCase();
         this.groupDesc = response.data.groupInfo.gdesc;
       });
     },
-    editGroupImg() {},
+    upload() {
+      console.log(this.files);
+      var params = new FormData();
+      params.append("file", this.files);
+      params.append("gno", this.gno);
+      axios
+        .post("fileUpload", params, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((resp) => {
+          if (resp.data.result) alert("프로필 변경에 성공했습니다.");
+          this.closeDialog();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.files = [];
+    },
   },
 };
 </script>
