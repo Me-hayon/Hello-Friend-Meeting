@@ -134,6 +134,7 @@ export default {
     this.$nextTick(function() {
       document.documentElement.scrollTop = document.body.scrollHeight;
     });
+    this.$store.commit("setChatPageH", document.body.scrollHeight);
   },
 
   created() {
@@ -300,6 +301,9 @@ export default {
     vuexMemberStatus() {
       return this.$store.getters.getMemberStatus;
     },
+    vuexTabNum() {
+      return this.$store.getters.getTabNum;
+    },
   },
   watch: {
     vuexGno(val) {
@@ -377,6 +381,15 @@ export default {
     },
     vuexMemberStatus(val) {
       this.memberStatus = val;
+    },
+    vuexTabNum() {
+      console.log("씨이이이발");
+      console.log("높이", this.$store.getters.getChatPageH);
+      let H = this.$store.getters.getChatPageH;
+      this.$nextTick(function() {
+        // document.documentElement.scrollTop = H;
+        document.body.scrollTop = H;
+      });
     },
     isLoadingUser(isLoadingUser) {
       console.log("watch에서 바뀌는지" + isLoadingUser);
