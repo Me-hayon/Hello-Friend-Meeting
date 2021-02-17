@@ -1,5 +1,5 @@
 <template>
-  <v-card style="padding:0">
+  <v-card style="padding:0" min-height="710px">
     <v-tabs class="group-bar" v-model="tab" background-color="white" grow>
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
@@ -24,10 +24,10 @@
   </v-card>
 </template>
 <script>
-import GroupBoard from '@/components/group/GroupBoard.vue';
-import GroupSchedule from '@/components/group/GroupSchedule.vue';
-import GroupChat from '@/components/group/GroupChat.vue';
-import GroupMemberList from '@/components/group/GroupMemberList.vue';
+import GroupBoard from "@/components/group/GroupBoard.vue";
+import GroupSchedule from "@/components/group/GroupSchedule.vue";
+import GroupChat from "@/components/group/GroupChat.vue";
+import GroupMemberList from "@/components/group/GroupMemberList.vue";
 export default {
   created() {
     this.height = window.screen.height - 112;

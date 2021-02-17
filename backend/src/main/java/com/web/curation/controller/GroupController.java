@@ -263,7 +263,6 @@ public class GroupController {
 				resultMap.put("is-success", false);
 			}
 		}
-
 		
 		return resultMap;
 	}

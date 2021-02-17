@@ -5,7 +5,20 @@
     style="height: 663px;"
     v-scroll:#scroll-target="onScroll"
   >
-    <v-row class="atchBg" :style="{ height: scrollHeight }" no-gutters>
+    <v-btn
+      icon
+      style="color: white; position: absolute; top: 20px; right: 20px;"
+      v-if="memberStatus == 4 && nowScroll < 100"
+      @click="editGroupImg"
+    >
+      <v-icon x-large>mdi-cog-outline</v-icon>
+    </v-btn>
+    <v-row
+      class="atchBg"
+      :style="{ height: scrollHeight }"
+      no-gutters
+      style="margin-top: 0;"
+    >
       <v-col align="center" align-self="center" style="padding: 0;">
         <p
           style="color: white; letter-spacing: 2px; margin-bottom: 0; font-size: 3rem; font-weight: bold;"
@@ -14,7 +27,7 @@
           {{ groupTitle }}
         </p>
         <p
-          style="color: white; letter-spacing: -1px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
+          style="color: white; letter-spacing: -1px; margin-left: 20px; margin-right: 20px; margin-bottom: 0; font-size: 1rem; font-weight: light;"
         >
           {{ groupDesc }}
         </p>
@@ -22,7 +35,7 @@
     </v-row>
 
     <!-- 공지사항 -->
-    <v-row style="margin: 0px; margin-top: 0;">
+    <v-row style="margin: 0px; margin-top: 0;" v-if="tableNotice.length != 0">
       <v-col class="pa-0">
         <v-list style="padding: 0;">
           <v-list-group no-action v-model="active" active-class="noticeBar">
@@ -136,7 +149,23 @@
           </v-dialog>
         </v-row>
         <!-- for 돌리기 : getBoardList -->
-        <v-row style="margin: 0;">
+        <v-row style="margin: 0; margin-top: 10px;" v-if="table.length == 0">
+          <v-col>
+            <v-row
+              justify="center"
+              style="font-size: 1.2rem; letter-spacing: -1px; font-weight: bold;"
+            >
+              이런, 아무 글이 없어요 :(
+            </v-row>
+            <v-row
+              justify="center"
+              style="font-size: 0.8rem; letter-spacing: -1px;"
+            >
+              첫 글의 주인공이 되어보세요!
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-row style="margin: 0;" v-else>
           <v-col style="padding: 0;">
             <v-simple-table>
               <template v-slot:default>
@@ -320,11 +349,12 @@ export default {
       var params = new URLSearchParams();
       params.append('gno', this.gno);
       axios.post('getGroupInfo', params).then((response) => {
-        console.log('※※※※※※※※※※※※※※※', response);
+        // console.log('※※※※※※※※※※※※※※※', response);
         this.groupTitle = response.data.groupInfo.gname.toUpperCase();
         this.groupDesc = response.data.groupInfo.gdesc;
       });
     },
+    editGroupImg() {},
   },
 };
 </script>
