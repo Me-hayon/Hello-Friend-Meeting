@@ -171,7 +171,7 @@
                         v-if="comment.isWriter"
                         >수정</v-btn
                       >
-                      <v-dialog v-model="editModal" persistent max-width="300">
+                      <!-- <v-dialog v-model="editModal" persistent max-width="300">
                         <v-card>
                           <v-card-title>
                             <span style="letter-spacing: -1px;">댓글수정</span>
@@ -204,7 +204,7 @@
                             </v-row>
                           </v-card-actions>
                         </v-card>
-                      </v-dialog>
+                      </v-dialog> -->
                       <v-btn
                         icon
                         @click="delComment(comment.cno)"
