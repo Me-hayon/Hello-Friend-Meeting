@@ -28,5 +28,11 @@ export default {
   },
   getFeedCreatedTime: function (state) {
     return state.feedCreatedTime
+  },
+  getTabNum: function(state) {
+    return state.tabNum;
+  },
+  getChatPageH: function(state) {
+    return state.chatPageH
   }
 };

@@ -15,7 +15,7 @@
         <v-card flat> <GroupSchedule /></v-card>
       </v-tab-item>
       <v-tab-item>
-        <v-card flat><GroupChat /> </v-card>
+        <v-card v-if="tab == 2" flat><GroupChat /> </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat><GroupMemberList /> </v-card>
@@ -58,6 +58,10 @@ export default {
     },
     vuexMemberStatus(val) {
       this.memberStatus = val;
+    },
+    tab(val) {
+      console.log(this.$store.getters.getTabNum);
+      this.$store.commit("setTabNum", val);
     },
   },
   components: {
