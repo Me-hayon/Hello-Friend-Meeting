@@ -37,6 +37,28 @@ export default {
       currentPage: 'home',
     };
   },
+  computed: {
+    getRouteUrl() {
+      return this.$store.getters.getRouteUrl;
+    },
+  },
+  watch: {
+    getRouteUrl(routeUrl) {
+      if (routeUrl == '/') {
+        this.currentPage = 'home';
+      } else if (routeUrl == '/group') {
+        this.currentPage = 'community';
+      } else if (routeUrl == '/board/detail') {
+        this.currentPage = 'community';
+      } else if (routeUrl == '/friendProfile') {
+        this.currentPage = 'community';
+      } else if (routeUrl == '/naegi') {
+        this.currentPage = 'community';
+      }
+
+      this.$store.commit('setRouteUrl', null);
+    },
+  },
 };
 </script>
 

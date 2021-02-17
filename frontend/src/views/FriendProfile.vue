@@ -1,15 +1,15 @@
 <template>
-  <v-container v-if="friend != null" style="height: 600px;">
+  <v-container v-if="friend != null" style="height: 711px;">
     <!-- 프로필 커버 이미지 -->
     <profile-cover />
 
     <!-- 프로필 사진 -->
     <v-btn style="top: 160px; left: 177px;" fab absolute disabled>
-      <v-img
-        contain
-        height="100"
-        :src="require(`@/assets/images/avatars/${friend.uprofileImg}.png`)"
-      ></v-img>
+      <v-avatar size="80"
+        ><v-img
+          :src="require(`@/assets/images/avatars/${friend.uprofileImg}.png`)"
+        ></v-img
+      ></v-avatar>
     </v-btn>
 
     <!-- 친구 관리 버튼 -->
@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import ProfileCover from "@/components/user/profile/ProfileCover.vue";
-import FriendManageBtn from "@/components/user/profile/FriendManageBtn.vue";
-import FriendGroupList from "@/components/user/profile/FriendGroupList.vue";
-import axios from "axios";
+import ProfileCover from '@/components/user/profile/ProfileCover.vue';
+import FriendManageBtn from '@/components/user/profile/FriendManageBtn.vue';
+import FriendGroupList from '@/components/user/profile/FriendGroupList.vue';
+import axios from 'axios';
 
 const storage = window.sessionStorage;
 
@@ -43,7 +43,7 @@ export default {
     FriendManageBtn,
     FriendGroupList,
   },
-  props: ["myUno", "friendUno", "categoryList"],
+  props: ['myUno', 'friendUno', 'categoryList'],
   data() {
     return {
       friend: null,
@@ -57,10 +57,10 @@ export default {
   watch: {
     vuexUno() {
       axios
-        .post("findUserByUno", { uno: this.friendUno })
+        .post('findUserByUno', { uno: this.friendUno })
         .then((response) => {
-          if (response.data["is-success"]) this.friend = response.data.user;
-          else alert("친구 정보를 불러오는데 오류가 발생하였습니다.");
+          if (response.data['is-success']) this.friend = response.data.user;
+          else alert('친구 정보를 불러오는데 오류가 발생하였습니다.');
         })
         .catch((error) => {
           console.log(error);
@@ -69,10 +69,10 @@ export default {
   },
   created() {
     axios
-      .post("findUserByUno", { uno: this.friendUno })
+      .post('findUserByUno', { uno: this.friendUno })
       .then((response) => {
-        if (response.data["is-success"]) this.friend = response.data.user;
-        else alert("친구 정보를 불러오는데 오류가 발생하였습니다.");
+        if (response.data['is-success']) this.friend = response.data.user;
+        else alert('친구 정보를 불러오는데 오류가 발생하였습니다.');
       })
       .catch((error) => {
         console.log(error);
