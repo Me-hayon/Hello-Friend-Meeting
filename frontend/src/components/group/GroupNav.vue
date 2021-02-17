@@ -1,5 +1,5 @@
 <template>
-  <v-card style="padding:0">
+  <v-card style="padding:0" :height="height">
     <v-tabs class="group-bar" v-model="tab" background-color="white" grow>
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
