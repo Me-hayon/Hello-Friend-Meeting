@@ -53,6 +53,12 @@ export default {
   },
   resetFeedCreatedTime: function (state) {
     state.feedCreatedTime = 0;
+  },
+  setTabNum:function(state, payload) {
+    state.tabNum = payload
+  },
+  setChatPageH:function(state, payload) {
+    state.chatPageH = payload
   }
 };
 
