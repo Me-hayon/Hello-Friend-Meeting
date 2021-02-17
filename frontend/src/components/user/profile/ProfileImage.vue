@@ -8,11 +8,13 @@
   >
     <template v-slot:activator>
       <v-btn v-model="profileImgFab" fab>
-        <v-img
-          contain
-          height="100"
-          :src="require(`@/assets/images/avatars/${profileImg}.png`)"
-        ></v-img>
+        <v-avatar
+          ><v-img
+            contain
+            height="100"
+            :src="require(`@/assets/images/avatars/${profileImg}.png`)"
+          ></v-img
+        ></v-avatar>
       </v-btn>
     </template>
     <v-row justify="center" style="width: 300px; overflow-y: visible;">
@@ -22,21 +24,23 @@
         fab
         @click="changeAvatar(pImage, index)"
       >
-        <v-img
-          contain
-          height="100"
-          :src="require(`@/assets/images/avatars/${pImage}.png`)"
-        ></v-img>
+        <v-avatar
+          ><v-img
+            contain
+            height="100"
+            :src="require(`@/assets/images/avatars/${pImage}.png`)"
+          ></v-img
+        ></v-avatar>
       </v-btn>
     </v-row>
   </v-speed-dial>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  props: ['email', 'currProfileImg', 'curr_pImages'],
+  props: ["email", "currProfileImg", "curr_pImages"],
   data() {
     return {
       profileImg: this.currProfileImg,
@@ -52,11 +56,11 @@ export default {
       this.pImages.splice(index, 0, prevImg);
 
       let params = new URLSearchParams();
-      params.append('email', this.email);
-      params.append('profileImg', pImage);
+      params.append("email", this.email);
+      params.append("profileImg", pImage);
 
       axios
-        .put('http://localhost:8080/changeAvatar', params)
+        .put("http://localhost:8080/changeAvatar", params)
         .then((response) => {
           console.log(response);
         })
