@@ -21,6 +21,7 @@
               v-model="search"
               label="검색"
               append-icon="mdi-magnify"
+              :hide-details="true"
               @input="searchInput"
               single-line
               clearable
@@ -273,7 +274,7 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="px-6">
             <v-row class="pt-0 pb-4" justify="end" no-gutters>
               <v-btn
                 color="success"

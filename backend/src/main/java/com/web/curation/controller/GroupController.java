@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
+import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Category;
 import com.web.curation.model.entity.Filetest;
 import com.web.curation.model.entity.FriendInfo;
@@ -34,6 +35,7 @@ import com.web.curation.model.entity.ScheduleParticipant;
 import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
+import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CategoryRepository;
 import com.web.curation.model.repository.FiletestRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
@@ -54,6 +56,9 @@ public class GroupController {
 	@Autowired
 	UserInfoRepository userInfoRepository;
 
+	@Autowired
+	BoardRepository boardRepository;
+	
 	@Autowired
 	GroupInfoRepository groupInfoRepository;
 
@@ -90,7 +95,20 @@ public class GroupController {
 	@Autowired
 	FiletestRepository filetestRepository;
 	
-	
+	@PostMapping("/findGnoByBno")
+	public Object findGnoByBno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<Board> optBoard = boardRepository.findById(Integer.parseInt(map.get("bno")));
+		
+		if(optBoard.isPresent()) {
+			resultMap.put("gno", optBoard.get().getBgno());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
+	}
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {

@@ -20,7 +20,7 @@
 
     <v-btn value="message" to="/message">
       <span>쪽지</span>
-      <v-icon>mdi-message</v-icon>
+      <v-icon>mdi-email-check</v-icon>
     </v-btn>
 
     <v-btn value="info" to="/user/profile">
