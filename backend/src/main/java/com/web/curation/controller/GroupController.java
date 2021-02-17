@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
 import com.web.curation.model.entity.Category;
+import com.web.curation.model.entity.Filetest;
 import com.web.curation.model.entity.FriendInfo;
 import com.web.curation.model.entity.GroupApply;
+import com.web.curation.model.entity.GroupDto;
 import com.web.curation.model.entity.GroupInfo;
 import com.web.curation.model.entity.GroupParticipant;
 import com.web.curation.model.entity.Naegi;
@@ -87,6 +89,8 @@ public class GroupController {
 	
 	@Autowired
 	FiletestRepository filetestRepository;
+	
+	
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {
@@ -173,11 +177,23 @@ public class GroupController {
 	}
 
 	@PostMapping("/getGroupInfo")
-	public Object getGroupInfo(@RequestParam int gno) {
+	public Object getGroupInfo(@RequestParam int gno) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
-		resultMap.put("groupInfo", groupInfo);
+		
+		GroupDto gd=new GroupDto();
+		gd.setGboundary(groupInfo.getGboundary());
+		gd.setGcategory(groupInfo.getGcategory());
+		gd.setGdate(groupInfo.getGdate());
+		gd.setGdesc(groupInfo.getGdesc());
+		gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+		gd.setGmaster(groupInfo.getGmaster());
+		gd.setGname(groupInfo.getGname());
+		gd.setGno(groupInfo.getGno());
+		gd.setGuserList(groupInfo.getGuserList());
+		
+		resultMap.put("groupInfo", gd);
 		
 		return resultMap;
 	}
@@ -185,7 +201,6 @@ public class GroupController {
 	@PostMapping("/getGroupList")
 	public Object getGroupList(@RequestBody Map<String, String> map) throws SQLException {
 		Map<String, Object> resultMap = new HashMap<>();
-		
 		UserInfo userInfo = userInfoRepository.findByEmail(map.get("email"));
 		int uno = userInfo.getUno();
 		
@@ -222,13 +237,22 @@ public class GroupController {
 					for(GroupInfo groupInfo: otherGroupList) {
 						groupList.add(groupInfo);
 					}
-					List<byte[]> byteList=new ArrayList<>();
+					
+					List<GroupDto> groupDtoList=new ArrayList<>();
 					for(GroupInfo groupInfo:groupList) {
-						byte[] cur=groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length());
-						byteList.add(cur);
+						GroupDto gd=new GroupDto();
+						gd.setGboundary(groupInfo.getGboundary());
+						gd.setGcategory(groupInfo.getGcategory());
+						gd.setGdate(groupInfo.getGdate());
+						gd.setGdesc(groupInfo.getGdesc());
+						gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+						gd.setGmaster(groupInfo.getGmaster());
+						gd.setGname(groupInfo.getGname());
+						gd.setGno(groupInfo.getGno());
+						gd.setGuserList(groupInfo.getGuserList());
+						groupDtoList.add(gd);
 					}
-					resultMap.put("fileList",byteList);
-					resultMap.put("groupList", groupList);
+					resultMap.put("groupList", groupDtoList);
 					resultMap.put("is-success", true);
 				}
 				else {
@@ -239,9 +263,7 @@ public class GroupController {
 				resultMap.put("is-success", false);
 			}
 		}
-		else {
-			resultMap.put("is-success", false);
-		}
+
 		
 		return resultMap;
 	}
@@ -261,13 +283,22 @@ public class GroupController {
 			
 			if(groupList.size()!=0) {
 				resultMap.put("groupList", groupList);
-				List<byte[]> byteList=new ArrayList<>();
+				
+				List<GroupDto> groupDtoList=new ArrayList<>();
 				for(GroupInfo groupInfo:groupList) {
-					byte[] cur=groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length());
-					byteList.add(cur);
+					GroupDto gd=new GroupDto();
+					gd.setGboundary(groupInfo.getGboundary());
+					gd.setGcategory(groupInfo.getGcategory());
+					gd.setGdate(groupInfo.getGdate());
+					gd.setGdesc(groupInfo.getGdesc());
+					gd.setGimg(groupInfo.getGimg().getBytes(1l, (int)groupInfo.getGimg().length()));
+					gd.setGmaster(groupInfo.getGmaster());
+					gd.setGname(groupInfo.getGname());
+					gd.setGno(groupInfo.getGno());
+					gd.setGuserList(groupInfo.getGuserList());
+					groupDtoList.add(gd);
 				}
-				resultMap.put("fileList",byteList);
-				resultMap.put("groupList", groupList);
+				resultMap.put("groupList", groupDtoList);
 				resultMap.put("is-success", true);
 			}
 			else {
@@ -308,9 +339,8 @@ public class GroupController {
 			groupInfo.setGcategory(gcategory);
 			groupInfo.setGboundary(gboundary);
 			groupInfo.setGuserList(Integer.toString(gmaster)+" ");
-			groupInfo = groupInfoRepository.save(groupInfo);
 			groupInfo.setGimg(filetestRepository.findById(11).get().getFblob());
-			groupInfoRepository.save(groupInfo);
+			groupInfo = groupInfoRepository.save(groupInfo);
 			
 			GroupParticipant groupParticipant = new GroupParticipant();
 			groupParticipant.setGno(groupInfo.getGno());
@@ -389,8 +419,8 @@ public class GroupController {
 						alarm.setAsummary(asummary);
 						
 						alarmRepository.save(alarm);
-						resultMap.put("is-success", true);
 					}
+					resultMap.put("is-success", true);
 				}
 				else resultMap.put("is-success", true);
 			}

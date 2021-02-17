@@ -37,5 +37,5 @@ public class GroupInfo {
 	private String gdesc;
 	
 	
-	Blob gimg;
+	private Blob gimg;
 }

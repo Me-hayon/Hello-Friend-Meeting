@@ -28,7 +28,6 @@
           </v-col>
         </v-row>
       </v-toolbar>
-
       <v-row
         v-if="groups.length != 0"
         class="pa-4 overflow-y-auto"
@@ -51,13 +50,13 @@
                       depressed
                       fab
                     >
-                      <v-img
+                      <img
+                        style="width:50px"
                         :src="
-                          require(`@/assets/images/group-img/${
+                          'data:image/png;base64,' +
                             groups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
                         "
-                      ></v-img>
+                      />
                     </v-btn>
                     <p>
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
@@ -79,14 +78,13 @@
                       depressed
                       fab
                     >
-                      <v-img
-                        width="50"
+                      <img
+                        style="width:50px"
                         :src="
-                          require(`@/assets/images/group-img/${
+                          'data:image/png;base64,' +
                             groups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
                         "
-                      ></v-img>
+                      />
                     </v-btn>
                     <p>
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
@@ -119,6 +117,7 @@
                       fab
                     >
                       <img
+                        style="width:50px"
                         :src="
                           'data:image/png;base64,' +
                             searchGroups[4 * (row - 1) + (col - 1)].gimg
@@ -146,6 +145,7 @@
                       fab
                     >
                       <img
+                        style="width:50px"
                         :src="
                           'data:image/png;base64,' +
                             searchGroups[4 * (row - 1) + (col - 1)].gimg
@@ -163,83 +163,83 @@
         </v-col>
 
         <!-- 그룹 생성 모달 -->
-        <v-dialog v-model="createGroupModal" persistent>
-          <v-card>
-            <v-card-title>
-              <span>그룹 생성</span>
-              <v-spacer></v-spacer>
-              <v-btn icon @click="createGroupModal = false">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-card-title>
-            <v-card-text class="pt-4 pb-0">
-              <v-row no-gutters>
-                <v-text-field
-                  v-model="groupName"
-                  label="그룹명"
-                  outlined
-                  clearable
-                  required
-                ></v-text-field>
-              </v-row>
-              <v-row class="mt-0" no-gutters>
-                <v-textarea
-                  v-model="groupDesc"
-                  rows="3"
-                  label="그룹 소개글"
-                  outlined
-                  no-resize
-                  clearable
-                ></v-textarea>
-              </v-row>
-              <v-row class="mt-0" no-gutters>
-                <v-select
-                  v-model="categorySelect"
-                  label="카테고리"
-                  :items="categoryList"
-                  item-text="cname"
-                  item-value="cno"
-                  outlined
-                >
-                </v-select>
-              </v-row>
-              <v-row class="mt-0" no-gutters>
-                <v-col>
-                  <p class="subtitle-1">그룹 공개 범위</p>
-                  <v-radio-group v-model="scope">
-                    <v-radio label="친구만" color="primary" value="1"></v-radio>
-                    <v-radio
-                      label="친구의 친구까지"
-                      color="success"
-                      value="2"
-                    ></v-radio>
-                    <v-radio label="비공개" color="warning" value="0"></v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-            </v-card-text>
-            <v-card-actions>
-              <v-row class="pt-0 pb-4" justify="end" no-gutters>
-                <v-btn
-                  color="success"
-                  :disabled="!createGroupValid"
-                  @click="createGroup"
-                  >그룹 생성하기</v-btn
-                >
-              </v-row>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-row>
+      <v-dialog v-model="createGroupModal" persistent>
+        <v-card>
+          <v-card-title>
+            <span>그룹 생성</span>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="createGroupModal = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text class="pt-4 pb-0">
+            <v-row no-gutters>
+              <v-text-field
+                v-model="groupName"
+                label="그룹명"
+                outlined
+                clearable
+                required
+              ></v-text-field>
+            </v-row>
+            <v-row class="mt-0" no-gutters>
+              <v-textarea
+                v-model="groupDesc"
+                rows="3"
+                label="그룹 소개글"
+                outlined
+                no-resize
+                clearable
+              ></v-textarea>
+            </v-row>
+            <v-row class="mt-0" no-gutters>
+              <v-select
+                v-model="categorySelect"
+                label="카테고리"
+                :items="categoryList"
+                item-text="cname"
+                item-value="cno"
+                outlined
+              >
+              </v-select>
+            </v-row>
+            <v-row class="mt-0" no-gutters>
+              <v-col>
+                <p class="subtitle-1">그룹 공개 범위</p>
+                <v-radio-group v-model="scope">
+                  <v-radio label="친구만" color="primary" value="1"></v-radio>
+                  <v-radio
+                    label="친구의 친구까지"
+                    color="success"
+                    value="2"
+                  ></v-radio>
+                  <v-radio label="비공개" color="warning" value="0"></v-radio>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions>
+            <v-row class="pt-0 pb-4" justify="end" no-gutters>
+              <v-btn
+                color="success"
+                :disabled="!createGroupValid"
+                @click="createGroup"
+                >그룹 생성하기</v-btn
+              >
+            </v-row>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  props: ['uno', 'email', 'groupList', 'categoryList', 'friendList'],
+  props: ["uno", "email", "groupList", "categoryList", "friendList"],
   data() {
     return {
       groups: this.groupList,
@@ -260,45 +260,41 @@ export default {
       categorySelectValid: false,
       scopeValid: false,
       icons: [
-        'mdi-controller-classic',
-        'mdi-book-open-page-variant',
-        'mdi-soccer',
-        'mdi-music-note',
-        'mdi-hand-shake',
-        'mdi-food-turkey',
-        'mdi-face-woman-shimmer',
+        "mdi-controller-classic",
+        "mdi-book-open-page-variant",
+        "mdi-soccer",
+        "mdi-music-note",
+        "mdi-hand-shake",
+        "mdi-food-turkey",
+        "mdi-face-woman-shimmer",
       ],
     };
   },
   created() {
-    this.groupListRow =
-      this.groups.length % 4 == 0
-        ? parseInt(this.groups.length / 4)
-        : parseInt(this.groups.length / 4) + 1;
+    console.log(this.groups);
+    this.groupListRow = parseInt(this.groups.length / 4) + 1;
   },
   methods: {
     moveGroup(index) {
-      this.$store.commit('setGno', this.groups[index].gno);
-      this.$router.push('/group');
+      this.$store.commit("setGno", this.groups[index].gno);
+      this.$router.push("/group");
     },
     searchInput() {
       this.searchGroups = [];
 
-      if (this.search != null && this.search != '') {
+      if (this.search != null && this.search != "") {
         for (let i = 0; i < this.groups.length; i++) {
           if (this.groups[i].gname.includes(this.search))
             this.searchGroups.push(this.groups[i]);
         }
 
-        this.searchGroupListRow =
-          this.searchGroups.length % 4 == 0
-            ? parseInt(this.searchGroups.length / 4)
-            : parseInt(this.searchGroups.length / 4) + 1;
+        this.searchGroupListRow = parseInt(this.searchGroups.length / 4) + 1;
       }
     },
     createGroup() {
+      console.log("pressed");
       axios
-        .post('createGroup', {
+        .post("createGroup", {
           uno: this.uno,
           gname: this.groupName,
           gdesc: this.groupDesc,
@@ -306,28 +302,27 @@ export default {
           gboundary: this.scope,
         })
         .then((response) => {
-          if (response.data['is-success']) {
+          if (response.data["is-success"]) {
             axios
-              .post('getGroupList', { email: this.email })
+              .post("getGroupList", { email: this.email })
               .then((response) => {
-                if (response.data['is-success']) {
+                if (response.data["is-success"]) {
                   this.groups = response.data.groupList;
 
                   for (let i = 0; i < this.groups.length; i++) {
                     this.groups[i].members = this.groups[i].guserList
                       .trim()
-                      .split(' ');
-                    this.groups[i].gimg = response.data.fileList[i];
+                      .split(" ");
                   }
 
                   this.createGroupModal = false;
-                  alert(this.groupName + ' 그룹이 생성되었습니다.');
+                  alert(this.groupName + " 그룹이 생성되었습니다.");
                 }
               })
               .catch((error) => {
                 console.log(error);
               });
-          } else alert('그룹을 생성하는데 오류가 발생하였습니다.');
+          } else alert("그룹을 생성하는데 오류가 발생하였습니다.");
         })
         .catch((error) => {
           console.log(error);
@@ -348,7 +343,7 @@ export default {
       }
     },
     groupName(groupName) {
-      if (groupName != null && groupName != '') {
+      if (groupName != null && groupName != "") {
         this.groupNameValid = true;
         if (this.groupDescValid && this.categorySelectValid && this.scopeValid)
           this.createGroupValid = true;
@@ -358,7 +353,7 @@ export default {
       }
     },
     groupDesc(groupDesc) {
-      if (groupDesc != null && groupDesc != '') {
+      if (groupDesc != null && groupDesc != "") {
         this.groupDescValid = true;
         if (this.groupNameValid && this.categorySelectValid && this.scopeValid)
           this.createGroupValid = true;
@@ -368,7 +363,7 @@ export default {
       }
     },
     categorySelect(categorySelect) {
-      if (categorySelect != null && categorySelect != '') {
+      if (categorySelect != null && categorySelect != "") {
         this.categorySelectValid = true;
         if (this.groupNameValid && this.groupDescValid && this.scopeValid)
           this.createGroupValid = true;
@@ -378,7 +373,7 @@ export default {
       }
     },
     scope(scope) {
-      if (scope != null && scope != '') {
+      if (scope != null && scope != "") {
         this.scopeValid = true;
         if (
           this.groupNameValid &&
