@@ -17,9 +17,9 @@
           <v-expansion-panel-header class="py-0">
             <v-list-item class="px-0">
               <v-list-item-avatar>
-                <v-img
-                  :src="require(`@/assets/images/group-img/${group.gimg}.png`)"
-                ></v-img>
+                <v-avatar>
+                  <img :src="'data:image/png;base64,' + group.gimg" />
+                </v-avatar>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="subtitle-2">{{
@@ -31,9 +31,7 @@
               </v-list-item-content>
             </v-list-item>
             <template v-slot:actions>
-              <v-icon color="purple" @click="scrollGroup(index)"
-                >$expand</v-icon
-              >
+              <v-icon color="purpl" @click="scrollGroup(index)">$expand</v-icon>
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -73,29 +71,28 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  props: ['uno', 'info', 'categoryList', 'panelsHeight'],
+  props: ["uno", "info", "categoryList", "panelsHeight"],
   data() {
     return {
       groups: [],
       isLoadingGroups: -1,
       panel: null,
-      panelsStyle: '',
+      panelsStyle: "",
     };
   },
   created() {
-    this.panelsStyle = 'max-height: ' + this.panelsHeight + 'px;';
+    this.panelsStyle = "max-height: " + this.panelsHeight + "px;";
 
     axios
-      .get('getGroupList/' + this.info.uno)
+      .get("getGroupList/" + this.info.uno)
       .then((response) => {
-        if (response.data['is-success']) {
+        if (response.data["is-success"]) {
           this.groups = response.data.groupList;
-
           for (let i = 0; i < this.groups.length; i++) {
-            this.groups[i].members = this.groups[i].guserList.trim().split(' ');
+            this.groups[i].members = this.groups[i].guserList.trim().split(" ");
 
             for (let j = 0; j < this.categoryList.length; j++) {
               if (this.categoryList[j].cno == this.groups[i].gcategory) {
@@ -117,21 +114,21 @@ export default {
       this.$nextTick(function() {
         if (index == 0) this.$refs.panels.$el.scrollTop = 0;
         else
-          this.$refs.panels.$el.scrollTop = this.$refs['group'][
+          this.$refs.panels.$el.scrollTop = this.$refs["group"][
             index
           ].$el.offsetTop;
       });
     },
     applyGroup(group) {
       axios
-        .post('applyGroup', { uno: this.uno, gno: group.gno })
+        .post("applyGroup", { uno: this.uno, gno: group.gno })
         .then((response) => {
-          let isSuccess = response.data['is-success'];
+          let isSuccess = response.data["is-success"];
 
-          if (isSuccess == 1) alert('그룹에 가입 신청을 보냈습니다.');
-          else if (isSuccess == 2) alert('이미 신청한 그룹입니다.');
-          else if (isSuccess == 3) alert('이미 가입된 그룹입니다.');
-          else alert('그룹 신청을 하는데 오류가 발생하였습니다.');
+          if (isSuccess == 1) alert("그룹에 가입 신청을 보냈습니다.");
+          else if (isSuccess == 2) alert("이미 신청한 그룹입니다.");
+          else if (isSuccess == 3) alert("이미 가입된 그룹입니다.");
+          else alert("그룹 신청을 하는데 오류가 발생하였습니다.");
         })
         .catch((error) => {
           console.log(error);

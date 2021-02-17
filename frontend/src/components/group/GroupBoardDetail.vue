@@ -74,7 +74,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon @click="show = !show">
-        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        <v-icon>{{ show ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
       </v-btn>
     </v-card-actions>
     <!-- <b-modal id="modal-modify" title="글 수정" @ok="modifyBoard"
@@ -224,7 +224,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   computed: {
     vuexGno() {
@@ -246,32 +246,7 @@ export default {
     },
     vuexBno(val) {
       this.bno = val;
-      var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      axios
-        .post('boardDetail', params)
-        .then((response) => {
-          this.article = response.data.curBoard;
-          this.writer = response.data.writer.uname;
-          this.localIsWriter = response.data.isWriter;
-          this.newTitle = this.article.btitle;
-          this.newContent = this.article.bcontent;
-
-          axios.post('getCommentList', params).then((resp) => {
-            this.comments = resp.data.comments;
-            var writerList = resp.data.writerList;
-            var isWriterList = resp.data.isWriterList;
-
-            for (var i = 0; i < this.comments.length; i++) {
-              this.comments[i].writerName = writerList[i];
-              this.comments[i].isWriter = isWriterList[i];
-            }
-          });
-        })
-        .catch((error) => {
-          error;
-        });
+      this.getBoardDetail();
     },
     vuexMemberStatus(val) {
       this.memberStatus = val;
@@ -287,12 +262,12 @@ export default {
       bno: this.$store.getters.getBno,
       localIsWriter: this.$store.getters.getIsWriter,
       article: {},
-      writer: '',
-      parsedDateforArticle: '',
+      writer: "",
+      parsedDateforArticle: "",
       comments: [],
-      newCommentContent: '',
-      newTitle: '',
-      newContent: '',
+      newCommentContent: "",
+      newTitle: "",
+      newContent: "",
       show: false,
       editModal: false,
     };
@@ -303,17 +278,17 @@ export default {
   methods: {
     getBoardDetail() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
+      params.append("bno", this.bno);
+      params.append("email", window.sessionStorage.getItem("user-email"));
       axios
-        .post('boardDetail', params)
+        .post("boardDetail", params)
         .then((response) => {
           if (!response.data.isExist) {
-            alert('삭제된 게시글입니다.');
-            this.$router.push('/');
+            alert("삭제된 게시글입니다.");
+            this.$router.push("/");
             return;
           }
-          console.log('★★★★★★★★★★★', response);
+          console.log("★★★★★★★★★★★", response);
           this.article = response.data.curBoard;
           this.parsedDateforArticle = this.parsingDate(
             response.data.curBoard.bdate
@@ -330,33 +305,33 @@ export default {
         });
     },
     parsingDate(beforeDate) {
-      let afterDate = '';
-      let month = '';
-      let day = '';
+      let afterDate = "";
+      let month = "";
+      let day = "";
 
-      afterDate = beforeDate.substring(2, 4) + '년 ';
+      afterDate = beforeDate.substring(2, 4) + "년 ";
 
-      if (beforeDate.charAt(5) == '0') {
+      if (beforeDate.charAt(5) == "0") {
         month = beforeDate.charAt(6);
       } else {
         month = beforeDate.substring(5, 7);
       }
 
-      if (beforeDate.charAt(8) == '0') {
+      if (beforeDate.charAt(8) == "0") {
         day = beforeDate.charAt(9);
       } else {
         day = beforeDate.substring(8, 10);
       }
 
-      afterDate = afterDate + month + '월 ' + day + '일';
+      afterDate = afterDate + month + "월 " + day + "일";
 
       return afterDate;
     },
     getComments() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      axios.post('getCommentList', params).then((resp) => {
+      params.append("bno", this.bno);
+      params.append("email", window.sessionStorage.getItem("user-email"));
+      axios.post("getCommentList", params).then((resp) => {
         // console.log('★★★★★★★★★★★', resp);
         this.comments = resp.data.comments;
         var writerList = resp.data.writerList;
@@ -374,7 +349,7 @@ export default {
     },
     returnToGroup() {
       var gno = this.article.bgno;
-      this.$router.push({ name: 'GroupMainPage', params: { gno } });
+      this.$router.push({ name: "GroupMainPage", params: { gno } });
     },
     // resetDatas() {
     //   this.newCommentContent = '';
@@ -382,25 +357,25 @@ export default {
     //   this.newContent = this.article.bcontent;
     // },
     writeComment() {
-      if (this.newCommentContent != '') {
+      if (this.newCommentContent != "") {
         var params = new URLSearchParams();
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        params.append('ccontent', this.newCommentContent);
-        params.append('bno', this.bno);
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        params.append("ccontent", this.newCommentContent);
+        params.append("bno", this.bno);
 
-        axios.post('writeComment', params).then((response) => {
+        axios.post("writeComment", params).then((response) => {
           // alert(response.data.data);
           this.getComments();
           this.resetDatas();
         });
-        this.newCommentContent = '';
+        this.newCommentContent = "";
       }
     },
     modifyComment(cno) {
       var params = new URLSearchParams();
-      params.append('cno', cno);
-      params.append('ccontent', this.newCommentContent);
-      axios.post('modifyComment', params).then((resp) => {
+      params.append("cno", cno);
+      params.append("ccontent", this.newCommentContent);
+      axios.post("modifyComment", params).then((resp) => {
         // alert(resp.data.data);
         this.getComments();
         this.editModal = false;
@@ -408,27 +383,27 @@ export default {
     },
     delComment(cno) {
       var params = new URLSearchParams();
-      params.append('cno', cno);
-      axios.post('delComment', params).then((resp) => {
+      params.append("cno", cno);
+      axios.post("delComment", params).then((resp) => {
         // alert(resp.data.data);
         this.getComments();
       });
     },
     delBoard() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      axios.post('delBoard', params).then((resp) => {
+      params.append("bno", this.bno);
+      axios.post("delBoard", params).then((resp) => {
         alert(resp.data.data);
-        this.$store.commit('setGno', this.gno);
-        this.$router.push('/group');
+        this.$store.commit("setGno", this.gno);
+        this.$router.push("/group");
       });
     },
     modifyBoard() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('title', this.newTitle);
-      params.append('content', this.newContent);
-      axios.post('modifyBoard', params).then((resp) => {
+      params.append("bno", this.bno);
+      params.append("title", this.newTitle);
+      params.append("content", this.newContent);
+      axios.post("modifyBoard", params).then((resp) => {
         this.getBoardDetail();
         alert(resp.data.data);
       });

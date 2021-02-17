@@ -49,14 +49,14 @@
                       @click="moveGroup(4 * (row - 1) + (col - 1))"
                       depressed
                       fab
-                    >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
+                      ><v-avatar>
+                        <img
+                          :src="
+                            'data:image/png;base64,' +
+                              groups[4 * (row - 1) + (col - 1)].gimg
+                          "
+                        />
+                      </v-avatar>
                     </v-btn>
                     <p>
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
@@ -78,13 +78,14 @@
                       depressed
                       fab
                     >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
+                      <v-avatar>
+                        <img
+                          :src="
+                            'data:image/png;base64,' +
+                              groups[4 * (row - 1) + (col - 1)].gimg
+                          "
+                        />
+                      </v-avatar>
                     </v-btn>
                     <p>
                       {{ groups[4 * (row - 1) + (col - 1)].gname }}
@@ -116,13 +117,14 @@
                       depressed
                       fab
                     >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
+                      <v-avatar>
+                        <img
+                          :src="
+                            'data:image/png;base64,' +
+                              searchGroups[4 * (row - 1) + (col - 1)].gimg
+                          "
+                        />
+                      </v-avatar>
                     </v-btn>
                     <p>
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
@@ -144,13 +146,14 @@
                       depressed
                       fab
                     >
-                      <img
-                        style="width:50px"
-                        :src="
-                          'data:image/png;base64,' +
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                        "
-                      />
+                      <v-avatar>
+                        <img
+                          :src="
+                            'data:image/png;base64,' +
+                              searchGroups[4 * (row - 1) + (col - 1)].gimg
+                          "
+                        />
+                      </v-avatar>
                     </v-btn>
                     <p>
                       {{ searchGroups[4 * (row - 1) + (col - 1)].gname }}
@@ -271,7 +274,7 @@ export default {
     };
   },
   created() {
-    console.log(this.groups);
+    // console.log(this.groups);
     this.groupListRow = parseInt(this.groups.length / 4) + 1;
   },
   methods: {

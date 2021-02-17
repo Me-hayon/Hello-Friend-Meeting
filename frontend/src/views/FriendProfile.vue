@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import ProfileCover from '@/components/user/profile/ProfileCover.vue';
-import FriendManageBtn from '@/components/user/profile/FriendManageBtn.vue';
-import FriendGroupList from '@/components/user/profile/FriendGroupList.vue';
-import axios from 'axios';
+import ProfileCover from "@/components/user/profile/ProfileCover.vue";
+import FriendManageBtn from "@/components/user/profile/FriendManageBtn.vue";
+import FriendGroupList from "@/components/user/profile/FriendGroupList.vue";
+import axios from "axios";
 
 const storage = window.sessionStorage;
 
@@ -43,18 +43,36 @@ export default {
     FriendManageBtn,
     FriendGroupList,
   },
-  props: ['myUno', 'friendUno', 'categoryList'],
+  props: ["myUno", "friendUno", "categoryList"],
   data() {
     return {
       friend: null,
     };
   },
+  computed: {
+    vuexUno() {
+      return this.$store.getters.getUno;
+    },
+  },
+  watch: {
+    vuexUno() {
+      axios
+        .post("findUserByUno", { uno: this.friendUno })
+        .then((response) => {
+          if (response.data["is-success"]) this.friend = response.data.user;
+          else alert("친구 정보를 불러오는데 오류가 발생하였습니다.");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
   created() {
     axios
-      .post('findUserByUno', { uno: this.friendUno })
+      .post("findUserByUno", { uno: this.friendUno })
       .then((response) => {
-        if (response.data['is-success']) this.friend = response.data.user;
-        else alert('친구 정보를 불러오는데 오류가 발생하였습니다.');
+        if (response.data["is-success"]) this.friend = response.data.user;
+        else alert("친구 정보를 불러오는데 오류가 발생하였습니다.");
       })
       .catch((error) => {
         console.log(error);
