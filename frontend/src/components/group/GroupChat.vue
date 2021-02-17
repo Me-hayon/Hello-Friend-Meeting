@@ -90,20 +90,6 @@
           <!-- </v-row> -->
         </v-col>
       </v-row>
-      <v-fab-transition>
-        <v-btn
-          bottom
-          right
-          fixed
-          fab
-          dark
-          small
-          v-show="btnShow"
-          @click="$vuetify.goTo('')"
-        >
-          <v-icon>fas fa-angle-double-up</v-icon></v-btn
-        >
-      </v-fab-transition>
     </div>
 
     <v-row style="position:fixed;width:100%; bottom:68px">
@@ -127,7 +113,6 @@ import SockJS from "sockjs-client";
 const storage = window.sessionStorage;
 
 export default {
-  props: ["tab"],
   data() {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
