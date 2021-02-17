@@ -231,9 +231,6 @@ public class GroupController {
 				resultMap.put("is-success", false);
 			}
 		}
-		else {
-			resultMap.put("is-success", false);
-		}
 		
 		return resultMap;
 	}

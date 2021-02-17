@@ -54,9 +54,7 @@
                       <v-img
                         width="50"
                         :src="
-                          require(`@/assets/images/group-img/${
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
+                          require(`@/assets/images/group-img/group_default.png`)
                         "
                       ></v-img>
                     </v-btn>
@@ -83,9 +81,7 @@
                       <v-img
                         width="50"
                         :src="
-                          require(`@/assets/images/group-img/${
-                            groups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
+                          require(`@/assets/images/group-img/group_default.png`)
                         "
                       ></v-img>
                     </v-btn>
@@ -122,9 +118,7 @@
                       <v-img
                         width="50"
                         :src="
-                          require(`@/assets/images/group-img/${
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
+                          require(`@/assets/images/group-img/group_default.png`)
                         "
                       ></v-img>
                     </v-btn>
@@ -151,9 +145,7 @@
                       <v-img
                         width="50"
                         :src="
-                          require(`@/assets/images/group-img/${
-                            searchGroups[4 * (row - 1) + (col - 1)].gimg
-                          }.png`)
+                          require(`@/assets/images/group-img/group_default.png`)
                         "
                       ></v-img>
                     </v-btn>
