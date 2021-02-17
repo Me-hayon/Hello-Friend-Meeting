@@ -1,7 +1,9 @@
 <template>
   <v-col cols="6" style="padding-top: 0; padding-left: 0; padding-right: 0;">
     <v-subheader>내가 작성한 댓글</v-subheader>
+
     <v-list
+      v-if="comments != null"
       two-line
       subheader
       dense
@@ -26,6 +28,16 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
+
+    <v-row
+      v-else
+      justify="center"
+      align="center"
+      style="height: 200px;"
+      no-gutters
+    >
+      <p>작성한 댓글이 없습니다.</p>
+    </v-row>
   </v-col>
 </template>
 
