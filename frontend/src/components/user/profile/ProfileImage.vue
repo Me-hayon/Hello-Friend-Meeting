@@ -60,7 +60,7 @@ export default {
       params.append("profileImg", pImage);
 
       axios
-        .put("http://localhost:8080/changeAvatar", params)
+        .put("changeAvatar", params)
         .then((response) => {
           console.log(response);
         })
