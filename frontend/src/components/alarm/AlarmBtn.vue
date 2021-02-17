@@ -159,7 +159,9 @@ export default {
           .then((response) => {
             this.$store.commit('setGno', gno);
             this.$store.commit('setMemberStatus', response.data.memberStatus);
-            this.$router.push('/group').catch(() => {});
+            this.$router
+              .push({ name: 'GroupMainPage', params: { ano: alarm.ano } })
+              .catch(() => {});
           })
           .catch((error) => {
             console.log(error);

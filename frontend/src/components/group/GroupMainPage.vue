@@ -1,11 +1,17 @@
 <template>
   <div>
-    <GroupNav />
+    <div v-if="vuexMemberStatus != 3 && vuexMemberStatus != 4">
+      <InviteLetter :ano="ano" />
+    </div>
+    <div v-else>
+      <GroupNav />
+    </div>
   </div>
 </template>
 
 <script>
 import GroupNav from '@/components/group/GroupNav.vue';
+import InviteLetter from '@/components/group/GroupInviteLetter.vue';
 import axios from 'axios';
 export default {
   computed: {
@@ -38,6 +44,7 @@ export default {
   },
   components: {
     GroupNav,
+    InviteLetter,
   },
   created() {
     this.$store.state.isHeader = true;
@@ -68,6 +75,7 @@ export default {
       uno: this.$store.getters.getUno,
     };
   },
+  props: ['ano'],
 };
 </script>
 
