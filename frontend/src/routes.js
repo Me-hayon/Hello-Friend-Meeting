@@ -11,13 +11,8 @@ import PageNotFound from '@/views/PageNotFound.vue';
 import FriendTest from '@/views/FriendTest.vue';
 import Naegi from '@/components/group/NaegiTab.vue';
 import FriendProfile from '@/views/FriendProfile.vue';
-import Filetest from '@/views/Filetest.vue'
+
 export default [
-  {
-    path: '/filetest',
-    name: 'filetest',
-    component:Filetest
-  },
   {
     path: '/naegi',
     name: 'naegi',

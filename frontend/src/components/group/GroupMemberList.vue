@@ -195,7 +195,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   computed: {
@@ -215,7 +215,23 @@ export default {
   watch: {
     vuexGno(val) {
       this.gno = val;
-      this.getUsers();
+      this.getFriends();
+      var params = new URLSearchParams();
+      params.append("email", this.email);
+      params.append("gno", this.gno);
+      axios
+        .post("isGroupMember", params)
+        .then((response) => {
+          var memberStatus = response.data.memberStatus;
+          var gno = this.gno;
+          this.$store.commit("setGno", gno);
+          this.$store.commit("setMemberStatus", memberStatus);
+          console.log(this.memberStatus);
+          this.getUsers();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     vuexUno(val) {
       this.uno = val;
@@ -236,7 +252,7 @@ export default {
       memberList: [],
       sortedMemberList: [],
       applierList: [],
-      email: window.sessionStorage.getItem('user-email'),
+      email: window.sessionStorage.getItem("user-email"),
       unoOfGmaster: 0,
       inviteFriend: false,
       friendList: [],
@@ -246,15 +262,15 @@ export default {
   created() {
     this.getFriends();
     var params = new URLSearchParams();
-    params.append('email', this.email);
-    params.append('gno', this.gno);
+    params.append("email", this.email);
+    params.append("gno", this.gno);
     axios
-      .post('isGroupMember', params)
+      .post("isGroupMember", params)
       .then((response) => {
         var memberStatus = response.data.memberStatus;
         var gno = this.gno;
-        this.$store.commit('setGno', gno);
-        this.$store.commit('setMemberStatus', memberStatus);
+        this.$store.commit("setGno", gno);
+        this.$store.commit("setMemberStatus", memberStatus);
         console.log(this.memberStatus);
         this.getUsers();
       })
@@ -265,24 +281,24 @@ export default {
   methods: {
     getUsers() {
       var params = new URLSearchParams();
-      params.append('gno', this.gno);
+      params.append("gno", this.gno);
       console.log(this.gno);
       console.log(this.gno);
       console.log(this.gno);
-      axios.post('unoOfGmaster', params).then((resp) => {
+      axios.post("unoOfGmaster", params).then((resp) => {
         this.unoOfGmaster = resp.data.gmasterUno;
-        console.log('그룹장 유저넘버', this.unoOfGmaster);
+        console.log("그룹장 유저넘버", this.unoOfGmaster);
         axios
-          .post('getUserListInGroup', params)
+          .post("getUserListInGroup", params)
           .then((response) => {
             this.memberList = response.data.userList;
-            console.log('정렬하기전멤버리스트', this.memberList);
+            console.log("정렬하기전멤버리스트", this.memberList);
             this.sortedMemberList = [];
 
             for (let i = 0; i < this.memberList.length; i++) {
               if (this.memberList[i].uno === this.unoOfGmaster) {
                 this.sortedMemberList.push(this.memberList[i]);
-                console.log('첫번째포문', this.memberList[i]);
+                console.log("첫번째포문", this.memberList[i]);
               }
             }
             for (let i = 0; i < this.memberList.length; i++) {
@@ -301,14 +317,14 @@ export default {
                 this.sortedMemberList.push(this.memberList[i]);
               }
             }
-            console.log('정렬된 멤버리스트', this.sortedMemberList);
+            console.log("정렬된 멤버리스트", this.sortedMemberList);
           })
           .catch((error) => {
             console.log(error);
           });
       });
       axios
-        .post('getGroupApplier', params)
+        .post("getGroupApplier", params)
         .then((response) => {
           this.applierList = response.data.applierList;
           console.log(this.applierList);
@@ -319,10 +335,10 @@ export default {
     },
     acceptApplier(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('acceptApplyGroup', params)
+        .post("acceptApplyGroup", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -333,10 +349,10 @@ export default {
     },
     denyApplier(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('denyApplyGroup', params)
+        .post("denyApplyGroup", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -347,10 +363,10 @@ export default {
     },
     banishMember(uno) {
       var params = new URLSearchParams();
-      params.append('uno', uno);
-      params.append('gno', this.gno);
+      params.append("uno", uno);
+      params.append("gno", this.gno);
       axios
-        .post('banishMember', params)
+        .post("banishMember", params)
         .then((response) => {
           alert(response.data.data);
           this.getUsers();
@@ -361,16 +377,16 @@ export default {
     },
     getoutGroup() {
       if (this.memberStatus === 4) {
-        alert('다른 사람을 그룹장으로 임명하고 다시 시도해주세요.');
+        alert("다른 사람을 그룹장으로 임명하고 다시 시도해주세요.");
       } else {
         var params = new URLSearchParams();
-        params.append('email', this.email);
-        params.append('gno', this.gno);
+        params.append("email", this.email);
+        params.append("gno", this.gno);
         axios
-          .post('getoutGroup', params)
+          .post("getoutGroup", params)
           .then((response) => {
             alert(response.data.data);
-            this.$router.push('/');
+            this.$router.push("/");
           })
           .catch((error) => {
             console.log(error);
@@ -379,23 +395,23 @@ export default {
     },
     changeGmaster(uno) {
       var params = new URLSearchParams();
-      params.append('nextMaster', uno);
-      params.append('gno', this.gno);
+      params.append("nextMaster", uno);
+      params.append("gno", this.gno);
       axios
-        .post('changeGroupMaster', params)
+        .post("changeGroupMaster", params)
         .then((response) => {
           this.unoOfGmaster = uno;
           alert(response.data.data);
           params = new URLSearchParams();
-          params.append('email', this.email);
-          params.append('gno', this.gno);
+          params.append("email", this.email);
+          params.append("gno", this.gno);
           axios
-            .post('isGroupMember', params)
+            .post("isGroupMember", params)
             .then((response) => {
               var memberStatus = response.data.memberStatus;
               var gno = this.gno;
-              this.$store.commit('setGno', gno);
-              this.$store.commit('setMemberStatus', memberStatus);
+              this.$store.commit("setGno", gno);
+              this.$store.commit("setMemberStatus", memberStatus);
             })
             .catch((error) => {
               console.log(error);
@@ -407,7 +423,7 @@ export default {
     },
     getFriends() {
       axios
-        .post('getFriendList', {
+        .post("getFriendList", {
           email: this.email,
         })
         .then((response) => {
@@ -416,9 +432,9 @@ export default {
 
           for (let i = 0; i < this.friendList.length; i++) {
             this.friendList[i].profileUrl =
-              '@/assets/images/avatars/' +
+              "@/assets/images/avatars/" +
               response.data.friendList[i].uprofileImg +
-              '.png';
+              ".png";
             // console.log('●●●●●●●●●●●●●●●●●', this.friendList[i].profileUrl);
           }
         })
@@ -428,14 +444,14 @@ export default {
     },
     getInvite(thisFriendId) {
       var params = new URLSearchParams();
-      params.append('email', this.email);
-      params.append('friendId', thisFriendId);
-      params.append('gno', this.gno);
+      params.append("email", this.email);
+      params.append("friendId", thisFriendId);
+      params.append("gno", this.gno);
 
       axios
-        .post('inviteGroup', params)
+        .post("inviteGroup", params)
         .then((response) => {
-          alert('초대장을 발송했습니다. 두근두근...');
+          alert("초대장을 발송했습니다. 두근두근...");
         })
         .catch((error) => {
           console.log(error);

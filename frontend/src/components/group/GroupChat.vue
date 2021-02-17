@@ -308,6 +308,70 @@ export default {
   watch: {
     vuexGno(val) {
       this.gno = val;
+      console.log("처음화면높이" + document.body.scrollHeight);
+      this.$nextTick(function() {
+        document.documentElement.scrollTop = document.body.scrollHeight;
+      });
+      axios
+        .post("/findUserByEmail", { email: storage.getItem("user-email") })
+        .then((response) => {
+          if (response.data["is-success"]) {
+            this.gcuno = response.data["user-number"];
+            this.uname = response.data["user-name"];
+            this.isLoadingUser = false;
+          } else {
+            alert("너 누구야");
+          }
+        });
+
+      axios({
+        method: "get",
+        url: "/getChat/" + this.gcgno,
+        baseURL: "http://localhost:8080/",
+      }).then(
+        (response) => {
+          this.chats = [];
+          console.log(response);
+          let chatList = response.data["chat-list"];
+          let unameList = response.data["uname-list"];
+
+          for (let i = 0; i < chatList.length; i++) {
+            let chat = {
+              uno: chatList[i].gcuno,
+              uname: unameList[i],
+              gccontent: chatList[i].gccontent,
+              gcdate: chatList[i].gcdate,
+              parsedDate: chatList[i].gcdate.substring(11, 16),
+              style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
+            };
+
+            if (this.gcdate != chatList[i].gcdate.substring(5, 10)) {
+              this.gcdate = chatList[i].gcdate.substring(5, 10);
+              chat.IsDateChange = true;
+            } else {
+              chat.IsDateChange = false;
+            }
+
+            this.chats.push(chat);
+            this.isLoadingChatList = false;
+          }
+
+          // for (let i = 0; i < response.data.length; i++) {
+          //   let chat = {
+          //     gcuno: response.data[i].gcuno,
+          //     gccontent: response.data[i].gccontent,
+          //     // 'senderNickname':res.data[i].senderNickname,
+          //     // 'content':res.data[i].content,
+          //     // 'style': res.data[i].senderId == this.id ? 'myMsg':'otherMsg'
+          //   };
+          //   this.chats.push(chat);
+          // }
+        },
+        (err) => {
+          console.log(err);
+          alert("error : 새로고침하세요");
+        }
+      );
     },
     vuexUno(val) {
       this.uno = val;
