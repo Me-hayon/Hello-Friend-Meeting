@@ -8,7 +8,7 @@
   >
     <template v-slot:activator>
       <v-btn v-model="profileImgFab" fab>
-        <v-avatar size="70"
+        <v-avatar size="80"
           ><v-img
             :src="require(`@/assets/images/avatars/${profileImg}.png`)"
           ></v-img
@@ -24,8 +24,6 @@
       >
         <v-avatar
           ><v-img
-            contain
-            height="100"
             :src="require(`@/assets/images/avatars/${pImage}.png`)"
           ></v-img
         ></v-avatar>
@@ -58,7 +56,7 @@ export default {
       params.append('profileImg', pImage);
 
       axios
-        .put('http://localhost:8080/changeAvatar', params)
+        .put('changeAvatar', params)
         .then((response) => {
           console.log(response);
         })
