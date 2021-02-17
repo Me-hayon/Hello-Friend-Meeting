@@ -34,6 +34,7 @@
                 v-model="search"
                 label="검색"
                 append-icon="mdi-magnify"
+                :hide-details="true"
                 @input="searchInput"
                 single-line
                 clearable
@@ -41,7 +42,11 @@
             </v-col>
           </v-row>
 
-          <v-row v-if="search == null || search == ''" class="mt-0" no-gutters>
+          <v-row
+            v-if="search == null || search == ''"
+            style="margin-top: 14px;"
+            no-gutters
+          >
             <span>즐겨찾는 친구 ({{ favoriteFriends.length }})</span>
             <v-spacer></v-spacer>
             <v-btn
