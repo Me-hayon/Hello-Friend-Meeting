@@ -400,11 +400,11 @@ body {
   width: 100%;
   height: 100%;
   background: linear-gradient(
-      to top,
-      rgba(66, 8, 94, 0.486),
-      rgba(0, 0, 0, 0.11)
+      to bottom,
+      rgba(44, 1, 66, 0.486),
+      rgba(0, 0, 0, 0.788)
     ),
-    url('~@/assets/images/light.gif') no-repeat center center fixed;
+    url('~@/assets/images/join.gif') no-repeat center center fixed;
   background-size: cover;
 }
 </style>

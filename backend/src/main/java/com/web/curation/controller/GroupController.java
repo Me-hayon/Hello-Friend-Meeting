@@ -349,11 +349,11 @@ public class GroupController {
 			if(gboundary!=0) {	// 비공개가 아닐 경우
 				List<FriendInfo> friendList = getFriendList(gmaster);
 				StringBuilder sb = new StringBuilder();
-				sb.append("회원님의 친구 ");
+				sb.append("내 친구 ");
 				sb.append(user.getUname());
-				sb.append("님이 ");
+				sb.append("님이 새로운 그룹, [");
 				sb.append(gname);
-				sb.append("그룹을 만들었습니다.");
+				sb.append("]을 만들었어요.");
 				
 				for(FriendInfo friendInfo: friendList) {
 					Alarm alarm=new Alarm();
@@ -393,6 +393,7 @@ public class GroupController {
 					for(Integer ff: friendFriendList) {
 						StringBuilder sb2 = new StringBuilder();
 						
+						sb2.append("친구 (");
 						for(Integer f: friendIntList) {
 							if(isFriendFriend(gmaster, f, ff)) {
 								sb2.append(userInfoRepository.findById(f).get().getUname());
@@ -402,11 +403,11 @@ public class GroupController {
 						
 						if(sb2.length()==0) continue;
 						
-						sb2.append("님의 친구 ");
+						sb2.append(")의 친구 ");
 						sb2.append(gmaster);
-						sb2.append("님이 ");
+						sb2.append("님이 새로운 그룹 [");
 						sb2.append(gname);
-						sb2.append("그룹을 만들었습니다.");
+						sb2.append("]을 만들었어요.");
 						String asummary = sb2.toString();
 						
 						Alarm alarm=new Alarm();
@@ -450,7 +451,7 @@ public class GroupController {
 		groupInfo.setGmaster(nextMaster);
 		groupInfoRepository.save(groupInfo);
 
-		resultMap.put("data", "그룹장 변경에 성공했습니다.");
+		resultMap.put("data", "그룹장 인수인계 완료!");
 		return resultMap;
 	}
 
@@ -463,10 +464,11 @@ public class GroupController {
 		Alarm alarm = new Alarm();
 
 		StringBuilder sb = new StringBuilder();
+		sb.append("와! ");
 		sb.append(myInfo.getUname());
-		sb.append("님이 ");
+		sb.append("님이 [");
 		sb.append(groupInfo.getGname());
-		sb.append("그룹으로 초대하셨습니다!");
+		sb.append("]로의 초대장을 보냈네요!");
 		alarm.setAsummary(sb.toString());
 		alarm.setAuser(friendId);
 		alarm.setCreateUser(myInfo.getUno());
@@ -539,10 +541,11 @@ public class GroupController {
 		List<FriendInfo> friendList=getFriendList(myInfo.getUno());
 		
 		StringBuilder sb2 = new StringBuilder();
+		sb2.append("반가워요, ");
 		sb2.append(myInfo.getUname());
-		sb2.append("님이 ");
+		sb2.append("님도 이제 [");
 		sb2.append(groupInfo.getGname());
-		sb2.append("그룹에 가입하셨습니다.");
+		sb2.append("]의 멤버예요!");
 		for(FriendInfo fi:friendList) {
 			Alarm alarm = new Alarm();
 			alarm.setAtype(1);
@@ -622,9 +625,9 @@ public class GroupController {
 			alarm.setAurlNo(gno);
 			StringBuilder sb = new StringBuilder();
 			sb.append(user.get().getUname());
-			sb.append("님이 ");
+			sb.append("님이 [");
 			sb.append(groupInfo.getGname());
-			sb.append("그룹에 가입을 신청했습니다.");
+			sb.append("]에 가입하고 싶어해요.");
 			alarm.setAsummary(sb.toString());
 			
 			alarmRepository.save(alarm);
@@ -704,7 +707,7 @@ public class GroupController {
 		groupInfo.setGuserList(sb.toString());
 		groupInfoRepository.save(groupInfo);
 
-		resultMap.put("data", "가입 요청을 승인했습니다.");
+		resultMap.put("data", "가입 요청을 승인했습니다. 반가워~");
 
 		return resultMap;
 	}
@@ -729,7 +732,7 @@ public class GroupController {
 		groupInfo.setGuserList(sb.toString());
 		groupInfoRepository.save(groupInfo);
 
-		resultMap.put("data", "그룹에서 탈퇴했습니다.");
+		resultMap.put("data", "그룹에서 탈퇴했습니다. 안녕~");
 
 		return resultMap;
 	}
@@ -753,7 +756,7 @@ public class GroupController {
 		groupInfo.setGuserList(sb.toString());
 		groupInfoRepository.save(groupInfo);
 
-		resultMap.put("data", "그룹에서 추방했습니다.");
+		resultMap.put("data", "그룹에서 추방했습니다. 잘가!");
 
 		return resultMap;
 	}

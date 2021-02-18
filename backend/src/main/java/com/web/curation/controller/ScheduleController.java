@@ -80,10 +80,11 @@ public class ScheduleController {
 			alarm.setCreateUser(schedule.getSmaster());
 			
 			StringBuilder sb=new StringBuilder();
-			sb.append(groupInfo.getGname());
-			sb.append("그룹에 ");
+			sb.append("새 일정 '");
 			sb.append(schedule.getStitle());
-			sb.append(" 일정이 추가되었습니다.");
+			sb.append("'이 [");
+			sb.append(groupInfo.getGname());
+			sb.append("]에 등록됐어요.");
 			
 			alarm.setAsummary(sb.toString());
 			
