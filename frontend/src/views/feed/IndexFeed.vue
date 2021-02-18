@@ -19,9 +19,7 @@
       </div></v-row
     >
 
-    <!-- <v-container v-for="type in types" :key="type" class="grey lighten-4" fluid> -->
-    <!-- <v-subheader>{{ type }}</v-subheader> -->
-    <v-container>
+    <v-container v-if="myFeeds != null">
       <v-row>
         <v-spacer></v-spacer>
         <v-col
@@ -97,17 +95,24 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-row
+      v-else
+      class="ma-0"
+      style="height: 624px;"
+      align="center"
+      justify="center"
+    >
+      <v-progress-circular indeterminate color="purple"></v-progress-circular>
+    </v-row>
   </v-card>
 </template>
 
 <script>
-// import { mapState } from "vuex";
-// import "../../components/css/feed/feed-item.scss";
-// import "../../components/css/feed/newsfeed.scss";
-// import FeedItem from '../../components/feed/FeedItem.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
+
 export default {
   methods: {
     getImage(url, summary) {
@@ -215,17 +220,7 @@ export default {
   },
   data() {
     return {
-      myFeeds: [
-        {
-          ano: '',
-          aurl: '',
-          asummary: '',
-          adate: '',
-          createUser: '',
-          createUserName: '',
-          profileImg: '',
-        },
-      ],
+      myFeeds: null,
       snackbar: false,
       timeout: 3000,
       myName: '',
