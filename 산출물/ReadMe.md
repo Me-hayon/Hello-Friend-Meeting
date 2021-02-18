@@ -54,39 +54,39 @@
 
 ## 6. 실행화면
 
-![views/View (1)](imgs/views/View (1).jpg)
+![views/View (1)](imgs/views/View_(1).jpg)
 
-![views/View (2)](imgs/views/View (2).jpg)
+![views/View (2)](imgs/views/View_(2).jpg)
 
-![views/View (3)](imgs/views/View (3).jpg)
+![views/View (3)](imgs/views/View_(3).jpg)
 
-![views/View (4)](imgs/views/View (4).jpg)
+![views/View (4)](imgs/views/View_(4).jpg)
 
-![views/View (5)](imgs/views/View (5).jpg)
+![views/View (5)](imgs/views/View_(5).jpg)
 
-![views/View (6)](imgs/views/View (6).jpg)
+![views/View (6)](imgs/views/View_(6).jpg)
 
-![views/View (7)](imgs/views/View (7).jpg)
+![views/View (7)](imgs/views/View_(7).jpg)
 
-![views/View (8)](imgs/views/View (8).jpg)
+![views/View (8)](imgs/views/View_(8).jpg)
 
-![views/View (9)](imgs/views/View (9).jpg)
+![views/View (9)](imgs/views/View_(9).jpg)
 
-![views/View (10)](imgs/views/View (10).jpg)
+![views/View (10)](imgs/views/View_(10).jpg)
 
-![views/View (11)](imgs/views/View (11).jpg)
+![views/View (11)](imgs/views/View_(11).jpg)
 
-![views/View (12)](imgs/views/View (12).jpg)
+![views/View (12)](imgs/views/View_(12).jpg)
 
-![views/View (13)](imgs/views/View (13).jpg)
+![views/View (13)](imgs/views/View_(13).jpg)
 
-![views/View (14)](imgs/views/View (14).jpg)
+![views/View (14)](imgs/views/View_(14).jpg)
 
-![views/View (15)](imgs/views/View (15).jpg)
+![views/View (15)](imgs/views/View_(15).jpg)
 
-![views/View (16)](imgs/views/View (16).jpg)
+![views/View (16)](imgs/views/View_(16).jpg)
 
-![views/View (17)](imgs/views/View (17).jpg)
+![views/View (17)](imgs/views/View_(17).jpg)
 
 
 
