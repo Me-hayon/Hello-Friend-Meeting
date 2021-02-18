@@ -213,7 +213,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 let tmp;
 export default {
@@ -223,41 +223,41 @@ export default {
     tmp = this;
   },
   data: () => ({
-    emailFront: '',
-    emailBack: '',
+    emailFront: "",
+    emailBack: "",
     emailBacks: [
-      'naver.com',
-      'gmail.com',
-      'hanmail.net',
-      'ssafy.com',
-      '직접 입력',
+      "naver.com",
+      "gmail.com",
+      "hanmail.net",
+      "ssafy.com",
+      "직접 입력",
     ],
-    errorMessages: '',
-    titleName: '반가워요!',
-    name: '',
-    password: '',
-    passwordConfirm: '',
+    errorMessages: "",
+    titleName: "반가워요!",
+    name: "",
+    password: "",
+    passwordConfirm: "",
     isDckEmail: false,
     tel: null,
     myAuthNum: null,
-    realAuthNum: null,
+    realAuthNum: "dummy",
     isAuth: false,
     nameRules: [
-      (v) => !!v || '이름은 꼭 알려주셨으면 좋겠어요!',
-      (v) => (!!v && v.length <= 10) || '이름은 10자 이내로 멋지게 지어주세요!',
+      (v) => !!v || "이름은 꼭 알려주셨으면 좋겠어요!",
+      (v) => (!!v && v.length <= 10) || "이름은 10자 이내로 멋지게 지어주세요!",
     ],
     passwordRules: [
-      (v) => !!v || '비밀번호를 입력해주세요.',
-      (v) => (v && v.length >= 8) || '너무 짧으면 위험하지 않을까요? ㅠ.ㅠ',
-      (v) => /(?=.*[A-Za-z])/.test(v) || '문자도 포함해볼까요?',
-      (v) => /(?=.*\d)/.test(v) || '숫자를 꼭 포함해야 해요!',
+      (v) => !!v || "비밀번호를 입력해주세요.",
+      (v) => (v && v.length >= 8) || "너무 짧으면 위험하지 않을까요? ㅠ.ㅠ",
+      (v) => /(?=.*[A-Za-z])/.test(v) || "문자도 포함해볼까요?",
+      (v) => /(?=.*\d)/.test(v) || "숫자를 꼭 포함해야 해요!",
       (v) =>
         /([!@$%])/.test(v) ||
-        '특수문자를 통해 더 안전한 비밀번호를 만들어요! [!@#$%]',
+        "특수문자를 통해 더 안전한 비밀번호를 만들어요! [!@#$%]",
     ],
     passwordConfirmRules: [
-      (v) => !!v || '비밀번호를 입력해주세요.',
-      (v) => v == tmp.password || '비밀번호와 일치해야해요.',
+      (v) => !!v || "비밀번호를 입력해주세요.",
+      (v) => v == tmp.password || "비밀번호와 일치해야해요.",
     ],
     formHasErrors: false,
   }),
@@ -276,11 +276,11 @@ export default {
 
   watch: {
     name(v, w) {
-      this.errorMessages = '';
+      this.errorMessages = "";
       if (this.name.length == 0) {
-        this.titleName = '반가워요!';
+        this.titleName = "반가워요!";
       } else {
-        this.titleName = this.name + '님!';
+        this.titleName = this.name + "님!";
       }
 
       if (this.name.length > 10) {
@@ -291,55 +291,55 @@ export default {
 
   methods: {
     close() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
     dckEmail() {
-      let email = this.emailFront + '@' + this.emailBack;
+      let email = this.emailFront + "@" + this.emailBack;
       var params = new URLSearchParams();
-      params.append('email', email);
+      params.append("email", email);
 
       axios
-        .post('dckEmail', params)
+        .post("dckEmail", params)
         .then((response) => {
-          if (response.data['is-success']) {
+          if (response.data["is-success"]) {
             this.isDckEmail = true;
-            alert('이 이메일은 이제 아이디가 될 거예요!');
+            alert("이 이메일은 이제 아이디가 될 거예요!");
           } else {
-            alert('다른 이메일을 입력해주세요:(');
+            alert("다른 이메일을 입력해주세요:(");
           }
         })
         .catch((error) => {
-          alert('에러');
+          alert("에러");
           console.log(error);
         });
     },
     authTel() {
       var params = new URLSearchParams();
-      params.append('tel', this.tel);
+      params.append("tel", this.tel);
 
       axios
-        .post('authTel', params)
+        .post("authTel", params)
         .then((response) => {
-          if (response.data['is-success']) {
-            this.realAuthNum = response.data['realAuthNum'];
-            alert('인증 번호를 전송했어요!');
+          if (response.data["is-success"]) {
+            this.realAuthNum = response.data["realAuthNum"];
+            alert("인증 번호를 전송했어요!");
           } else {
-            alert('이미 등록된 번호입니다.');
+            alert("이미 등록된 번호입니다.");
           }
         })
         .catch((error) => {
-          alert('에러');
+          alert("에러");
           console.log(error);
         });
     },
     confirmAuth() {
       if (this.realAuthNum == this.myAuthNum) {
-        alert('인증 성공!');
-        console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
+        alert("인증 성공!");
+        console.log("real: " + this.realAuthNum + " / my: " + this.myAuthNum);
         this.isAuth = true;
       } else {
-        alert('인증 실패');
-        console.log('real: ' + this.realAuthNum + ' / my: ' + this.myAuthNum);
+        alert("인증 실패");
+        console.log("real: " + this.realAuthNum + " / my: " + this.myAuthNum);
         this.isAuth = false;
       }
     },
@@ -347,7 +347,7 @@ export default {
       if (this.$refs.form.validate() && this.isDckEmail && this.isAuth) {
         this.submit();
       } else {
-        alert('진행 안된 게 있음'); // 경우 나눠서 알려주면
+        alert("진행 안된 게 있음"); // 경우 나눠서 알려주면
       }
       // this.formHasErrors = false;
 
@@ -361,21 +361,21 @@ export default {
       // }
     },
     submit() {
-      let email = this.emailFront + '@' + this.emailBack;
+      let email = this.emailFront + "@" + this.emailBack;
 
       axios
-        .post('join', {
+        .post("join", {
           uname: this.name,
           email: email,
           password: this.password,
           tel: this.tel,
         })
         .then((response) => {
-          alert(this.name + '님! 새로운 친구가 되어주셔서 감사해요:)');
-          this.$router.push('/');
+          alert(this.name + "님! 새로운 친구가 되어주셔서 감사해요:)");
+          this.$router.push("/");
         })
         .catch((error) => {
-          alert('가입 도중 오류가 발생하였습니다.');
+          alert("가입 도중 오류가 발생하였습니다.");
         });
     },
     // submit() {
@@ -404,7 +404,7 @@ body {
       rgba(44, 1, 66, 0.486),
       rgba(0, 0, 0, 0.788)
     ),
-    url('~@/assets/images/join.gif') no-repeat center center fixed;
+    url("~@/assets/images/join.gif") no-repeat center center fixed;
   background-size: cover;
 }
 </style>
