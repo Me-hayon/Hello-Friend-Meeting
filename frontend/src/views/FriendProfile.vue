@@ -4,7 +4,12 @@
     <profile-cover />
 
     <!-- 프로필 사진 -->
-    <v-btn style="top: 160px; left: 177px;" fab absolute disabled>
+    <v-btn
+      :style="{ left: '50%', top: '160px', transform: 'translateX(-50%)' }"
+      fab
+      absolute
+      disabled
+    >
       <v-avatar size="80"
         ><v-img
           :src="require(`@/assets/images/avatars/${friend.uprofileImg}.png`)"

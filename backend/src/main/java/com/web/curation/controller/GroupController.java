@@ -421,7 +421,7 @@ public class GroupController {
 						if(sb2.length()==0) continue;
 						
 						sb2.append("님의 친구 ");
-						sb2.append(gmaster);
+						sb2.append(user.getUname());
 						sb2.append("님이 ");
 						sb2.append(gname);
 						sb2.append("그룹을 만들었습니다.");
