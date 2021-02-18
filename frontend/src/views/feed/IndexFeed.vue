@@ -24,7 +24,13 @@
     <v-container>
       <v-row>
         <v-spacer></v-spacer>
-        <v-col v-for="feed in myFeeds" :key="feed.ano" cols="12" sm="6" md="4">
+        <v-col
+          v-for="(feed, index) in myFeeds"
+          :key="feed.ano"
+          cols="12"
+          sm="6"
+          md="4"
+        >
           <v-card>
             <v-img
               :src="
@@ -52,7 +58,7 @@
                   <v-row
                     style="height: 50px; margin-top: 10px;"
                     justify="center"
-                    @click="delFeed(feed.ano)"
+                    @click="delFeed(feed.ano, index)"
                     no-gutters
                   >
                     <v-btn large icon color="white">
@@ -176,11 +182,11 @@ export default {
           console.log('error occur');
         });
     },
-    delFeed(ano) {
+    delFeed(ano, index) {
       var params = new URLSearchParams();
       params.append('ano', ano);
       axios.post('delFeed', params).then((resp) => {
-        this.getFeeds();
+        this.myFeeds.splice(index, 1);
       });
     },
     parsingDate(beforeDate) {
