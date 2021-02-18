@@ -156,8 +156,8 @@ export default {
           }
 
           this.chats.push(chat);
-          this.isLoadingChatList = false;
         }
+        this.isLoadingChatList = false;
       },
       (err) => {
         console.log(err);
@@ -189,7 +189,7 @@ export default {
       }
     },
     connect() {
-      const serverURL = "http://localhost:8080/ws";
+      const serverURL = "http://i4b203.p.ssafy.io:8080/ws";
       let socket = new SockJS(serverURL);
       let tmp = {};
 
@@ -271,7 +271,7 @@ export default {
       axios({
         method: "get",
         url: "/getChat/" + this.gcgno,
-        baseURL: "http://localhost:8080/",
+        baseURL: "http://i4b203.p.ssafy.io:8080/",
       }).then(
         (response) => {
           this.chats = [];
