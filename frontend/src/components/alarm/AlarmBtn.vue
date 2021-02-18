@@ -39,10 +39,28 @@
             class="ma-0"
             align="center"
             justify="center"
-            style="height: 100px;"
+            style="height: 70px;"
           >
-            알림 없음ㅋㅋ!! <br />
-            나중에... 이미지로 대체하고 싶삼
+            <v-col
+              cols="2"
+              align="center"
+              style="padding: 0; margin-left: 30px; margin-top: -15px;"
+            >
+              <v-img
+                src="@/assets/images/alarm.gif"
+                style="width: 40px; height: 40px; "
+              ></v-img>
+            </v-col>
+            <v-col
+              style="letter-spacing: -1px; padding: 0; margin-left: -50px;"
+            >
+              <div style="font-size: 0.9rem; text-align: center;">
+                뭐, 곧 새로운 알림이 올거예요.
+              </div>
+              <div style="font-size: 0.7rem; text-align: center;">
+                *귀뚜라미 소리*
+              </div>
+            </v-col>
           </v-row>
           <v-row
             v-else
