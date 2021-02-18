@@ -1,14 +1,13 @@
 import Login from '@/views/user/Login.vue';
 import Join from '@/views/user/Join.vue';
-import FeedMain from '@/views/feed/IndexFeed.vue';
+import FeedMain from '@/views/IndexFeed.vue';
 import Community from '@/views/Community.vue';
 import Profile from '@/views/user/Profile.vue';
 import GroupMainPage from '@/components/group/GroupMainPage.vue';
 import GroupBoardDetail from '@/components/group/GroupBoardDetail.vue';
-import Message from '@/views/message/Message.vue';
+import Message from '@/views/Message.vue';
 import ErrorPage from '@/views/Error.vue';
 import PageNotFound from '@/views/PageNotFound.vue';
-import FriendTest from '@/views/FriendTest.vue';
 import Naegi from '@/components/group/NaegiTab.vue';
 import FriendProfile from '@/views/FriendProfile.vue';
 
@@ -17,11 +16,6 @@ export default [
     path: '/naegi',
     name: 'naegi',
     component: Naegi,
-  },
-  {
-    path: '/ft/:uno',
-    name: 'ft',
-    component: FriendTest,
   },
   {
     path: '/',

@@ -293,6 +293,8 @@
 <script>
 import axios from 'axios';
 
+const storage = window.sessionStorage;
+
 export default {
   props: ['uno', 'email', 'groupList', 'categoryList', 'friendList'],
   data() {
@@ -330,9 +332,32 @@ export default {
   },
   methods: {
     moveGroup(index, isSearch) {
-      if (isSearch) this.$store.commit('setGno', this.searchGroups[index].gno);
-      else this.$store.commit('setGno', this.groups[index].gno);
-      this.$router.push('/group');
+      let params = new URLSearchParams();
+      params.append('email', storage.getItem('user-email'));
+
+      if (isSearch) {
+        this.$store.commit('setGno', this.searchGroups[index].gno);
+        params.append('gno', this.searchGroups[index].gno);
+      } else {
+        this.$store.commit('setGno', this.groups[index].gno);
+        params.append('gno', this.groups[index].gno);
+      }
+
+      axios
+        .post('isGroupMember', params)
+        .then((response) => {
+          if (!response.data.isExist) {
+            alert('삭제된 그룹입니다.');
+            this.$router.push('/');
+            return;
+          }
+          this.memberStatus = response.data.memberStatus;
+          this.$store.commit('setMemberStatus', this.memberStatus);
+          this.$router.push('/group');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     searchInput() {
       this.searchGroups = [];

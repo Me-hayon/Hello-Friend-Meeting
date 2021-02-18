@@ -24,10 +24,11 @@
   </v-card>
 </template>
 <script>
-import GroupBoard from "@/components/group/GroupBoard.vue";
-import GroupSchedule from "@/components/group/GroupSchedule.vue";
-import GroupChat from "@/components/group/GroupChat.vue";
-import GroupMemberList from "@/components/group/GroupMemberList.vue";
+import GroupBoard from '@/components/group/GroupBoard.vue';
+import GroupSchedule from '@/components/group/GroupSchedule.vue';
+import GroupChat from '@/components/group/GroupChat.vue';
+import GroupMemberList from '@/components/group/GroupMemberList.vue';
+
 export default {
   created() {
     this.height = window.screen.height - 112;
@@ -60,8 +61,7 @@ export default {
       this.memberStatus = val;
     },
     tab(val) {
-      console.log(this.$store.getters.getTabNum);
-      this.$store.commit("setTabNum", val);
+      this.$store.commit('setTabNum', val);
     },
   },
   components: {

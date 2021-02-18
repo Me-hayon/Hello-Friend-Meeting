@@ -1,5 +1,5 @@
 <template>
-  <v-card flat tile style="background-color: white;">
+  <v-card v-if="myFeeds != null" flat tile style="background-color: white;">
     <v-row style="margin: 10px;">
       <div style="font-size: 1.8rem; letter-spacing: -2px; color: #3F568B;">
         안녕하세요, <strong>{{ myName }}</strong
@@ -19,12 +19,16 @@
       </div></v-row
     >
 
-    <!-- <v-container v-for="type in types" :key="type" class="grey lighten-4" fluid> -->
-    <!-- <v-subheader>{{ type }}</v-subheader> -->
     <v-container>
       <v-row>
         <v-spacer></v-spacer>
-        <v-col v-for="feed in myFeeds" :key="feed.ano" cols="12" sm="6" md="4">
+        <v-col
+          v-for="(feed, index) in myFeeds"
+          :key="feed.ano"
+          cols="12"
+          sm="6"
+          md="4"
+        >
           <v-card>
             <v-img
               :src="
@@ -52,7 +56,7 @@
                   <v-row
                     style="height: 50px; margin-top: 10px;"
                     justify="center"
-                    @click="delFeed(feed.ano)"
+                    @click="delFeed(feed.ano, index)"
                     no-gutters
                   >
                     <v-btn large icon color="white">
@@ -92,16 +96,23 @@
       </v-row>
     </v-container>
   </v-card>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 711px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
-// import { mapState } from "vuex";
-// import "../../components/css/feed/feed-item.scss";
-// import "../../components/css/feed/newsfeed.scss";
-// import FeedItem from '../../components/feed/FeedItem.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
+
 export default {
   methods: {
     getImage(url, summary) {
@@ -167,8 +178,6 @@ export default {
       axios
         .post('getFeeds', params)
         .then((response) => {
-          console.log(response);
-
           this.myFeeds = response.data.feeds;
         })
         .catch((error) => {
@@ -176,11 +185,11 @@ export default {
           console.log('error occur');
         });
     },
-    delFeed(ano) {
+    delFeed(ano, index) {
       var params = new URLSearchParams();
       params.append('ano', ano);
       axios.post('delFeed', params).then((resp) => {
-        this.getFeeds();
+        this.myFeeds.splice(index, 1);
       });
     },
     parsingDate(beforeDate) {
@@ -209,17 +218,7 @@ export default {
   },
   data() {
     return {
-      myFeeds: [
-        {
-          ano: '',
-          aurl: '',
-          asummary: '',
-          adate: '',
-          createUser: '',
-          createUserName: '',
-          profileImg: '',
-        },
-      ],
+      myFeeds: null,
       snackbar: false,
       timeout: 3000,
       myName: '',
@@ -234,8 +233,6 @@ export default {
 
     var params = new URLSearchParams();
     params.append('email', storage.getItem('user-email'));
-    // params.append('email', 'test@gmail.com');
-    console.log(params);
 
     axios.post('profile', params).then((resp) => {
       this.myName = resp.data['user-name'];
