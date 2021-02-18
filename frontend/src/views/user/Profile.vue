@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="!isLoadingProfileImg">
     <!-- 사용자 설정 버튼 -->
     <user-config-btn />
 
@@ -26,6 +26,16 @@
       :timelines="timelines"
     />
   </v-container>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 711px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
