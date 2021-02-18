@@ -1,5 +1,6 @@
 <template>
   <v-container
+    v-if="!isLoadingGroupInfo && !isLoadingBoardList"
     id="scroll-target"
     class="pa-0 overflow-y-auto"
     style="height: 663px;"
@@ -231,10 +232,19 @@
             </v-simple-table>
           </v-col>
         </v-row>
-        <v-row style="margin-top: 56px;"></v-row>
       </v-col>
     </v-row>
   </v-container>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 663px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
@@ -284,6 +294,8 @@ export default {
       nowScroll: 0,
       dialog: false,
       files: [],
+      isLoadingGroupInfo: true,
+      isLoadingBoardList: true,
     };
   },
   created() {
@@ -327,12 +339,15 @@ export default {
               i
             ].bdate.substring(2, 16);
           }
+
           for (i = 0; i < this.tableNotice.length; i++) {
             this.tableNotice[i].writerName = response.data.noticeWriter[i];
             this.tableNotice[i].parsedDate = response.data.notice[
               i
             ].bdate.substring(2, 16);
           }
+
+          this.isLoadingBoardList = false;
         })
         .catch((error) => {
           console.log(error);
@@ -344,6 +359,7 @@ export default {
       axios.post('getGroupInfo', params).then((response) => {
         this.groupTitle = response.data.groupInfo.gname.toUpperCase();
         this.groupDesc = response.data.groupInfo.gdesc;
+        this.isLoadingGroupInfo = false;
       });
     },
     upload() {

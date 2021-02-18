@@ -1,6 +1,9 @@
 <template>
-  <v-container class="Bg" :style="'height: ' + height + 'px'">
-    <v-img src="@/assets/images/petals.gif" style="position: absolute;"></v-img>
+  <v-container
+    v-if="!isLoadingGroupInfo"
+    class="Bg"
+    :style="'height: ' + height + 'px'"
+  >
     <v-img
       src="@/assets/images/invitation.gif"
       style="margin-top: 0; margin-left: 30px;"
@@ -27,6 +30,16 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 663px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
@@ -41,6 +54,7 @@ export default {
       gname: '',
       gdesc: '',
       height: window.screen.height - 112,
+      isLoadingGroupInfo: true,
     };
   },
   props: ['ano'],
@@ -52,6 +66,7 @@ export default {
       .then((response) => {
         this.gname = response.data.groupInfo.gname;
         this.gdesc = response.data.groupInfo.gdesc;
+        this.isLoadingGroupInfo = false;
       })
       .catch((error) => {
         console.log(error);
@@ -109,7 +124,8 @@ export default {
 
 <style>
 .Bg {
-  background: url('~@/assets/images/invite.gif') center center;
+  background: url('~@/assets/images/petals.gif'),
+    url('~@/assets/images/invite.gif') center center;
   background-repeat: no-repeat;
   /* background-attachment: fixed; */
   background-size: cover;
