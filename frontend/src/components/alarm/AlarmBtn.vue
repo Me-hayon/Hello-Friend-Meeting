@@ -141,7 +141,7 @@ export default {
   computed: {
     alarmBgColor() {
       return (aisRead) => {
-        return aisRead ? '#E6E6FA' : 'white';
+        return aisRead ? '#E8E1D5' : 'white';
       };
     },
   },
