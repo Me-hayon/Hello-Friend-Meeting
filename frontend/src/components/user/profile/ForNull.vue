@@ -6,7 +6,7 @@
     align="center"
   >
     <v-col align="center">
-      <v-row class="myImg" style="width: 300px;" no-gutters>
+      <v-row class="myImg" style="width: 250px;" no-gutters>
         <v-img src="@/assets/images/friend.png"></v-img>
       </v-row>
       <v-row

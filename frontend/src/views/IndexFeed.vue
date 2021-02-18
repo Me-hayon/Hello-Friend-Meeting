@@ -230,7 +230,7 @@ export default {
     return {
       myFeeds: null,
       snackbar: false,
-      timeout: 3000,
+      timeout: 5000,
       myName: '',
     };
   },

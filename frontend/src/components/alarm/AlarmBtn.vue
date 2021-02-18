@@ -108,7 +108,7 @@ export default {
 
   created() {
     this.getAlarmsList();
-    setInterval(this.getAlarmsList, 10000);
+    setInterval(this.getAlarmsList, 3000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
     params.append('email', storage.getItem('user-email'));
