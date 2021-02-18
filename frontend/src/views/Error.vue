@@ -1,33 +1,27 @@
 <template>
-  <b-container>
-    <div id="error-window">
-      <h1 style="margin-bottom: 50px;">
-        <strong>해당 페이지에 오류가 발생했습니다.</strong>
-      </h1>
-      <div style="text-align: center;">
-        <img src="@/assets/images/error.png" width="100" />
-      </div>
-      <hr class="my-4" />
-      <router-link to="/" style="float: right;">
-        <b-button style="height: auto;" variant="primary"
-          >로그인 페이지로 이동</b-button
-        >
-      </router-link>
-    </div>
-  </b-container>
+  <v-container class="pa-0">
+    <v-row style="height: 823px;" align="center" no-gutters>
+      <v-col class="text-center">
+        <v-img src="@/assets/images/error.png" height="100" contain> </v-img>
+        <h4 style="margin-top: 30px;">
+          <strong>해당 페이지에 오류가 발생했습니다.</strong>
+        </h4>
+        <v-divider></v-divider>
+        <router-link to="/">
+          <v-btn color="primary">돌아가기</v-btn>
+        </router-link>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-export default {};
+export default {
+  created() {
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
+  },
+};
 </script>
 
-<style>
-#error-window {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 0;
-}
-</style>
+<style></style>

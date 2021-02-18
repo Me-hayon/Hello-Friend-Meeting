@@ -1,168 +1,181 @@
 <template>
-  <div class="user" id="login">
-    <div class="wrapC">
-      <h1 style="text-align: center; margin-top: 55px">우리 친구하자</h1>
-      <img
-        class="logo"
-        style="display: block; margin: 0 auto 50px"
-        src="@/assets/images/logo.png"
-        alt=""
-      />
-
-      <div class="input-with-label">
-        <input
-          v-model="email"
-          v-bind:class="{
-            error: error.email,
-            complete: !error.email && email.length !== 0,
-          }"
-          @keyup.enter="Login"
-          id="email"
-          placeholder="이메일을 입력하세요"
-          type="text"
-        />
-        <label for="email">이메일</label>
-        <div class="error-text" v-if="error.email">{{ error.email }}</div>
-      </div>
-
-      <div class="input-with-label">
-        <input
-          v-model="password"
-          type="password"
-          v-bind:class="{
-            error: error.password,
-            complete: !error.password && password.length !== 0,
-          }"
-          id="password"
-          @keyup.enter="Login"
-          placeholder="비밀번호를 입력하세요"
-        />
-        <label for="password">비밀번호</label>
-        <div class="error-text" v-if="error.password">{{ error.password }}</div>
-      </div>
-      <button
-        class="btn btn--back btn--login"
-        @click="onLogin"
-        :disabled="!isSubmit"
-        :class="{ disabled: !isSubmit }"
-        style="background-color: tomato; color: white"
+  <v-container class="bg">
+    <v-row style="margin-top: 200px;">
+      <v-col align="center">
+        <img src="@/assets/images/logo.png" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col align="center">
+        <p class="font-weight-thin" style="color: white; font-size: 1rem;">
+          로그인 하러 가기
+        </p>
+      </v-col>
+    </v-row>
+    <v-row style="margin-top: -35px;">
+      <v-col align="center">
+        <v-btn
+          icon
+          color="white"
+          @click="$vuetify.goTo('#startLogin', options)"
+        >
+          <v-icon size="50">mdi-menu-down</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row style="margin-top: 600px;"></v-row>
+    <v-row id="startLogin" style="margin-top: 30px;">
+      <v-col
+        style="
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: rgba(255,255,255,.6);
+        margin-left: 30px;
+        margin-right: 30px;
+        border-radius: 10px; "
       >
-        로그인
-      </button>
-      <div class="add-option">
-        <div class="text">
-          <p>혹시</p>
-          <div class="bar"></div>
-        </div>
-        <div class="wrap">
-          <p>아직 회원이 아니신가요?</p>
-          <router-link to="/user/join" class="btn--text">가입하기</router-link>
-        </div>
-      </div>
-      <BottomNav />
-    </div>
-  </div>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="email"
+            label="이메일"
+            hint="ssafy@ssafy.com"
+            outlined
+            rounded
+            clearable
+            required
+            :rules="emailRules"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="password"
+            label="비밀번호"
+            outlined
+            rounded
+            clearable
+            required
+            :type="passwordShow ? 'text' : 'password'"
+            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="passwordShow = !passwordShow"
+            @keyup.enter="validate"
+          ></v-text-field>
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            class="font-weight-black"
+            @click="validate"
+            block
+          >
+            로그인
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
+    <v-row style="padding-left: 40px; padding-right: 40px;">
+      <v-col style="padding-left: 0; padding-right: 0;" cols="8">
+        <p class="font-weight-thin" style="color: white;">
+          혹시 아직 회원이 아니신가요?
+        </p>
+      </v-col>
+      <v-col style="padding-left: 0; padding-right: 0;" align="end">
+        <router-link to="/user/join" class="font-weight-bold"
+          >가입하기</router-link
+        >
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import '../../components/css/user.scss';
-import PV from 'password-validator';
-import * as EmailValidator from 'email-validator';
-import BottomNav from '../../components/common/BottomNav.vue';
 import axios from 'axios';
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    BottomNav,
+  data() {
+    return {
+      valid: false,
+      email: '',
+      password: '',
+      emailRules: [
+        (v) =>
+          /.+@.+\..+/.test(v) ||
+          v == null ||
+          v.length == 0 ||
+          '올바른 이메일 형식을 입력해주세요.',
+      ],
+      passwordShow: false,
+      duration: 1000,
+    };
   },
   created() {
     if (storage.getItem('auth-token')) {
       this.$router.push('/feed/main');
     }
 
-    this.component = this;
-
-    this.passwordSchema
-      .is()
-      .min(8)
-      .is()
-      .max(100)
-      .has()
-      .digits()
-      .has()
-      .letters();
+    this.$store.commit('setIsHeader', false);
+    this.$store.commit('setIsFooter', false);
   },
-  watch: {
-    password: function (v) {
-      this.checkForm();
-    },
-    email: function (v) {
-      this.checkForm();
+  computed: {
+    options() {
+      return {
+        duration: this.duration,
+      };
     },
   },
   methods: {
-    checkForm() {
-      if (this.email.length > 0 && !EmailValidator.validate(this.email))
-        this.error.email = '이메일 형식이 아닙니다.';
-      else this.error.email = false;
-
-      if (
-        this.password.length > 0 &&
-        !this.passwordSchema.validate(this.password)
-      )
-        this.error.password = '영문, 숫자 포함 8자리 이상이어야 합니다.';
-      else this.error.password = false;
-
-      let isSubmit = true;
-      Object.values(this.error).map((v) => {
-        if (v) isSubmit = false;
-      });
-      this.isSubmit = isSubmit;
+    validate() {
+      if (this.$refs.form.validate()) this.login();
     },
-    onLogin() {
-      if (this.isSubmit) {
-        this.email = this.email.toLowerCase();
-        this.isSubmit = false;
-        console.log(this.email);
-        console.log(this.password);
+    login() {
+      var params = new URLSearchParams();
+      params.append('email', this.email);
+      params.append('password', this.password);
 
-        var params = new URLSearchParams();
-        params.append('email', this.email);
-        params.append('password', this.password);
-
-        axios
-          .post('http://localhost:8080/login', params)
-          .then((response) => {
-            this.isSubmit = true;
-            if (response.data['is-success']) {
-              storage.setItem('auth-token', response.data['auth-token']);
-              storage.setItem('user-email', response.data['user-email']);
-              this.$router.push('/feed/main');
-            } else {
-              alert('아이디 또는 비밀번호를 잘못 입력하였습니다.');
-            }
-          })
-          .catch((error) => {
-            this.isSubmit = true;
-            alert('로그인 도중 오류가 발생하였습니다.');
-          });
-      }
+      axios
+        .post('login', params)
+        .then((response) => {
+          if (response.data['is-success']) {
+            storage.setItem('auth-token', response.data['auth-token']);
+            storage.setItem('user-email', response.data['user-email']);
+            this.$router.push('/feed/main');
+          } else {
+            alert('아이디 또는 비밀번호를 잘못 입력하였습니다.');
+          }
+        })
+        .catch((error) => {
+          alert('로그인 도중 오류가 발생하였습니다.');
+        });
     },
   },
-  data: () => {
-    return {
-      email: '',
-      password: '',
-      passwordSchema: new PV(),
-      error: {
-        email: false,
-        password: false,
-      },
-      isSubmit: false,
-      component: this,
-    };
+  watch: {
+    valid(valid) {
+      if (valid) {
+        if (this.email == null || this.email.length == 0) this.valid = false;
+        else if (this.password == null || this.password.length == 0)
+          this.valid = false;
+      }
+    },
+    email(email) {
+      if (email == null || email.length == 0) this.valid = false;
+    },
+    password(password) {
+      if (this.valid && (password == null || password.length == 0))
+        this.valid = false;
+      else if (!this.valid && password.length > 0) this.valid = true;
+    },
   },
 };
 </script>
+
+<style>
+.bg {
+  background: linear-gradient(
+      to bottom,
+      rgba(47, 6, 122, 0.205),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url('~@/assets/images/main.gif') no-repeat right top fixed;
+  background-size: cover;
+}
+</style>
