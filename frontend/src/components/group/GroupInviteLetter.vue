@@ -83,6 +83,7 @@ export default {
         .then((response) => {
           alert(response.data.data);
           this.delInviteAlarm();
+          this.$store.commit('setMemberStatus', 0);
         })
         .catch((error) => {
           console.log(error);

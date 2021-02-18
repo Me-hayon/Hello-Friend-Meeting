@@ -5,34 +5,37 @@ export default {
   getIsFooter: function(state) {
     return state.isFooter;
   },
-  getGno: function (state) {
+  getGno: function(state) {
     return state.vuexGno;
   },
-  getUno: function (state) {
+  getUno: function(state) {
     return state.vuexUno;
   },
-  getMemberStatus: function (state) {
+  getMemberStatus: function(state) {
     return state.vuexMemberStatus;
   },
-  getBno: function (state) {
+  getBno: function(state) {
     return state.vuexBno;
   },
-  getIsWriter: function (state) {
+  getIsWriter: function(state) {
     return state.isWriter;
   },
-  getEvents: function (state) {
-    return state.events
+  getEvents: function(state) {
+    return state.events;
   },
-  getCalendar:function(state){
+  getCalendar: function(state) {
     return state.calendar;
   },
-  getFeedCreatedTime: function (state) {
-    return state.feedCreatedTime
+  getFeedCreatedTime: function(state) {
+    return state.feedCreatedTime;
   },
   getTabNum: function(state) {
     return state.tabNum;
   },
   getChatPageH: function(state) {
-    return state.chatPageH
-  }
+    return state.chatPageH;
+  },
+  getRouteUrl: function(state) {
+    return state.routeUrl;
+  },
 };

@@ -1,6 +1,6 @@
 <template>
   <v-speed-dial
-    style="top: 160px; left: 175px;"
+    :style="{ left: '50%', top: '160px', transform: 'translateX(-50%)' }"
     v-model="profileImgFab"
     absolute
     direction="bottom"
@@ -24,6 +24,8 @@
       >
         <v-avatar
           ><v-img
+            contain
+            height="100"
             :src="require(`@/assets/images/avatars/${pImage}.png`)"
           ></v-img
         ></v-avatar>
@@ -55,8 +57,10 @@ export default {
       params.append('email', this.email);
       params.append('profileImg', pImage);
 
+      console.log(pImage);
+
       axios
-        .put('changeAvatar', params)
+        .put('http://localhost:8080/changeAvatar', params)
         .then((response) => {
           console.log(response);
         })

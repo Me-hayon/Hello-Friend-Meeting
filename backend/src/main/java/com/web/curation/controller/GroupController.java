@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.entity.Alarm;
+import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Category;
 import com.web.curation.model.entity.Filetest;
 import com.web.curation.model.entity.FriendInfo;
@@ -34,6 +35,7 @@ import com.web.curation.model.entity.ScheduleParticipant;
 import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.AlarmRepository;
+import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CategoryRepository;
 import com.web.curation.model.repository.FiletestRepository;
 import com.web.curation.model.repository.FriendInfoRepository;
@@ -54,6 +56,9 @@ public class GroupController {
 	@Autowired
 	UserInfoRepository userInfoRepository;
 
+	@Autowired
+	BoardRepository boardRepository;
+	
 	@Autowired
 	GroupInfoRepository groupInfoRepository;
 
@@ -90,7 +95,20 @@ public class GroupController {
 	@Autowired
 	FiletestRepository filetestRepository;
 	
-	
+	@PostMapping("/findGnoByBno")
+	public Object findGnoByBno(@RequestBody Map<String, String> map) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		Optional<Board> optBoard = boardRepository.findById(Integer.parseInt(map.get("bno")));
+		
+		if(optBoard.isPresent()) {
+			resultMap.put("gno", optBoard.get().getBgno());
+			resultMap.put("is-success", true);
+		}
+		else resultMap.put("is-success", false);
+		
+		return resultMap;
+	}
 	
 	@PostMapping("/unoOfGmaster")
 	public Object unoOfGmaster(@RequestParam int gno) {
@@ -402,9 +420,9 @@ public class GroupController {
 						}
 						
 						if(sb2.length()==0) continue;
-						
+
 						sb2.append(")의 친구 ");
-						sb2.append(gmaster);
+						sb2.append(user.getUname());
 						sb2.append("님이 새로운 그룹 [");
 						sb2.append(gname);
 						sb2.append("]을 만들었어요.");
@@ -459,6 +477,15 @@ public class GroupController {
 	public Object inviteGroup(@RequestParam String email, @RequestParam int friendId, @RequestParam int gno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
+		if(groupParticipantRepository.findByUnoAndGno(friendId, gno).isPresent()) {
+			resultMap.put("result",false);
+			resultMap.put("msg","이미 그룹원인 친구를 초대할 수는 없어요 ㅠ.ㅠ");
+			return resultMap;
+		}else if(groupApplyRepository.findByUnoAndGno(friendId, gno).isPresent()) {
+			resultMap.put("result",false);
+			resultMap.put("msg","이미 그룹에 신청하거나 초대받은 친구네요!");
+			return resultMap;
+		}
 		UserInfo myInfo = userInfoRepository.findByEmail(email);
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
 		Alarm alarm = new Alarm();
@@ -483,7 +510,7 @@ public class GroupController {
 		groupApply.setUno(friendId);
 
 		groupApplyRepository.save(groupApply);
-
+		resultMap.put("result",true);
 		return resultMap;
 	}
 

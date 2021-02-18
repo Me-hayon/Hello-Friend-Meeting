@@ -68,9 +68,7 @@
         </v-list>
         <v-card-actions>
           <v-spacer></v-spacer>
-
-          <v-btn text @click="menu = false">Cancel</v-btn>
-          <v-btn color="primary" text @click="menu = false">Save</v-btn>
+          <v-btn text @click="menu = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
@@ -142,6 +140,7 @@ export default {
       var params = new URLSearchParams();
       if (alarm.aurl === 'FriendInfo') {
         this.menu = false;
+        this.$store.commit('setRouteUrl', '/friendProfile');
         this.$router.push({
           name: 'FriendProfile',
           params: {
@@ -157,8 +156,10 @@ export default {
         axios
           .post('isGroupMember', params)
           .then((response) => {
+            this.menu = false;
             this.$store.commit('setGno', gno);
             this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$store.commit('setRouteUrl', '/group');
             this.$router
               .push({ name: 'GroupMainPage', params: { ano: alarm.ano } })
               .catch(() => {});
@@ -173,6 +174,8 @@ export default {
         axios.post('boardDetail', params).then((resp) => {
           if (!resp.data.isExist) {
             alert('삭제된 게시글입니다.');
+            this.menu = false;
+            this.$store.commit('setRouteUrl', '/');
             this.$router.push('/');
             return;
           }
@@ -183,8 +186,10 @@ export default {
           params.append('gno', resp.data.curBoard.bgno);
 
           axios.post('isGroupMember', params).then((response) => {
+            this.menu = false;
             this.$store.commit('setGno', gno);
             this.$store.commit('setMemberStatus', response.data.memberStatus);
+            this.$store.commit('setRouteUrl', '/board/detail');
             this.$router.push('/board/detail').catch(() => {});
           });
         });
