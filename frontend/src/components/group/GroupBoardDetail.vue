@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!isLoadingPost">
     <v-parallax
       height="300"
       src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -204,6 +204,16 @@
       </v-col>
     </v-row>
   </div>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 663px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
@@ -253,6 +263,7 @@ export default {
       newContent: '',
       show: false,
       editModal: false,
+      isLoadingPost: true,
     };
   },
   created() {
@@ -271,7 +282,6 @@ export default {
             this.$router.push('/');
             return;
           }
-          console.log('★★★★★★★★★★★', response);
           this.article = response.data.curBoard;
           this.parsedDateforArticle = this.parsingDate(
             response.data.curBoard.bdate
@@ -315,7 +325,6 @@ export default {
       params.append('bno', this.bno);
       params.append('email', window.sessionStorage.getItem('user-email'));
       axios.post('getCommentList', params).then((resp) => {
-        // console.log('★★★★★★★★★★★', resp);
         this.comments = resp.data.comments;
         var writerList = resp.data.writerList;
         var isWriterList = resp.data.isWriterList;
@@ -328,17 +337,14 @@ export default {
             16
           );
         }
+
+        this.isLoadingPost = false;
       });
     },
     returnToGroup() {
       var gno = this.article.bgno;
       this.$router.push({ name: 'GroupMainPage', params: { gno } });
     },
-    // resetDatas() {
-    //   this.newCommentContent = '';
-    //   this.newTitle = this.article.btitle;
-    //   this.newContent = this.article.bcontent;
-    // },
     writeComment() {
       if (this.newCommentContent != '') {
         var params = new URLSearchParams();
@@ -347,7 +353,6 @@ export default {
         params.append('bno', this.bno);
 
         axios.post('writeComment', params).then((response) => {
-          // alert(response.data.data);
           this.getComments();
           this.resetDatas();
         });
@@ -359,7 +364,6 @@ export default {
       params.append('cno', cno);
       params.append('ccontent', this.newCommentContent);
       axios.post('modifyComment', params).then((resp) => {
-        // alert(resp.data.data);
         this.getComments();
         this.editModal = false;
       });
@@ -368,7 +372,6 @@ export default {
       var params = new URLSearchParams();
       params.append('cno', cno);
       axios.post('delComment', params).then((resp) => {
-        // alert(resp.data.data);
         this.getComments();
       });
     },
