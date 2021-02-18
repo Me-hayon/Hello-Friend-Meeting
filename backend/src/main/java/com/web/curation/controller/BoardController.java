@@ -104,11 +104,13 @@ public class BoardController {
 		String[] eachUser=guserList.split(" ");
 		
 		StringBuilder sb=new StringBuilder();
-		sb.append(groupInfo.getGname());
-		sb.append("그룹에 ");
 		sb.append(myInfo.getUname());
-		sb.append("님이 새 게시글을 작성했습니다.\n");
+		sb.append("님이 [");
+		sb.append(groupInfo.getGname());
+		sb.append("]에 '");
+		
 		sb.append(board.getBtitle());
+		sb.append("'라는 글을 썼어요.");
 		
 		String asummary=sb.toString();
 		

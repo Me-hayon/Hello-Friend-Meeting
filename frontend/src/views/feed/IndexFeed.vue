@@ -1,20 +1,22 @@
 <template>
-  <v-card flat tile>
+  <v-card flat tile style="background-color: white;">
     <v-row style="margin: 10px;">
-      <!-- <div style="font-size: 1.5rem;">
+      <div style="font-size: 1.8rem; letter-spacing: -2px; color: #3F568B;">
         안녕하세요, <strong>{{ myName }}</strong
         >님!
-      </div> -->
+      </div>
       <div class="text-center">
         <v-snackbar v-model="snackbar" :timeout="timeout" rounded="pill"
-          ><div style="text-align:center">
+          ><div style="text-align:center;">
             안녕하세요, <strong>{{ myName }}</strong
             >님!
           </div>
         </v-snackbar>
       </div>
 
-      <div>친구들이 만든 그룹과 새로 등록된 일정을 볼 수 있어요.</div></v-row
+      <div style="letter-spacing: -1px;">
+        친구들이 만든 그룹과 새로 등록된 일정을 볼 수 있어요.
+      </div></v-row
     >
 
     <!-- <v-container v-for="type in types" :key="type" class="grey lighten-4" fluid> -->
@@ -22,49 +24,72 @@
     <v-container>
       <v-row>
         <v-spacer></v-spacer>
-        <v-col v-for="feed in myFeeds" :key="feed.ano" cols="12" sm="6" md="4">
+        <v-col
+          v-for="(feed, index) in myFeeds"
+          :key="feed.ano"
+          cols="12"
+          sm="6"
+          md="4"
+        >
           <v-card>
             <v-img
-              :src="`https://picsum.photos/200/300?image=${getImage()}`"
-              gradient="to top right, rgba(0,0,0,.7), rgba(25,32,72,0)"
-              height="150px"
+              :src="
+                require(`@/assets/images/feeds/${getImage(
+                  feed.aurl,
+                  feed.asummary
+                )}.gif`)
+              "
+              gradient="to top, rgba(20,20,20,.4), rgba(0,0,0,.7)"
+              height="140px"
             >
-              <span
-                class="white--text pl-4 pt-4 d-inline-block"
-                v-text="feed.asummary"
-              ></span>
+              <v-row>
+                <v-col
+                  cols="10"
+                  style="height: 150px;"
+                  @click="goRouting(feed.aurl, feed.aurlNo)"
+                >
+                  <span
+                    class="white--text pl-4 pt-4 d-inline-block"
+                    style="letter-spacing: -1px; padding: 0; margin-left: 10px; margin-top: 10px; margin-right: 30px;"
+                    v-text="feed.asummary"
+                  ></span>
+                </v-col>
+                <v-col style="padding: 0;">
+                  <v-row
+                    style="height: 50px; margin-top: 10px;"
+                    justify="center"
+                    @click="delFeed(feed.ano, index)"
+                    no-gutters
+                  >
+                    <v-btn large icon color="white">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-row>
+                </v-col>
+              </v-row>
             </v-img>
 
-            <v-card-actions class="white justify-left">
-              <span
-                class="white--text"
-                @click="goRouting(feed.aurl, feed.aurlNo)"
-                style="position: absolute; bottom: 40px; "
-                >클릭해서 보러 갈래요</span
-              >
-              <!-- <v-btn
-                v-for="(social, i) in socials"
-                :key="i"
-                :color="social.color"
-                class="white--text"
-                fab
-                icon
-                small
-              >
-                <v-icon>{{ social.icon }}</v-icon>
-              </v-btn> -->
-              <span
-                >From. <b>{{ feed.createUserName }}</b></span
-              >
-              <!-- <img
-                height="101"
-                style="position: absolute; right: 8px; bottom: 6px; "
-                src="@/assets/images/circle.png"
-              /> -->
-
+            <v-card-actions
+              class="justify-left"
+              style="background-color: #2D2D2F"
+            >
+              <v-row>
+                <v-col
+                  cols="7"
+                  style="margin-left: 3px; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;"
+                >
+                  {{ feed.createUserName }}
+                </v-col>
+                <v-col
+                  align-self="center"
+                  style="color: #FFFFFF; font-weight: light; font-style: italic; font-size: 0.7rem;"
+                  v-text="parsingDate(feed.adate)"
+                >
+                </v-col>
+              </v-row>
               <img
-                height="100"
-                style="position: absolute; right: 10px; bottom: 10px;  border-radius: 70%;"
+                height="80"
+                style="position: absolute; right: 15px; bottom: 15px;  border-radius: 70%;"
                 :src="require(`@/assets/images/avatars/${feed.profileImg}.png`)"
               />
             </v-card-actions>
@@ -85,11 +110,24 @@ import axios from 'axios';
 const storage = window.sessionStorage;
 export default {
   methods: {
-    getImage() {
-      const min = 550;
-      const max = 560;
-
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    getImage(url, summary) {
+      if (url == 'BoardDetail') {
+        return 1;
+      } else {
+        if (summary.charAt(0) == '친') {
+          return 2;
+        } else if (summary.charAt(0) == '내') {
+          return 3;
+        } else if (summary.charAt(0) == '와') {
+          return 4;
+        } else if (summary.charAt(0) == '반') {
+          return 5;
+        } else if (summary.charAt(0) == '새') {
+          return 6;
+        } else {
+          return 7;
+        }
+      }
     },
     goRouting(aurl, myParam) {
       var params = new URLSearchParams();
@@ -129,6 +167,51 @@ export default {
         });
       }
     },
+    getFeeds() {
+      var params = new URLSearchParams();
+      params.append('email', storage.getItem('user-email'));
+      axios
+        .post('getFeeds', params)
+        .then((response) => {
+          console.log(response);
+
+          this.myFeeds = response.data.feeds;
+        })
+        .catch((error) => {
+          console.log(error);
+          console.log('error occur');
+        });
+    },
+    delFeed(ano, index) {
+      var params = new URLSearchParams();
+      params.append('ano', ano);
+      axios.post('delFeed', params).then((resp) => {
+        this.myFeeds.splice(index, 1);
+      });
+    },
+    parsingDate(beforeDate) {
+      let afterDate = '';
+      let month = '';
+      let day = '';
+
+      afterDate = beforeDate.substring(2, 4) + '. ';
+
+      if (beforeDate.charAt(5) == '0') {
+        month = beforeDate.charAt(6);
+      } else {
+        month = beforeDate.substring(5, 7);
+      }
+
+      if (beforeDate.charAt(8) == '0') {
+        day = beforeDate.charAt(9);
+      } else {
+        day = beforeDate.substring(8, 10);
+      }
+
+      afterDate = afterDate + month + '. ' + day;
+
+      return afterDate;
+    },
   },
   data() {
     return {
@@ -164,19 +247,7 @@ export default {
       this.myName = resp.data['user-name'];
     });
 
-    axios
-      .post('getFeeds', params)
-      .then((response) => {
-        console.log('asdfasdf');
-        console.log(response);
-        console.log('asdfa');
-
-        this.myFeeds = response.data.feeds;
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log('error occur');
-      });
+    this.getFeeds();
 
     this.$store.commit('setIsHeader', true);
     this.$store.commit('setIsFooter', true);
@@ -184,4 +255,16 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.feedBg {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      to bottom,
+      rgba(44, 1, 66, 0.486),
+      rgba(0, 0, 0, 0.788)
+    ),
+    url('~@/assets/images/join.gif') no-repeat center center fixed;
+  background-size: cover;
+}
+</style>

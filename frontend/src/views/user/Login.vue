@@ -171,11 +171,11 @@ export default {
 <style>
 .bg {
   background: linear-gradient(
-      to right,
-      rgba(30, 75, 115, 0.8),
-      rgba(0, 0, 0, 0.3)
+      to bottom,
+      rgba(47, 6, 122, 0.205),
+      rgba(0, 0, 0, 0.5)
     ),
-    url('~@/assets/images/night.gif') no-repeat center center fixed;
+    url('~@/assets/images/main.gif') no-repeat right top fixed;
   background-size: cover;
 }
 </style>
