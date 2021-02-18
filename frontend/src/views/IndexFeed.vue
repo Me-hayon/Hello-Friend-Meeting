@@ -1,13 +1,17 @@
 <template>
   <v-card v-if="myFeeds != null" flat tile style="background-color: white;">
     <v-row style="margin: 10px;">
-      <div style="font-size: 1.8rem; letter-spacing: -2px; color: #3F568B;">
+      <div style="font-size: 1.8rem; letter-spacing: -2px; color: #804F69;">
         안녕하세요, <strong>{{ myName }}</strong
         >님!
       </div>
       <div class="text-center">
-        <v-snackbar v-model="snackbar" :timeout="timeout" rounded="pill"
-          ><div style="text-align:center;">
+        <v-snackbar
+          v-model="snackbar"
+          :timeout="timeout"
+          rounded="pill"
+          color="#804F69"
+          ><div style="text-align:center; color: #E8E1D5;">
             안녕하세요, <strong>{{ myName }}</strong
             >님!
           </div>
@@ -19,7 +23,7 @@
       </div></v-row
     >
 
-    <v-container>
+    <v-container v-if="myFeeds.length != 0">
       <v-row>
         <v-spacer></v-spacer>
         <v-col
@@ -59,7 +63,7 @@
                     @click="delFeed(feed.ano, index)"
                     no-gutters
                   >
-                    <v-btn large icon color="white">
+                    <v-btn large icon color="#E8E1D5">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
                   </v-row>
@@ -69,18 +73,18 @@
 
             <v-card-actions
               class="justify-left"
-              style="background-color: #2D2D2F"
+              style="background-color: #212034"
             >
               <v-row>
                 <v-col
                   cols="7"
-                  style="margin-left: 3px; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;"
+                  style="margin-left: 3px; color: #E8E1D5; font-weight: bold; font-size: 1.1rem;"
                 >
                   {{ feed.createUserName }}
                 </v-col>
                 <v-col
                   align-self="center"
-                  style="color: #FFFFFF; font-weight: light; font-style: italic; font-size: 0.7rem;"
+                  style="color: #E8E1D5; font-weight: light; font-style: italic; font-size: 0.7rem;"
                   v-text="parsingDate(feed.adate)"
                 >
                 </v-col>
@@ -95,6 +99,8 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <for-null v-else :myHeight="'620px'" />
   </v-card>
 
   <v-row
@@ -110,10 +116,14 @@
 
 <script>
 import axios from 'axios';
+import ForNull from '@/components/user/profile/ForNull.vue';
 
 const storage = window.sessionStorage;
 
 export default {
+  components: {
+    ForNull,
+  },
   methods: {
     getImage(url, summary) {
       if (url == 'BoardDetail') {

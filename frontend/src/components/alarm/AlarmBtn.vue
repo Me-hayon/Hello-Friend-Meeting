@@ -3,14 +3,9 @@
     <v-menu v-model="menu" :close-on-content-click="false" offset-x>
       <template v-slot:activator="{ on, attrs }">
         <v-btn icon v-bind="attrs" v-on="on" color="white">
-          <v-badge
-            :value="alarmLen != 0"
-            color="deep-purple accent-4"
-            right
-            overlap
-          >
+          <v-badge :value="alarmLen != 0" color="#804F69" right overlap>
             <span slot="badge">{{ alarmLen }}</span>
-            <v-icon>mdi-bell</v-icon>
+            <v-icon color="#E8E1D5">mdi-bell</v-icon>
           </v-badge>
         </v-btn>
       </template>

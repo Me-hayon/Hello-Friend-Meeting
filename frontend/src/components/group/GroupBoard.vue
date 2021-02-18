@@ -2,7 +2,7 @@
   <v-container
     v-if="!isLoadingGroupInfo && !isLoadingBoardList"
     id="scroll-target"
-    class="pa-0 overflow-y-auto"
+    class="pa-0 overflow-y-auto rounded-0"
     style="height: 663px;"
     v-scroll:#scroll-target="onScroll"
   >
@@ -12,7 +12,7 @@
       v-if="memberStatus == 4 && nowScroll < 100"
       @click="dialog = true"
     >
-      <v-icon x-large>mdi-cog-outline</v-icon>
+      <v-icon large color="#E8E1D5">mdi-camera</v-icon>
     </v-btn>
 
     <v-dialog v-model="dialog" persistent>
@@ -46,7 +46,7 @@
     </v-dialog>
 
     <v-row
-      class="atchBg"
+      class="atchBg "
       :style="{ height: scrollHeight }"
       no-gutters
       style="margin-top: 0;"
@@ -126,7 +126,7 @@
           <v-col cols="3" align="center">
             <v-btn icon @click="writeModal = true">
               <span
-                style="margin-left: 5px; margin-top: -10px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #4682B4"
+                style="margin-left: 5px; margin-top: -10px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #804F69"
                 >글 작성</span
               >
             </v-btn>

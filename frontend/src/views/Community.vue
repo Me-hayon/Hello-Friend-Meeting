@@ -3,22 +3,23 @@
     <v-row class="ma-0">
       <v-tabs
         v-model="tab"
-        background-color="deep-purple accent-4"
+        background-color="#212034"
         centered
         dark
         grow
+        color="#E2B9C6"
         icons-and-text
       >
         <v-tabs-slider></v-tabs-slider>
 
         <v-tab href="#tab-1" replace>
           그룹
-          <v-icon>mdi-home-group</v-icon>
+          <v-icon color="#E8E1D5">mdi-home-group</v-icon>
         </v-tab>
 
         <v-tab href="#tab-2" replace>
           친구
-          <v-icon>mdi-account-group</v-icon>
+          <v-icon color="#E8E1D5">mdi-account-group</v-icon>
         </v-tab>
 
         <v-tabs-items v-model="tab">
@@ -88,9 +89,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import GroupList from "../components/community/GroupList.vue";
-import FriendList from "../components/community/FriendList.vue";
+import axios from 'axios';
+import GroupList from '../components/community/GroupList.vue';
+import FriendList from '../components/community/FriendList.vue';
 
 const storage = window.sessionStorage;
 
@@ -99,7 +100,7 @@ export default {
   data() {
     return {
       uno: -1,
-      email: storage.getItem("user-email"),
+      email: storage.getItem('user-email'),
       tab: null,
       groups: [],
       categories: [],
@@ -112,31 +113,31 @@ export default {
     };
   },
   created() {
-    axios.post("findUno", { email: this.email }).then((response) => {
-      if (response.data["is-success"]) {
+    axios.post('findUno', { email: this.email }).then((response) => {
+      if (response.data['is-success']) {
         this.uno = response.data.uno;
         this.isLoadingUno = false;
-      } else alert("사용자 정보를 불러오는데 오류가 발생하였습니다.");
+      } else alert('사용자 정보를 불러오는데 오류가 발생하였습니다.');
     });
 
     this.getGroupList();
     this.getCategory();
     this.getFriendList();
-    this.$store.commit("setIsHeader", true);
-    this.$store.commit("setIsFooter", true);
+    this.$store.commit('setIsHeader', true);
+    this.$store.commit('setIsFooter', true);
   },
   methods: {
     getGroupList() {
       axios
-        .post("getGroupList", { email: this.email })
+        .post('getGroupList', { email: this.email })
         .then((response) => {
-          if (response.data["is-success"]) {
+          if (response.data['is-success']) {
             this.groups = response.data.groupList;
 
             for (let i = 0; i < this.groups.length; i++) {
               this.groups[i].members = this.groups[i].guserList
                 .trim()
-                .split(" ");
+                .split(' ');
 
               // console.log(this.groups[i].gimg);
             }
@@ -150,7 +151,7 @@ export default {
     },
     getCategory() {
       axios
-        .get("getCategory")
+        .get('getCategory')
         .then((response) => {
           this.categories = response.data.categories;
           this.isLoadingCategories = false;
@@ -161,9 +162,9 @@ export default {
     },
     getFriendList() {
       axios
-        .post("getFriendList", { email: this.email })
+        .post('getFriendList', { email: this.email })
         .then((response) => {
-          if (response.data["is-success"]) {
+          if (response.data['is-success']) {
             // 친구가 존재할 경우
             this.friends = response.data.friendList;
             this.favoriteFriends = response.data.favoriteFriendList;

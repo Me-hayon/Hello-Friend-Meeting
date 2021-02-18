@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar v-if="$store.getters.getIsHeader" app dark flat>
+  <v-app-bar v-if="$store.getters.getIsHeader" app color="#212034" flat>
     <v-btn @click="$router.go(-1)" icon>
-      <v-icon>mdi-arrow-left</v-icon>
+      <v-icon color="#E8E1D5">mdi-arrow-left</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
     <alarm-btn />

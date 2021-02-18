@@ -3,7 +3,8 @@
     <v-row class="ma-0">
       <v-tabs
         v-model="tab"
-        background-color="deep-purple accent-4"
+        background-color="#212034"
+        color="#E2B9C6"
         centered
         dark
         grow

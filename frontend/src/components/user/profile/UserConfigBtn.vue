@@ -9,7 +9,7 @@
       transition="slide-x-reverse-transition"
     >
       <template v-slot:activator>
-        <v-btn v-model="userConfigFab" color="primary" small fab dark>
+        <v-btn v-model="userConfigFab" color="success" small fab dark>
           <v-icon>mdi-cog</v-icon>
         </v-btn>
       </template>

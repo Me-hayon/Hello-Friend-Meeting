@@ -1,6 +1,13 @@
 <template>
   <v-card style="padding:0" min-height="710px">
-    <v-tabs class="group-bar" v-model="tab" background-color="white" grow>
+    <v-tabs
+      class="group-bar rounded-0"
+      v-model="tab"
+      background-color="#212034"
+      color="#E2B9C6"
+      dark
+      grow
+    >
       <v-tab>게시판</v-tab>
       <v-tab>일정</v-tab>
       <v-tab>채팅</v-tab>
