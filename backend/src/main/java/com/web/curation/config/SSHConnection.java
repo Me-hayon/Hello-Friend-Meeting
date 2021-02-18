@@ -10,7 +10,7 @@ public class SSHConnection {
 	private final static String HOST = "i4b203.p.ssafy.io";
 	private final static Integer PORT = 22;
 	private final static String SSH_USER = "ubuntu";
-	private final static String S_PATH_FILE_PRIVATE_KEY = "C:\\SSAFY\\PrivateKey\\I4B203T.ppk";
+	private final static String S_PATH_FILE_PRIVATE_KEY = "/var/www/html/dist/I4B203T.ppk";
 	// private final static String SSH_PW = "";
 	
 	private Session session;

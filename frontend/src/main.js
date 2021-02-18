@@ -22,7 +22,7 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueRouter);
 
-axios.defaults.baseURL = 'http://localhost:8080/';
+axios.defaults.baseURL = 'http://i4b203.p.ssafy.io:8080/';
 
 const router = new VueRouter({
   mode: 'history',

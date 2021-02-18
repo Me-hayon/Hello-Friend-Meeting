@@ -81,9 +81,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Stomp from 'webstomp-client';
-import SockJS from 'sockjs-client';
+import axios from "axios";
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
 
 const storage = window.sessionStorage;
 
@@ -92,12 +92,12 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gcgno: this.$store.getters.getGno,
-      gcno: '',
-      gcuno: '',
-      gcdate: '',
-      parsedDate: '',
-      gccontent: '',
-      uname: '',
+      gcno: "",
+      gcuno: "",
+      gcdate: "",
+      parsedDate: "",
+      gccontent: "",
+      uname: "",
       chats: [],
       stompClient: null,
       IsDateChange: false,
@@ -109,7 +109,7 @@ export default {
     this.$nextTick(function() {
       document.documentElement.scrollTop = document.body.scrollHeight;
     });
-    this.$store.commit('setChatPageH', document.body.scrollHeight);
+    this.$store.commit("setChatPageH", document.body.scrollHeight);
   },
 
   created() {
@@ -117,26 +117,26 @@ export default {
       document.documentElement.scrollTop = document.body.scrollHeight;
     });
     axios
-      .post('/findUserByEmail', { email: storage.getItem('user-email') })
+      .post("/findUserByEmail", { email: storage.getItem("user-email") })
       .then((response) => {
-        if (response.data['is-success']) {
-          this.gcuno = response.data['user-number'];
-          this.uname = response.data['user-name'];
+        if (response.data["is-success"]) {
+          this.gcuno = response.data["user-number"];
+          this.uname = response.data["user-name"];
           this.isLoadingUser = false;
         } else {
-          alert('너 누구야');
+          alert("너 누구야");
         }
       });
 
     axios({
-      method: 'get',
-      url: '/getChat/' + this.gcgno,
-      baseURL: 'http://localhost:8080/',
+      method: "get",
+      url: "/getChat/" + this.gcgno,
+      baseURL: "http://i4b203.p.ssafy.io:8080/",
     }).then(
       (response) => {
         this.chats = [];
-        let chatList = response.data['chat-list'];
-        let unameList = response.data['uname-list'];
+        let chatList = response.data["chat-list"];
+        let unameList = response.data["uname-list"];
 
         for (let i = 0; i < chatList.length; i++) {
           let chat = {
@@ -145,7 +145,7 @@ export default {
             gccontent: chatList[i].gccontent,
             gcdate: chatList[i].gcdate,
             parsedDate: chatList[i].gcdate.substring(11, 16),
-            style: chatList[i].gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
+            style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
           };
 
           if (this.gcdate != chatList[i].gcdate.substring(5, 10)) {
@@ -161,7 +161,7 @@ export default {
       },
       (err) => {
         console.log(err);
-        alert('error : 새로고침하세요');
+        alert("error : 새로고침하세요");
       }
     );
 
@@ -169,9 +169,9 @@ export default {
   },
   methods: {
     sendMessage(e) {
-      if (this.gccontent !== '') {
+      if (this.gccontent !== "") {
         this.send();
-        this.gccontent = '';
+        this.gccontent = "";
       }
       this.$nextTick(function() {
         document.documentElement.scrollTop = document.body.scrollHeight + 100;
@@ -185,11 +185,11 @@ export default {
           gcuname: this.uname,
           gccontent: this.gccontent,
         };
-        this.stompClient.send('/pub/chat', JSON.stringify(chat), {});
+        this.stompClient.send("/pub/chat", JSON.stringify(chat), {});
       }
     },
     connect() {
-      const serverURL = 'http://localhost:8080/ws';
+      const serverURL = "http://localhost:8080/ws";
       let socket = new SockJS(serverURL);
       let tmp = {};
 
@@ -200,7 +200,7 @@ export default {
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
-          this.stompClient.subscribe('/sub/' + this.gcgno, (response) => {
+          this.stompClient.subscribe("/sub/" + this.gcgno, (response) => {
             let parseTmp = JSON.parse(response.body);
 
             tmp = {
@@ -209,7 +209,7 @@ export default {
               gccontent: parseTmp.gccontent,
               gcdate: parseTmp.gcdate,
               parsedDate: parseTmp.gcdate.substring(11, 16),
-              style: parseTmp.gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
+              style: parseTmp.gcuno == this.gcuno ? "myStyle" : "yourStyle",
             };
 
             this.chats.push(tmp);
@@ -217,7 +217,7 @@ export default {
         },
         (error) => {
           // 소켓 연결 실패
-          console.log('소켓 연결 실패', error);
+          console.log("소켓 연결 실패", error);
           this.connected = false;
         }
       );
@@ -227,10 +227,10 @@ export default {
     },
   },
   beforeMount() {
-    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener("scroll", this.handleScroll);
   },
   computed: {
     vuexGno() {
@@ -257,26 +257,26 @@ export default {
       });
 
       axios
-        .post('/findUserByEmail', { email: storage.getItem('user-email') })
+        .post("/findUserByEmail", { email: storage.getItem("user-email") })
         .then((response) => {
-          if (response.data['is-success']) {
-            this.gcuno = response.data['user-number'];
-            this.uname = response.data['user-name'];
+          if (response.data["is-success"]) {
+            this.gcuno = response.data["user-number"];
+            this.uname = response.data["user-name"];
             this.isLoadingUser = false;
           } else {
-            alert('너 누구야');
+            alert("너 누구야");
           }
         });
 
       axios({
-        method: 'get',
-        url: '/getChat/' + this.gcgno,
-        baseURL: 'http://localhost:8080/',
+        method: "get",
+        url: "/getChat/" + this.gcgno,
+        baseURL: "http://localhost:8080/",
       }).then(
         (response) => {
           this.chats = [];
-          let chatList = response.data['chat-list'];
-          let unameList = response.data['uname-list'];
+          let chatList = response.data["chat-list"];
+          let unameList = response.data["uname-list"];
 
           for (let i = 0; i < chatList.length; i++) {
             let chat = {
@@ -285,7 +285,7 @@ export default {
               gccontent: chatList[i].gccontent,
               gcdate: chatList[i].gcdate,
               parsedDate: chatList[i].gcdate.substring(11, 16),
-              style: chatList[i].gcuno == this.gcuno ? 'myStyle' : 'yourStyle',
+              style: chatList[i].gcuno == this.gcuno ? "myStyle" : "yourStyle",
             };
 
             if (this.gcdate != chatList[i].gcdate.substring(5, 10)) {
@@ -301,7 +301,7 @@ export default {
         },
         (err) => {
           console.log(err);
-          alert('error : 새로고침하세요');
+          alert("error : 새로고침하세요");
         }
       );
     },
@@ -356,7 +356,7 @@ export default {
 }
 
 .speech-bubble-left:after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -381,7 +381,7 @@ export default {
 }
 
 .speech-bubble-right:after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 50%;
@@ -406,7 +406,7 @@ export default {
 
 .hr-date::before,
 .hr-date::after {
-  content: '';
+  content: "";
   flex-grow: 1;
   background: rgba(0, 0, 0, 0.35);
   height: 1px;

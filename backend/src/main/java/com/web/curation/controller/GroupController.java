@@ -722,7 +722,25 @@ public class GroupController {
 				naegiParticipantRepository.save(np);
 			}
 		}
+		UserInfo myInfo=userInfoRepository.findById(uno).get();
+List<FriendInfo> friendList=getFriendList(myInfo.getUno());
 		
+		StringBuilder sb2 = new StringBuilder();
+		sb2.append("반가워요, ");
+		sb2.append(myInfo.getUname());
+		sb2.append("님도 이제 [");
+		sb2.append(groupInfo.getGname());
+		sb2.append("]의 멤버예요!");
+		for(FriendInfo fi:friendList) {
+			Alarm alarm = new Alarm();
+			alarm.setAtype(1);
+			alarm.setAurl("GroupMainPage");
+			alarm.setAuser(fi.getMyId());
+			alarm.setCreateUser(myInfo.getUno());
+			alarm.setAurlNo(gno);
+			alarm.setAsummary(sb2.toString());
+			alarmRepository.save(alarm);
+		}
 
 		List<GroupParticipant> gpList = groupParticipantRepository.findAllByGno(gno);
 
