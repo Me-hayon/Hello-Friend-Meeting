@@ -57,13 +57,9 @@ export default {
       params.append('email', this.email);
       params.append('profileImg', pImage);
 
-      console.log(pImage);
-
       axios
-        .put('http://localhost:8080/changeAvatar', params)
-        .then((response) => {
-          console.log(response);
-        })
+        .put('changeAvatar', params)
+        .then()
         .catch((error) => {
           console.log(error);
         });
