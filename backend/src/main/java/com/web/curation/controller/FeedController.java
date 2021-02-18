@@ -53,5 +53,16 @@ public class FeedController {
 //		System.out.println(list);
 		return resultMap;
 	}
+	
+	@PostMapping("/delFeed")
+	public Object delFeed(@RequestParam int ano) {
+		Map<String,Object> resultMap=new HashMap<>();
+		
+		Alarm alarm = alarmRepository.findById(ano).get();
+		alarmRepository.delete(alarm);
+		resultMap.put("data","글을 삭제했습니다.");
+		
+		return resultMap;
+	}
 
 }

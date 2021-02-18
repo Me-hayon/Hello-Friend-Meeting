@@ -11,7 +11,7 @@
         color="white"
         style="margin-left: -15px;"
       >
-        <v-icon>mdi-chevron-left</v-icon>
+        <v-icon>mdi-close</v-icon>
       </v-btn>
       <v-row class="for-title" style="margin-top: 160px;">
         <v-col>
@@ -63,7 +63,8 @@
       {{ article.bcontent }}
     </v-card-subtitle>
 
-    <v-card-actions>
+    <v-card-actions style="padding: 10px; margin-right: 10px;">
+      <v-spacer></v-spacer>
       <v-btn text v-if="localIsWriter" @click="modifyBoard">EDIT</v-btn>
       <v-btn
         color="purple"
@@ -72,12 +73,6 @@
         @click="delBoard"
       >
         DELETE
-      </v-btn>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon @click="show = !show">
-        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </v-btn>
     </v-card-actions>
     <!-- <b-modal id="modal-modify" title="글 수정" @ok="modifyBoard"
@@ -89,24 +84,9 @@
       ></b-form-textarea>
     </b-modal> -->
 
-    <!-- 확장 부분 -->
-    <v-expand-transition>
-      <div v-show="show">
-        <!-- <v-divider class="ma-0"></v-divider> -->
-
-        <v-card-text
-          style="letter-spacing: -1px; font-size: 0.8rem; margin-bottom: -20px; "
-        >
-          이 부분에.... 뭐가 들어가야... 간지일까요....??? 뭔가 약관이나
-          규칙같은 걸 써둘까.....??? 나 속상해.... 이거 너무 쓰고 싶어.... 포기
-          못해..........</v-card-text
-        >
-      </div>
-    </v-expand-transition>
-
     <!-- 댓글 작성 -->
     <v-row
-      style="font-size: 1.5rem; margin: 0; padding-left: 10px; margin-top: 20px;"
+      style="font-size: 1.5rem; margin: 0; padding-left: 10px; margin-top: 10px;"
     >
       <v-icon>mdi-comment-multiple-outline</v-icon>
       <span style="margin-left: 5px; letter-spacing: -1px;">Comments</span>

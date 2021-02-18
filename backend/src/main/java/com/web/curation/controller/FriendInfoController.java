@@ -98,7 +98,7 @@ public class FriendInfoController {
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append(myInfo.getUname());
-				sb.append("님이 친구 요청을 보냈습니다.");
+				sb.append("님이 친구가 되고 싶어해요.");
 				
 				Alarm alarm = new Alarm();
 				alarm.setAsummary(sb.toString());
@@ -135,7 +135,7 @@ public class FriendInfoController {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append(myInfo.getUname());
-			sb.append("님이 친구 요청을 보냈습니다.");
+			sb.append("님이 친구가 되고 싶어해요.");
 			
 			Alarm alarm = new Alarm();
 			alarm.setAsummary(sb.toString());
