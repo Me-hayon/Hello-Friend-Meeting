@@ -56,7 +56,6 @@ export default {
       this.bno = val;
     },
     vuexMemberStatus(val) {
-      console.log(val);
       this.memberStatus = val;
     },
   },
@@ -65,7 +64,6 @@ export default {
     InviteLetter,
   },
   created() {
-    console.log(this.memberStatus);
     this.$store.state.isHeader = true;
     this.$store.state.isFooter = true;
 

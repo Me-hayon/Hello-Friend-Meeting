@@ -1,4 +1,4 @@
-<template v-slot:activator="{ on, attrs }">
+<template>
   <div>
     <v-speed-dial
       v-model="userConfigFab"
@@ -15,15 +15,7 @@
       </template>
 
       <!-- 회원탈퇴 -->
-      <v-btn
-        fab
-        dark
-        small
-        color="red"
-        v-bind="attrs"
-        v-on="on"
-        @click="deleteModal = true"
-      >
+      <v-btn fab dark small color="red" @click="deleteModal = true">
         <v-icon>mdi-account-remove</v-icon>
       </v-btn>
 

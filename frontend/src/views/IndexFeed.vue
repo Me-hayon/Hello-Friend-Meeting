@@ -1,5 +1,5 @@
 <template>
-  <v-card flat tile style="background-color: white;">
+  <v-card v-if="myFeeds != null" flat tile style="background-color: white;">
     <v-row style="margin: 10px;">
       <div style="font-size: 1.8rem; letter-spacing: -2px; color: #3F568B;">
         안녕하세요, <strong>{{ myName }}</strong
@@ -19,7 +19,7 @@
       </div></v-row
     >
 
-    <v-container v-if="myFeeds != null">
+    <v-container>
       <v-row>
         <v-spacer></v-spacer>
         <v-col
@@ -95,17 +95,17 @@
         </v-col>
       </v-row>
     </v-container>
-
-    <v-row
-      v-else
-      class="ma-0"
-      style="height: 624px;"
-      align="center"
-      justify="center"
-    >
-      <v-progress-circular indeterminate color="purple"></v-progress-circular>
-    </v-row>
   </v-card>
+
+  <v-row
+    v-else
+    class="ma-0"
+    style="height: 711px;"
+    align="center"
+    justify="center"
+  >
+    <v-progress-circular indeterminate color="purple"></v-progress-circular>
+  </v-row>
 </template>
 
 <script>
@@ -178,8 +178,6 @@ export default {
       axios
         .post('getFeeds', params)
         .then((response) => {
-          console.log(response);
-
           this.myFeeds = response.data.feeds;
         })
         .catch((error) => {
@@ -235,8 +233,6 @@ export default {
 
     var params = new URLSearchParams();
     params.append('email', storage.getItem('user-email'));
-    // params.append('email', 'test@gmail.com');
-    console.log(params);
 
     axios.post('profile', params).then((resp) => {
       this.myName = resp.data['user-name'];
