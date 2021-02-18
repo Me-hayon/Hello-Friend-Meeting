@@ -66,7 +66,10 @@
             style="margin: 0;"
           >
             <v-col cols="9" style="padding: 0;">
-              <v-list-item @click="goRouting(alarm)" style="padding-right: 0;">
+              <v-list-item
+                @click="modalShowMethod(alarm)"
+                style="padding-right: 0;"
+              >
                 <v-list-item-title style="letter-spacing: -1px;">
                   {{ alarm.asummary }}
                 </v-list-item-title>
@@ -78,6 +81,23 @@
               >
             </v-col>
           </v-row>
+          <b-modal
+            v-model="modalShow"
+            centered
+            hide-footer
+            title="어떤 알림이 왔을까요?"
+          >
+            <v-textarea :value="alarmLocal.asummary"></v-textarea>
+            <div style="float:right">
+              <button class="btn-message" @click="goRouting(alarmLocal)">
+                이동
+              </button>
+
+              <button class="btn-message" @click="delAlarm(alarmLocal.ano)">
+                삭제
+              </button>
+            </div>
+          </b-modal>
         </v-list>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -89,20 +109,22 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data() {
     return {
       menu: false,
       alarms: [],
       userInfo: {},
-      imgPath: '',
-      alarmLen: '',
+      imgPath: "",
+      alarmLen: "",
       offset: true,
       categoryList: [],
       isLoadingUser: true,
       isLoadingAlarms: true,
       isloadingCategoryList: true,
+      modalShow: false,
+      alarmLocal: {},
     };
   },
 
@@ -111,15 +133,15 @@ export default {
     setInterval(this.getAlarmsList, 3000);
     var storage = window.sessionStorage;
     var params = new URLSearchParams();
-    params.append('email', storage.getItem('user-email'));
+    params.append("email", storage.getItem("user-email"));
 
     axios
-      .post('profile', params)
+      .post("profile", params)
       .then((response) => {
-        this.userInfo.uname = response.data['user-name'];
-        this.userInfo.utel = response.data['user-tel'];
-        this.userInfo.uprofileImg = response.data['profile-img'];
-        this.userInfo.uno = response.data['user-uno'];
+        this.userInfo.uname = response.data["user-name"];
+        this.userInfo.utel = response.data["user-tel"];
+        this.userInfo.uprofileImg = response.data["profile-img"];
+        this.userInfo.uno = response.data["user-uno"];
         this.imgPath = require(`@/assets/images/avatars/${this.userInfo.uprofileImg}.png`);
         this.isLoadingUser = false;
       })
@@ -128,7 +150,7 @@ export default {
       });
 
     axios
-      .get('getCategory')
+      .get("getCategory")
       .then((response) => {
         this.categories = response.data.categories;
         this.isloadingCategoryList = false;
@@ -141,69 +163,68 @@ export default {
   computed: {
     alarmBgColor() {
       return (aisRead) => {
-        return aisRead ? '#E8E1D5' : 'white';
+        return aisRead ? "#E8E1D5" : "white";
       };
     },
   },
 
   methods: {
     goRouting(alarm) {
-      this.readAlarm(alarm);
-
+      this.modalShow = false;
       var params = new URLSearchParams();
-      if (alarm.aurl === 'FriendInfo') {
+      if (alarm.aurl === "FriendInfo") {
         this.menu = false;
-        this.$store.commit('setRouteUrl', '/friendProfile');
+        this.$store.commit("setRouteUrl", "/friendProfile");
         this.$router.push({
-          name: 'FriendProfile',
+          name: "FriendProfile",
           params: {
             myUno: this.userInfo.uno,
             friendUno: alarm.aurlNo,
             categoryList: this.categoryList,
           },
         });
-      } else if (alarm.aurl === 'GroupMainPage') {
+      } else if (alarm.aurl === "GroupMainPage") {
         var gno = alarm.aurlNo;
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        params.append('gno', gno);
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        params.append("gno", gno);
         axios
-          .post('isGroupMember', params)
+          .post("isGroupMember", params)
           .then((response) => {
             this.menu = false;
-            this.$store.commit('setGno', gno);
-            this.$store.commit('setMemberStatus', response.data.memberStatus);
-            this.$store.commit('setRouteUrl', '/group');
+            this.$store.commit("setGno", gno);
+            this.$store.commit("setMemberStatus", response.data.memberStatus);
+            this.$store.commit("setRouteUrl", "/group");
             this.$router
-              .push({ name: 'GroupMainPage', params: { ano: alarm.ano } })
+              .push({ name: "GroupMainPage", params: { ano: alarm.ano } })
               .catch(() => {});
           })
           .catch((error) => {
             console.log(error);
           });
-      } else if (alarm.aurl === 'BoardDetail') {
+      } else if (alarm.aurl === "BoardDetail") {
         var bno = alarm.aurlNo;
-        params.append('bno', bno);
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        axios.post('boardDetail', params).then((resp) => {
+        params.append("bno", bno);
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        axios.post("boardDetail", params).then((resp) => {
           if (!resp.data.isExist) {
-            alert('삭제된 게시글입니다.');
+            alert("삭제된 게시글입니다.");
             this.menu = false;
-            this.$store.commit('setRouteUrl', '/');
-            this.$router.push('/');
+            this.$store.commit("setRouteUrl", "/");
+            this.$router.push("/");
             return;
           }
-          this.$store.commit('setIsWriter', resp.data.isWriter);
+          this.$store.commit("setIsWriter", resp.data.isWriter);
 
           params = new URLSearchParams();
-          params.append('email', window.sessionStorage.getItem('user-email'));
-          params.append('gno', resp.data.curBoard.bgno);
+          params.append("email", window.sessionStorage.getItem("user-email"));
+          params.append("gno", resp.data.curBoard.bgno);
 
-          axios.post('isGroupMember', params).then((response) => {
+          axios.post("isGroupMember", params).then((response) => {
             this.menu = false;
-            this.$store.commit('setGno', gno);
-            this.$store.commit('setMemberStatus', response.data.memberStatus);
-            this.$store.commit('setRouteUrl', '/board/detail');
-            this.$router.push('/board/detail').catch(() => {});
+            this.$store.commit("setGno", gno);
+            this.$store.commit("setMemberStatus", response.data.memberStatus);
+            this.$store.commit("setRouteUrl", "/board/detail");
+            this.$router.push("/board/detail").catch(() => {});
           });
         });
       }
@@ -211,10 +232,10 @@ export default {
     getAlarmsList() {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
-      params.append('email', storage.getItem('user-email'));
+      params.append("email", storage.getItem("user-email"));
 
       axios
-        .post('getAlarms', params)
+        .post("getAlarms", params)
         .then((response) => {
           this.alarms = response.data.alarms;
           this.alarmLen = response.data.notReadAlarm;
@@ -225,30 +246,31 @@ export default {
         });
     },
     delAlarm(ano) {
+      this.modalShow = false;
       var params = new URLSearchParams();
-      params.append('ano', ano);
+      params.append("ano", ano);
 
       axios
-        .post('delAlarm', params)
+        .post("delAlarm", params)
         .then((response) => {
           console.log(ano);
           this.getAlarmsList();
         })
         .catch((error) => {
-          alert('에러');
+          alert("에러");
           console.log(ano);
         });
     },
     readAlarm(alarm) {
       var params = new URLSearchParams();
-      params.append('ano', alarm.ano);
+      params.append("ano", alarm.ano);
 
       if (!alarm.aisRead) {
-        axios.post('readAlarm', params).then((resp) => {
+        axios.post("readAlarm", params).then((resp) => {
           params = new URLSearchParams();
-          params.append('email', window.sessionStorage.getItem('user-email'));
+          params.append("email", window.sessionStorage.getItem("user-email"));
           axios
-            .post('getAlarms', params)
+            .post("getAlarms", params)
             .then((response) => {
               this.alarms = response.data.alarms;
               this.alarmLen = response.data.notReadAlarm;
@@ -258,6 +280,11 @@ export default {
             });
         });
       }
+    },
+    modalShowMethod(alarm) {
+      this.readAlarm(alarm);
+      this.alarmLocal = alarm;
+      this.modalShow = true;
     },
   },
 };

@@ -65,7 +65,13 @@
 
     <v-card-actions style="padding: 10px; margin-right: 10px;">
       <v-spacer></v-spacer>
-      <v-btn text v-if="localIsWriter" @click="modifyBoard">EDIT</v-btn>
+      <v-btn
+        text
+        v-if="localIsWriter"
+        @click="boardModifyOpen"
+        @hide="boardModify = false"
+        >EDIT</v-btn
+      >
       <v-btn
         color="purple"
         text
@@ -75,14 +81,19 @@
         DELETE
       </v-btn>
     </v-card-actions>
-    <!-- <b-modal id="modal-modify" title="글 수정" @ok="modifyBoard"
+    <b-modal
+      v-model="boardModify"
+      centered
+      id="modal-modify"
+      title="글 수정"
+      @ok="modifyBoard"
       >제목 : <input type="text" v-model="newTitle" />
       <b-form-textarea
         id="textarea-rows"
         rows="8"
         v-model="newContent"
       ></b-form-textarea>
-    </b-modal> -->
+    </b-modal>
 
     <!-- 댓글 작성 -->
     <v-row
@@ -136,9 +147,21 @@
                 <td class="text-left">
                   <v-row no-gutters style="margin-top: 5px;">
                     <p
+                      v-if="!editModal"
                       style="font-size: 1rem; margin: 0; letter-spacing: -1px;"
                     >
                       {{ comment.ccontent }}
+                    </p>
+                    <p
+                      style="font-size: 1rem; margin: 0; letter-spacing: -1px;"
+                      v-else
+                    >
+                      <v-textarea
+                        rows="1"
+                        auto-grow
+                        filled
+                        v-model="modifiedCommentContent"
+                      />
                     </p>
                   </v-row>
                   <v-row
@@ -150,49 +173,32 @@
                     <v-col cols="3">
                       <v-btn
                         icon
-                        @click="editModal = true"
-                        v-if="comment.isWriter"
+                        @click="commentToInput(comment.ccontent)"
+                        v-if="comment.isWriter && !editModal"
                         >수정</v-btn
                       >
-                      <v-dialog v-model="editModal" persistent max-width="300">
-                        <v-card>
-                          <v-card-title>
-                            <span style="letter-spacing: -1px;">댓글수정</span>
-                            <v-spacer></v-spacer>
-                            <v-btn icon @click="editModal = false">
-                              <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                          </v-card-title>
-                          <v-card-text>
-                            <v-textarea
-                              rows="3"
-                              style="margin-bottom:10px"
-                              v-model="newCommentContent"
-                              outlined
-                              required
-                              label="댓글 수정"
-                              :value="comment.ccontent"
-                            >
-                            </v-textarea>
-                          </v-card-text>
-                          <v-card-actions style="padding-top: 0;">
-                            <v-row class="ma-0" justify="end">
-                              <v-btn
-                                color="primary"
-                                class="font-weight-black"
-                                @click="modifyComment(comment.cno)"
-                              >
-                                댓글 수정
-                              </v-btn>
-                            </v-row>
-                          </v-card-actions>
-                        </v-card>
-                      </v-dialog>
+                      <v-btn
+                        icon
+                        @click="modifyComment(comment.cno)"
+                        v-if="comment.isWriter && editModal"
+                        >완료</v-btn
+                      >
+
                       <v-btn
                         icon
                         @click="delComment(comment.cno)"
-                        v-if="comment.isWriter || memberStatus === 4"
+                        v-if="
+                          (comment.isWriter || memberStatus === 4) && !editModal
+                        "
                         >삭제</v-btn
+                      >
+                      <v-btn
+                        icon
+                        @click="editModal = false"
+                        v-if="
+                          (comment.isWriter || memberStatus === 4) && editModal
+                        "
+                        >취소</v-btn
                       >
                     </v-col>
                   </v-row>
@@ -217,7 +223,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   computed: {
     vuexGno() {
@@ -255,15 +261,17 @@ export default {
       bno: this.$store.getters.getBno,
       localIsWriter: this.$store.getters.getIsWriter,
       article: {},
-      writer: '',
-      parsedDateforArticle: '',
+      writer: "",
+      parsedDateforArticle: "",
       comments: [],
-      newCommentContent: '',
-      newTitle: '',
-      newContent: '',
+      newCommentContent: "",
+      newTitle: "",
+      newContent: "",
+      modifiedCommentContent: "",
       show: false,
       editModal: false,
       isLoadingPost: true,
+      boardModify: false,
     };
   },
   created() {
@@ -272,14 +280,14 @@ export default {
   methods: {
     getBoardDetail() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
+      params.append("bno", this.bno);
+      params.append("email", window.sessionStorage.getItem("user-email"));
       axios
-        .post('boardDetail', params)
+        .post("boardDetail", params)
         .then((response) => {
           if (!response.data.isExist) {
-            alert('삭제된 게시글입니다.');
-            this.$router.push('/');
+            alert("삭제된 게시글입니다.");
+            this.$router.push("/");
             return;
           }
           this.article = response.data.curBoard;
@@ -298,33 +306,33 @@ export default {
         });
     },
     parsingDate(beforeDate) {
-      let afterDate = '';
-      let month = '';
-      let day = '';
+      let afterDate = "";
+      let month = "";
+      let day = "";
 
-      afterDate = beforeDate.substring(2, 4) + '년 ';
+      afterDate = beforeDate.substring(2, 4) + "년 ";
 
-      if (beforeDate.charAt(5) == '0') {
+      if (beforeDate.charAt(5) == "0") {
         month = beforeDate.charAt(6);
       } else {
         month = beforeDate.substring(5, 7);
       }
 
-      if (beforeDate.charAt(8) == '0') {
+      if (beforeDate.charAt(8) == "0") {
         day = beforeDate.charAt(9);
       } else {
         day = beforeDate.substring(8, 10);
       }
 
-      afterDate = afterDate + month + '월 ' + day + '일';
+      afterDate = afterDate + month + "월 " + day + "일";
 
       return afterDate;
     },
     getComments() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('email', window.sessionStorage.getItem('user-email'));
-      axios.post('getCommentList', params).then((resp) => {
+      params.append("bno", this.bno);
+      params.append("email", window.sessionStorage.getItem("user-email"));
+      axios.post("getCommentList", params).then((resp) => {
         this.comments = resp.data.comments;
         var writerList = resp.data.writerList;
         var isWriterList = resp.data.isWriterList;
@@ -343,56 +351,75 @@ export default {
     },
     returnToGroup() {
       var gno = this.article.bgno;
-      this.$router.push({ name: 'GroupMainPage', params: { gno } });
+      this.$router.push({ name: "GroupMainPage", params: { gno } });
     },
     writeComment() {
-      if (this.newCommentContent != '') {
+      if (this.newCommentContent != "") {
         var params = new URLSearchParams();
-        params.append('email', window.sessionStorage.getItem('user-email'));
-        params.append('ccontent', this.newCommentContent);
-        params.append('bno', this.bno);
+        params.append("email", window.sessionStorage.getItem("user-email"));
+        params.append("ccontent", this.newCommentContent);
+        params.append("bno", this.bno);
 
-        axios.post('writeComment', params).then((response) => {
+        axios.post("writeComment", params).then((response) => {
           this.getComments();
           this.resetDatas();
         });
-        this.newCommentContent = '';
+        this.newCommentContent = "";
       }
     },
     modifyComment(cno) {
       var params = new URLSearchParams();
-      params.append('cno', cno);
-      params.append('ccontent', this.newCommentContent);
-      axios.post('modifyComment', params).then((resp) => {
+      params.append("cno", cno);
+      params.append("ccontent", this.modifiedCommentContent);
+      axios.post("modifyComment", params).then((resp) => {
         this.getComments();
         this.editModal = false;
       });
     },
     delComment(cno) {
       var params = new URLSearchParams();
-      params.append('cno', cno);
-      axios.post('delComment', params).then((resp) => {
+      params.append("cno", cno);
+      axios.post("delComment", params).then((resp) => {
         this.getComments();
       });
     },
     delBoard() {
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      axios.post('delBoard', params).then((resp) => {
+      params.append("bno", this.bno);
+      axios.post("delBoard", params).then((resp) => {
         alert(resp.data.data);
-        this.$store.commit('setGno', this.gno);
-        this.$router.push('/group');
+        this.$store.commit("setGno", this.gno);
+        this.$router.push("/group");
       });
     },
-    modifyBoard() {
+    modifyBoard(modal) {
+      if (this.newTitle === "") {
+        modal.preventDefault();
+        alert("제목을 입력해주세요!");
+        return;
+      } else if (this.newContent === "") {
+        modal.preventDefault();
+        alert("내용을 입력해주세요!");
+        return;
+      }
+
       var params = new URLSearchParams();
-      params.append('bno', this.bno);
-      params.append('title', this.newTitle);
-      params.append('content', this.newContent);
-      axios.post('modifyBoard', params).then((resp) => {
+      params.append("bno", this.bno);
+      params.append("title", this.newTitle);
+      params.append("content", this.newContent);
+      axios.post("modifyBoard", params).then((resp) => {
         this.getBoardDetail();
         alert(resp.data.data);
       });
+    },
+    boardModifyOpen() {
+      this.boardModify = true;
+      this.newTitle = this.article.btitle;
+      this.newContent = this.article.bcontent;
+    },
+    commentToInput(ccontent) {
+      this.editModal = true;
+      this.modifiedCommentContent = ccontent;
     },
   },
 };

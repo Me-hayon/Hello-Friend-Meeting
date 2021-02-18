@@ -139,13 +139,18 @@
         </v-card-title>
 
         <v-card-text>
-          <p
+          <v-chip
             v-for="event in moreEvents"
             :key="event.sno"
             @click="showEventAtMore(event)"
+            class="ma-2"
+            :color="event.color"
+            text-color="white"
           >
-            {{ event.name }}
-          </p>
+            <span class=" text-truncate">
+              {{ event.name }}
+            </span>
+          </v-chip>
         </v-card-text>
 
         <v-divider></v-divider>

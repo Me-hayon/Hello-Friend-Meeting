@@ -39,7 +39,8 @@
                 message.mtitle,
                 message.mcontent,
                 message.msender,
-                message.mno
+                message.mno,
+                message.mdate
               )
             "
           >
@@ -77,9 +78,12 @@
           @ok="delMessage(mno)"
         ></b-modal>
         <b-modal v-model="modalShow" centered hide-footer :title="mtitle">
-          <p><span style="font-weight: bold;">보낸사람</span> {{ msender }}</p>
+          <p>
+            <span style="font-weight: bold;">보낸사람</span> {{ msender
+            }}<v-spacer></v-spacer>{{ mdate }}
+          </p>
           <hr />
-          <p>{{ mcontent }}</p>
+          <v-textarea :value="mcontent"></v-textarea>
           <div style="float:right">
             <button class="btn-message" v-b-modal.reply>
               답장
@@ -96,21 +100,22 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  props: ['uno'],
+  props: ["uno"],
   data() {
     return {
       messages: Array,
       modalShow: false,
-      mtitle: '',
-      mcontent: '',
-      msender: '',
-      msenderUno: '',
-      mno: '',
-      newMtitle: '',
-      newMcontent: '',
+      mtitle: "",
+      mcontent: "",
+      msender: "",
+      msenderUno: "",
+      mno: "",
+      mdate: "",
+      newMtitle: "",
+      newMcontent: "",
       search: null,
       searchList: Array,
     };
@@ -127,7 +132,7 @@ export default {
             item.msenderName.includes(this.search)
           );
           this.searchList = filteredList;
-          console.log('키키키', this.searchList);
+          console.log("키키키", this.searchList);
         }, 100);
       } else {
         clearTimeout(this.debounce);
@@ -137,17 +142,18 @@ export default {
       }
     },
 
-    modalShowMethod(title, content, sender, mno) {
+    modalShowMethod(title, content, sender, mno, mdate) {
       this.modalShow = !this.modalShow;
       if (this.modalShow) {
         this.mtitle = title;
         this.mcontent = content;
         this.msenderUno = sender;
         this.mno = mno;
+        this.mdate = mdate;
         var params = new URLSearchParams();
-        params.append('uno', sender);
+        params.append("uno", sender);
         axios
-          .post('findUnameByUno', params)
+          .post("findUnameByUno", params)
           .then((response) => {
             this.msender = response.data.data;
           })
@@ -160,32 +166,32 @@ export default {
       var storage = window.sessionStorage;
       var params = new URLSearchParams();
 
-      params.append('uno', this.msenderUno);
-      if (this.newMtitle === '') {
-        alert('제목을 입력해주세요.');
+      params.append("uno", this.msenderUno);
+      if (this.newMtitle === "") {
+        alert("제목을 입력해주세요.");
         return;
       }
 
-      if (this.newMcontent === '') {
-        alert('내용을 입력해주세요.');
+      if (this.newMcontent === "") {
+        alert("내용을 입력해주세요.");
         return;
       }
       axios
-        .post('findEmailByUno', params)
+        .post("findEmailByUno", params)
         .then((response) => {
           params = new URLSearchParams();
-          params.append('email', storage.getItem('user-email'));
-          params.append('friendEmail', response.data.data);
-          params.append('mtitle', this.newMtitle);
-          params.append('mcontent', this.newMcontent);
+          params.append("email", storage.getItem("user-email"));
+          params.append("friendEmail", response.data.data);
+          params.append("mtitle", this.newMtitle);
+          params.append("mcontent", this.newMcontent);
           axios
-            .post('sendMessage', params)
+            .post("sendMessage", params)
             .then((resp) => {
               console.log(resp);
               this.getMessages();
-              alert('쪽지를 보냈습니다.');
-              this.newMcontent = '';
-              this.newMtitle = '';
+              alert("쪽지를 보냈습니다.");
+              this.newMcontent = "";
+              this.newMtitle = "";
             })
             .catch((err) => {
               console.log(err);
@@ -197,13 +203,13 @@ export default {
     },
     delMessage(mno) {
       var params = new URLSearchParams();
-      params.append('mno', mno);
+      params.append("mno", mno);
       axios
-        .post('delMessage', params)
+        .post("delMessage", params)
         .then((response) => {
           console.log(response);
           this.getMessages();
-          alert('쪽지를 삭제했습니다.');
+          alert("쪽지를 삭제했습니다.");
           this.modalShow = !this.modalShow;
         })
         .catch((error) => {
@@ -213,9 +219,9 @@ export default {
     getMessages() {
       var params = new URLSearchParams();
       var storage = window.sessionStorage;
-      params.append('email', storage.getItem('user-email'));
+      params.append("email", storage.getItem("user-email"));
       axios
-        .post('getMessages', params)
+        .post("getMessages", params)
         .then((response) => {
           this.messages = response.data.messagesList;
           this.searchList = response.data.messagesList;
