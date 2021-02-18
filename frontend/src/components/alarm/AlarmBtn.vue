@@ -87,7 +87,12 @@
             hide-footer
             title="어떤 알림이 왔을까요?"
           >
-            <v-textarea :value="alarmLocal.asummary"></v-textarea>
+            <v-textarea
+              :value="alarmLocal.asummary"
+              rows="1"
+              auto-grow
+              disabled
+            ></v-textarea>
             <div style="float:right">
               <button class="btn-message" @click="goRouting(alarmLocal)">
                 이동
