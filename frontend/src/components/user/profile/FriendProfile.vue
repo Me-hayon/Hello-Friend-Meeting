@@ -15,7 +15,11 @@
     </v-btn>
 
     <!-- 프로필 사진 -->
-    <v-btn style="top: -25px; left: 115px;" fab disabled>
+    <v-btn
+      :style="{ left: '50%', top: '-25px', transform: 'translateX(-50%)' }"
+      fab
+      disabled
+    >
       <v-avatar size="70"
         ><v-img
           :src="require(`@/assets/images/avatars/${info.uprofileImg}.png`)"
