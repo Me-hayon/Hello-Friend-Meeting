@@ -156,8 +156,8 @@ export default {
           }
 
           this.chats.push(chat);
-          this.isLoadingChatList = false;
         }
+        this.isLoadingChatList = false;
       },
       (err) => {
         console.log(err);
