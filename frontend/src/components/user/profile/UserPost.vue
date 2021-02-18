@@ -14,14 +14,23 @@
         v-for="(post, index) in posts"
         :key="index"
         @click="movePost(index)"
+        style="padding-left: 10px; padding-right: 10px; height: 50px;"
       >
         <v-list-item-avatar>
-          <v-icon>mdi-post</v-icon>
+          <v-icon small>mdi-post</v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-content>
-          <v-list-item-title v-text="post.btitle"></v-list-item-title>
-          <v-list-item-subtitle v-text="post.bdate"></v-list-item-subtitle>
+        <v-list-item-content
+          style="padding-top: 5px; padding-bottom: 5px; margin-left: -15px;"
+        >
+          <v-list-item-title
+            style="letter-spacing: -1px;"
+            v-text="post.btitle"
+          ></v-list-item-title>
+          <v-list-item-subtitle
+            style="letter-spacing: -1px;"
+            v-text="post.bdate"
+          ></v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -30,10 +39,30 @@
       v-else
       justify="center"
       align="center"
-      style="height: 200px;"
+      style="height: 200px; padding: 20px;"
       no-gutters
     >
-      <p>작성한 글이 없습니다.</p>
+      <v-col align-self="center" cols="3">
+        <v-img
+          src="@/assets/images/alarm.gif"
+          style="width: 50px; height: 50px; margin-top: -15px;"
+        >
+        </v-img>
+      </v-col>
+      <v-col>
+        <v-row
+          no-gutters
+          style="letter-spacing: -1px; padding: 0; font-size: 0.9rem; text-align: center; font-weight: bold; font-style: italic;"
+        >
+          이런,
+        </v-row>
+        <v-row
+          no-gutters
+          style="letter-spacing: -1px; margin-top: 0;font-size: 0.8rem; text-align: center;"
+        >
+          작성한 글이 없네요 :(
+        </v-row>
+      </v-col>
     </v-row>
   </v-col>
 </template>

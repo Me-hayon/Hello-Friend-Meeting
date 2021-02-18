@@ -27,10 +27,12 @@ import com.web.curation.config.JwtService;
 import com.web.curation.config.SensService;
 import com.web.curation.model.entity.Board;
 import com.web.curation.model.entity.Comment;
+import com.web.curation.model.entity.Message;
 import com.web.curation.model.entity.Timeline;
 import com.web.curation.model.entity.UserInfo;
 import com.web.curation.model.repository.BoardRepository;
 import com.web.curation.model.repository.CommentRepository;
+import com.web.curation.model.repository.MessageRepository;
 import com.web.curation.model.repository.TimelineRepository;
 import com.web.curation.model.repository.UserInfoRepository;
 
@@ -55,6 +57,9 @@ public class UserInfoController {
 	
 	@Autowired
 	private TimelineRepository timelineRepository;
+	
+	@Autowired
+	MessageRepository messageRepository;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 
@@ -102,10 +107,19 @@ public class UserInfoController {
 		}
 	}
 
+	// 개발자 user 번호 1
 	@PostMapping("/join")
 	public UserInfo join(@RequestBody UserInfo userInfo) {
 
 		userInfoRepository.save(userInfo);
+		
+		Message message = new Message();
+		message.setMsender(1);
+		message.setMreceiver(userInfo.getUno());
+		message.setMtitle(userInfo.getUname() + "님, 환영합니다!");
+		message.setMcontent("새로운 친구의 친구가 되어주세요. 규칙을 잘 지켜주세요. 맘껏 즐겨주세요.");
+		messageRepository.save(message);
+		
 		Timeline timeline=new Timeline();
 		timeline.setTcontent("");
 		timeline.setTcontentSecond("회원가입");

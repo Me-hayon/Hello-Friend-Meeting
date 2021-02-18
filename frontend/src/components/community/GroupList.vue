@@ -219,6 +219,8 @@
 
         <!-- 그룹 생성 모달 -->
       </v-row>
+      <for-null v-else :myHeight="'591px'" />
+
       <v-dialog v-model="createGroupModal" persistent>
         <v-card>
           <v-card-title>
@@ -292,10 +294,14 @@
 
 <script>
 import axios from 'axios';
+import ForNull from '@/components/user/profile/ForNull.vue';
 
 const storage = window.sessionStorage;
 
 export default {
+  components: {
+    ForNull,
+  },
   props: ['uno', 'email', 'groupList', 'categoryList', 'friendList'],
   data() {
     return {

@@ -1,7 +1,8 @@
 <template>
   <v-row>
     <v-img
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      gradient="to right, rgba(0,0,0,.8), rgba(50,50,50,.3)"
+      src="@/assets/images/profileCover.gif"
       height="200"
     ></v-img>
   </v-row>

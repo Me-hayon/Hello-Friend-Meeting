@@ -6,26 +6,27 @@
     grow
     shift
     dark
-    color="purple lighten-2"
+    background-color="#212034"
+    color="#E2B9C6"
   >
     <v-btn value="home" to="/feed/main">
       <span>홈</span>
-      <v-icon>mdi-home</v-icon>
+      <v-icon color="#E8E1D5">mdi-home</v-icon>
     </v-btn>
 
     <v-btn value="community" to="/community">
       <span>커뮤니티</span>
-      <v-icon>mdi-account-group</v-icon>
+      <v-icon color="#E8E1D5">mdi-account-group</v-icon>
     </v-btn>
 
     <v-btn value="message" to="/message">
       <span>쪽지</span>
-      <v-icon>mdi-email-check</v-icon>
+      <v-icon color="#E8E1D5">mdi-email-check</v-icon>
     </v-btn>
 
     <v-btn value="info" to="/user/profile">
       <span>내정보</span>
-      <v-icon>mdi-card-account-details</v-icon>
+      <v-icon color="#E8E1D5">mdi-card-account-details</v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>

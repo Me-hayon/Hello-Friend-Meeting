@@ -49,7 +49,7 @@
           <v-btn icon @click="inviteFriend = true">
             <v-icon>mdi-account-plus-outline</v-icon>
             <span
-              style="margin-left: 5px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #4682B4"
+              style="margin-left: 5px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #804F69"
             >
               초대
             </span>
