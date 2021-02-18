@@ -476,6 +476,15 @@ public class GroupController {
 	public Object inviteGroup(@RequestParam String email, @RequestParam int friendId, @RequestParam int gno) {
 		Map<String, Object> resultMap = new HashMap<>();
 
+		if(groupParticipantRepository.findByUnoAndGno(friendId, gno).isPresent()) {
+			resultMap.put("result",false);
+			resultMap.put("msg","이미 그룹원인 친구를 초대할 수는 없어요 ㅠ.ㅠ");
+			return resultMap;
+		}else if(groupApplyRepository.findByUnoAndGno(friendId, gno).isPresent()) {
+			resultMap.put("result",false);
+			resultMap.put("msg","이미 그룹에 신청하거나 초대받은 친구네요!");
+			return resultMap;
+		}
 		UserInfo myInfo = userInfoRepository.findByEmail(email);
 		GroupInfo groupInfo = groupInfoRepository.findById(gno).get();
 		Alarm alarm = new Alarm();
@@ -499,7 +508,7 @@ public class GroupController {
 		groupApply.setUno(friendId);
 
 		groupApplyRepository.save(groupApply);
-
+		resultMap.put("result",true);
 		return resultMap;
 	}
 
