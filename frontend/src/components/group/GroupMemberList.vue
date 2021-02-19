@@ -80,28 +80,23 @@
                 </v-list-item-content>
                 <v-list-item v-for="(friend, i) in friendList" :key="i">
                   <v-row no-gutters>
-                    <v-col cols="2" align-self="center">
-                      <v-list-item-avatar>
-                        <v-img
-                          style="width:50px;"
-                          :src="
-                            require(`@/assets/images/avatars/${friendList[i].uprofileImg}.png`)
-                          "
-                        ></v-img>
-                      </v-list-item-avatar>
-                    </v-col>
-                    <v-col align-self="center">
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="friend.uname"
-                        ></v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="1" align-self="center">
-                      <v-btn icon @click="getInvite(friend.uno)">
-                        초대
-                      </v-btn>
-                    </v-col>
+                    <v-list-item-avatar>
+                      <v-img
+                        style="width:50px;"
+                        :src="
+                          require(`@/assets/images/avatars/${friendList[i].uprofileImg}.png`)
+                        "
+                      ></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        v-text="friend.uname"
+                      ></v-list-item-title>
+                    </v-list-item-content>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="getInvite(friend.uno)">
+                      초대
+                    </v-btn>
                   </v-row>
                 </v-list-item>
               </v-list>

@@ -124,7 +124,7 @@
         </v-row>
         <v-row no-gutters justify="end" style="margin-top: -15px;">
           <v-col cols="3" align="center">
-            <v-btn icon @click="writeModal = true">
+            <v-btn icon @click="writeModalMethod">
               <span
                 style="margin-left: 5px; margin-top: -10px; letter-spacing: -1px; font-size: 1.2rem; font-weight: bold; color: #804F69"
                 >글 작성</span
@@ -248,16 +248,16 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   computed: {
     scrollHeight() {
       let tmp = 663 - this.nowScroll;
-      return tmp + "px";
+      return tmp + 'px';
     },
     scrollMargin() {
       let tmp = this.nowScroll;
-      return tmp + "px";
+      return tmp + 'px';
     },
     vuexGno() {
       return this.$store.getters.getGno;
@@ -280,12 +280,12 @@ export default {
     return {
       memberStatus: this.$store.getters.getMemberStatus,
       gno: this.$store.getters.getGno,
-      groupTitle: "",
-      groupDesc: "",
+      groupTitle: '',
+      groupDesc: '',
       table: [],
       tableNotice: [],
-      newTitle: "",
-      newContent: "",
+      newTitle: '',
+      newContent: '',
       newIsNotice: false,
       circle: true,
       disabled: false,
@@ -307,25 +307,25 @@ export default {
       this.nowScroll = e.target.scrollTop;
     },
     boardDetail(bno) {
-      this.$store.commit("setBno", bno);
-      this.$router.push("/board/detail");
+      this.$store.commit('setBno', bno);
+      this.$router.push('/board/detail');
     },
     createArticle() {
       var params = new URLSearchParams();
-      if (this.newTitle === "") {
-        alert("제목을 입력해주세요!");
+      if (this.newTitle === '') {
+        alert('제목을 입력해주세요!');
         return;
-      } else if (this.newContent === "") {
-        alert("내용을 입력해주세요!");
+      } else if (this.newContent === '') {
+        alert('내용을 입력해주세요!');
         return;
       }
-      params.append("email", window.sessionStorage.getItem("user-email"));
-      params.append("bgno", this.gno);
-      params.append("title", this.newTitle);
-      params.append("content", this.newContent);
-      params.append("bisNotice", this.newIsNotice);
+      params.append('email', window.sessionStorage.getItem('user-email'));
+      params.append('bgno', this.gno);
+      params.append('title', this.newTitle);
+      params.append('content', this.newContent);
+      params.append('bisNotice', this.newIsNotice);
 
-      axios.post("writeBoard", params).then((resp) => {
+      axios.post('writeBoard', params).then((resp) => {
         alert(resp.data.data);
         this.getBoardList();
         this.writeModal = false;
@@ -333,9 +333,9 @@ export default {
     },
     getBoardList() {
       var params = new URLSearchParams();
-      params.append("bgno", this.gno);
+      params.append('bgno', this.gno);
       axios
-        .post("getBoardList", params)
+        .post('getBoardList', params)
         .then((response) => {
           this.table = response.data.notNotice;
           this.tableNotice = response.data.notice;
@@ -362,8 +362,8 @@ export default {
     },
     getGroupInfo() {
       var params = new URLSearchParams();
-      params.append("gno", this.gno);
-      axios.post("getGroupInfo", params).then((response) => {
+      params.append('gno', this.gno);
+      axios.post('getGroupInfo', params).then((response) => {
         this.groupTitle = response.data.groupInfo.gname.toUpperCase();
         this.groupDesc = response.data.groupInfo.gdesc;
         this.isLoadingGroupInfo = false;
@@ -372,16 +372,16 @@ export default {
     upload() {
       console.log(this.files);
       var params = new FormData();
-      params.append("file", this.files);
-      params.append("gno", this.gno);
+      params.append('file', this.files);
+      params.append('gno', this.gno);
       axios
-        .post("fileUpload", params, {
+        .post('fileUpload', params, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         })
         .then((resp) => {
-          if (resp.data.result) alert("프로필 변경에 성공했습니다.");
+          if (resp.data.result) alert('프로필 변경에 성공했습니다.');
           this.closeDialog();
         })
         .catch((err) => {
@@ -391,6 +391,12 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.files = [];
+    },
+    writeModalMethod() {
+      this.newTitle = '';
+      this.newContent = '';
+      this.writeModal = true;
+      this.newIsNotice = false;
     },
   },
 };
@@ -406,7 +412,7 @@ export default {
       rgba(0, 0, 0, 0.4),
       rgba(69, 6, 99, 0.212)
     ),
-    url("~@/assets/images/home.gif");
+    url('~@/assets/images/home.gif');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;

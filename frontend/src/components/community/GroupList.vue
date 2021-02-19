@@ -402,6 +402,7 @@ export default {
                   }
 
                   this.createGroupModal = false;
+                  this.groupListRow = parseInt(this.groups.length / 4) + 1;
                   alert(this.groupName + ' 그룹이 생성되었습니다.');
                 }
               })
