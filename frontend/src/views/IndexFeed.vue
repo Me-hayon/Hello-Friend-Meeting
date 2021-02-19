@@ -169,13 +169,13 @@ export default {
         params.append('email', window.sessionStorage.getItem('user-email'));
         axios.post('boardDetail', params).then((resp) => {
           this.$store.commit('setIsWriter', resp.data.isWriter);
+          this.$store.commit('setGno', resp.data.curBoard.bgno);
           this.$store.commit('setBno', bno);
           params = new URLSearchParams();
           params.append('email', window.sessionStorage.getItem('user-email'));
           params.append('gno', resp.data.curBoard.bgno);
 
           axios.post('isGroupMember', params).then((response) => {
-            this.$store.commit('setGno', gno);
             this.$store.commit('setMemberStatus', response.data.memberStatus);
             this.$router.push('/board/detail').catch(() => {});
           });
